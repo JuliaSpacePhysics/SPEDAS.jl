@@ -1,11 +1,11 @@
 Makie.convert_arguments(P::Type{<:Lines}, ta::TimeArray) = convert_arguments(P, timestamp(ta), values(ta))
 
-function ylabel(tas)
+function ylabel(tas::AbstractVector{<:TimeArray})
     op(x, y) = x == y ? x : "$x, $y"
     mapreduce(ylabel, op, tas)
 end
 
-function ylabel(ta::TimeArray{T}) where {T}
+function ylabel(ta::TimeArray)
     m = meta(ta)
     m === nothing && return ""
     label = get(m, "label", "")
@@ -52,18 +52,5 @@ end
 
 function tplot(tas; linkxaxes=true, figure=(;), kwargs...)
     f = Figure(; figure...)
-    axs = []
-    for (i, ta) in enumerate(tas)
-        ax = Axis(f[i, 1]; ylabel=ylabel(ta))
-
-        for p in propertynames(ta)
-            lines!(ax, getproperty(ta, p); label=p)
-        end
-
-        # Hide redundant x labels
-        linkxaxes && i != length(tas) && hidexdecorations!(ax, grid=false)
-        push!(axs, ax)
-    end
-    linkxaxes && linkxaxes!(axs...)
-    f
+    tplot!(f, tas; linkxaxes, kwargs...)
 end
