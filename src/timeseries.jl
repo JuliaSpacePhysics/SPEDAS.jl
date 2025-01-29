@@ -1,56 +1,22 @@
-Makie.convert_arguments(P::Type{<:Lines}, ta::TimeArray) = convert_arguments(P, timestamp(ta), values(ta))
+using RollingWindowArrays
 
-function ylabel(tas::AbstractVector{<:TimeArray})
-    op(x, y) = x == y ? x : "$x, $y"
-    mapreduce(ylabel, op, tas)
-end
-
-function ylabel(ta::TimeArray)
-    m = meta(ta)
-    m === nothing && return ""
-    label = get(m, "label", "")
-    unit = get(m, "unit", "")
-    isempty(unit) ? label : "$label ($unit)"
-end
-
-"""
-Overlay multiple columns of a time series on the same axis
-"""
-function tplot!(ax::Axis, ta; kwargs...)
-    for p in propertynames(ta)
-        lines!(ax, getproperty(ta, p); label=string(p))
+function resolution(times; tol=2)
+    dt = diff(times)
+    dt0 = eltype(dt)(1)
+    dtf_mean, relerr = mean_relerr(dt ./ dt0)
+    if relerr > exp10(-tol - 1)
+        @warn "Time resolution is is not approximately constant (relerr ≈ $relerr)"
     end
+    round(Integer, dtf_mean) * dt0
 end
 
-"""
-    tplot!(ax, tas; kwargs...)
+resolution(da::AbstractDimType; dim=Ti, kwargs...) =
+    resolution(dims(da, dim).val; kwargs...)
 
-Overlay multiple time series on the same axis
-"""
-function tplot!(ax::Axis, tas::AbstractVector; kwargs...)
-    for ta in tas
-        tplot!(ax, ta; kwargs...)
+
+function smooth(da::AbstractDimArray, span::Integer; dim=Ti, suffix="_smoothed", kwargs...)
+    new_da = mapslices(da, dims=dim) do slice
+        mean.(RollingWindowArrays.rolling(slice, span; kwargs...))
     end
-end
-
-"""
-Lay out multiple time series on the same figure
-"""
-function tplot!(f, tas::AbstractVector; linkxaxes=true, kwargs...)
-    axs = []
-    for (i, ta) in enumerate(tas)
-        ax = Axis(f[i, 1]; ylabel=ylabel(ta))
-        tplot!(ax, ta; kwargs...)
-
-        # Hide redundant x labels
-        linkxaxes && i != length(tas) && hidexdecorations!(ax, grid=false)
-        push!(axs, ax)
-    end
-    linkxaxes && linkxaxes!(axs...)
-    f, axs
-end
-
-function tplot(tas; linkxaxes=true, figure=(;), kwargs...)
-    f = Figure(; figure...)
-    tplot!(f, tas; linkxaxes, kwargs...)
+    rebuild(new_da; name=Symbol(da.name, suffix))
 end
