@@ -1,13 +1,15 @@
 Makie.convert_arguments(P::Type{<:Lines}, ta::TimeArray) = convert_arguments(P, timestamp(ta), values(ta))
 
-ylabel(tas) = ""
+function ylabel(tas)
+    op(x, y) = x == y ? x : "$x, $y"
+    mapreduce(ylabel, op, tas)
+end
 
-function ylabel(ta::TimeArray)
+function ylabel(ta::TimeArray{T}) where {T}
     m = meta(ta)
     m === nothing && return ""
-    haskey(m, "label") && haskey(m, "unit") || return ""
-    label = m["label"]
-    unit = m["unit"]
+    label = get(m, "label", "")
+    unit = get(m, "unit", "")
     isempty(unit) ? label : "$label ($unit)"
 end
 
@@ -16,11 +18,12 @@ Overlay multiple columns of a time series on the same axis
 """
 function tplot!(ax::Axis, ta; kwargs...)
     for p in propertynames(ta)
-        lines!(ax, getproperty(ta, p); label=p)
+        lines!(ax, getproperty(ta, p); label=string(p))
     end
 end
 
 """
+    tplot!(ax, tas; kwargs...)
 
 Overlay multiple time series on the same axis
 """
@@ -44,7 +47,7 @@ function tplot!(f, tas::AbstractVector; linkxaxes=true, kwargs...)
         push!(axs, ax)
     end
     linkxaxes && linkxaxes!(axs...)
-    f
+    f, axs
 end
 
 function tplot(tas; linkxaxes=true, figure=(;), kwargs...)
