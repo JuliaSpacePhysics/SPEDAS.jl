@@ -12,7 +12,7 @@ using RollingFunctions
 using RollingWindowArrays
 
 export AbstractDataSet, DataSet
-export resolution, smooth
+export degap, rectify_datetime, resolution, samplingrate, smooth
 export tplot!, tplot
 export rotate, fac_matrix_make
 
