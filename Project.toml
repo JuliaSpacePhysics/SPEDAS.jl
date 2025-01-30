@@ -16,16 +16,16 @@ TimeseriesTools = "380cddd1-6ef2-46ca-b087-e7151fb095ff"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-Dates = "1.11.0"
-DimensionalData = "0.29.8"
-LinearAlgebra = "1.11.0"
+Dates = "1"
+DimensionalData = "0.29"
+LinearAlgebra = "1"
 Makie = "0.22"
 RollingFunctions = "0.8.1"
 RollingWindowArrays = "1.0.1"
-Statistics = "1.11.1"
+Statistics = "1"
 TimeSeries = "0.24.2"
 TimeseriesTools = "0.6.2"
-Unitful = "1.22.0"
+Unitful = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
