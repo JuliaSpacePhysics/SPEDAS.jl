@@ -1,3 +1,6 @@
+# References
+# - https://github.com/henry2004y/VisAnaJulia/blob/master/src/MFA.jl
+
 """
     fac_matrix_make(vec::AbstractVector; xref=[1.0, 0.0, 0.0])
 
