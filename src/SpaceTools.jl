@@ -1,6 +1,7 @@
 module SpaceTools
 
 using Dates
+using DimensionalData
 using LinearAlgebra
 using Makie
 using TimeSeries
@@ -13,7 +14,7 @@ using RollingWindowArrays
 export AbstractDataSet, DataSet
 export resolution, smooth
 export tplot!, tplot
-export fac_matrix_make
+export rotate, fac_matrix_make
 
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
 
@@ -22,6 +23,7 @@ include("mhd.jl")
 include("timeseries.jl")
 include("timeseries/tplot.jl")
 include("utils.jl")
+include("cotrans/rotate.jl")
 include("cotrans/fac.jl")
 
 end
