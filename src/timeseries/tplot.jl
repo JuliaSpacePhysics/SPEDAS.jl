@@ -18,12 +18,6 @@ ylabel(ta::AbstractDimArray) = prioritized_get(ta.metadata, ["ylabel", "long_nam
 xlabel(ta) = ""
 xlabel(ta::AbstractDimArray) = prioritized_get(ta.metadata, ["xlabel"], DD.label(dims(ta, 1)))
 
-function prioritized_get(c, keys::AbstractVector, default)
-    values = get.(Ref(c), keys, nothing)
-    something(values..., default)
-end
-
-
 """
     tplot!(ax, tas; kwargs...)
 
