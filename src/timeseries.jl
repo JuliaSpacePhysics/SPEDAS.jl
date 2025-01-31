@@ -1,5 +1,20 @@
 using RollingWindowArrays
 
+function tnorm(da)
+    norm.(eachrow(da))
+end
+
+function timeshift(ta; dim=1, t0=nothing)
+    td = dims(ta, dim)
+    times = td.val.data
+    t0 = something(t0, times[1])
+
+    new_dim_name = Symbol("Time after ", t0)
+    new_dim = Dim{new_dim_name}(times .- t0)
+
+    DimArray(ta.data, (new_dim, otherdims(ta, dim)...), name=ta.name, metadata=ta.metadata)
+end
+
 function resolution(times; tol=2)
     dt = diff(times)
     dt0 = eltype(dt)(1)
