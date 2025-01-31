@@ -17,6 +17,7 @@ export tplot!, tplot, ylabel
 export LMN
 export rotate, fac_matrix_make, mva, mva_mat
 
+const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
 const AbstractDimMatrix = Union{DimensionalData.AbstractDimMatrix,TimeseriesTools.AbstractDimMatrix}
 const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTools.AbstractDimVector}

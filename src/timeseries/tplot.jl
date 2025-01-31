@@ -14,6 +14,9 @@ end
 
 
 ylabel(ta) = ""
+ylabel(ta::AbstractDimArray) = prioritized_get(ta.metadata, ["ylabel", "long_name"], DD.label(ta))
+xlabel(ta) = ""
+xlabel(ta::AbstractDimArray) = prioritized_get(ta.metadata, ["xlabel"], DD.label(dims(ta, 1)))
 
 function prioritized_get(c, keys::AbstractVector, default)
     values = get.(Ref(c), keys, nothing)
@@ -47,19 +50,28 @@ end
 """
 Overlay multiple columns of a time series on the same axis
 """
-function tplot!(ax::Axis, ta::AbstractDimArray; labeldim=nothing, kwargs...)
+function tplot!(ax::Axis, ta::AbstractDimMatrix; labeldim=nothing, kwargs...)
     args, attributes = _series(ta, kwargs, labeldim)
     series!(ax, args...; labels=attributes.labels, kwargs...)
 end
 
+tplot!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs...)
+
 """
 Plot a multivariate time series on a position in a figure
 """
-function tplot(gp::GridPosition, ta::AbstractDimArray; labeldim=nothing, kwargs...)
-    args, attributes = _series(ta, kwargs, labeldim)
-    series(gp, args...; attributes...)
+function tplot(gp::GridPosition, ta::AbstractDimMatrix; labeldim=nothing, kwargs...)
+    axis = (; ylabel=ylabel(ta))
+    attributes = Attributes(kwargs...; axis)
+    args, merged_attributes = _series(ta, attributes, labeldim)
+    series(gp, args...; merged_attributes...)
 end
 
+# Only add legend when the axis contains multiple labels
+function tplot(gp::GridPosition, ta::AbstractDimVector; kwargs...)
+    axis = (; ylabel=ylabel(ta), xlabel=xlabel(ta))
+    lines(gp, ta; axis, kwargs...)
+end
 
 """
 Lay out multiple time series on the same figure across different panels (rows)
@@ -73,14 +85,18 @@ function tplot(f, tas::AbstractVector; add_legend=true, link_xaxes=true, kwargs.
     end
     axs = map(ap -> ap.axis, aps)
     link_xaxes && linkxaxes!(axs...)
-    add_legend && axislegend.(axs)
+
+    add_legend && try
+        axislegend.(axs)
+    catch
+    end
+
     FigureAxes(f, axs)
 end
 
 function tplot(tas; figure=(;), kwargs...)
     f = Figure(; figure...)
-    fa = tplot(f, tas; kwargs...)
-    f
+    tplot(f, tas; kwargs...)
 end
 
 
