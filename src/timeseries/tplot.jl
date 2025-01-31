@@ -12,42 +12,12 @@ struct AxisPlots
     plots
 end
 
-Makie.convert_arguments(P::Type{<:Lines}, ta::TimeArray) = convert_arguments(P, timestamp(ta), values(ta))
-
 
 ylabel(ta) = ""
-
-function ylabel(tas::AbstractVector{<:TimeArray})
-    op(x, y) = ((x != y) && y != "") ? "$x, $y" : x
-    mapreduce(ylabel, op, tas)
-end
 
 function prioritized_get(c, keys::AbstractVector, default)
     values = get.(Ref(c), keys, nothing)
     something(values..., default)
-end
-
-function ylabel(ta::TimeArray)
-    m = meta(ta)
-    m === nothing && return ""
-    label = prioritized_get(m, ["label", "long_name"], "")
-    unit = prioritized_get(m, ["unit", "units"], "")
-    isempty(unit) ? label : "$label ($unit)"
-end
-
-"""
-Overlay multiple columns of a time series on the same axis
-"""
-function tplot!(ax::Axis, ta::TimeArray; kwargs...)
-    map(propertynames(ta)) do p
-        lines!(ax, getproperty(ta, p); label=string(p))
-    end
-end
-
-function tplot(gp::GridPosition, ta::TimeArray; kwargs...)
-    ax = Axis(gp, ylabel=ylabel(ta))
-    plots = tplot!(ax, ta; kwargs...)
-    AxisPlots(ax, plots)
 end
 
 

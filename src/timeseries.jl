@@ -32,10 +32,6 @@ function degap(da::DimArray; dim=Ti)
     end
 end
 
-function degap(ts::TimeArray)
-    ts[all.(!isnan, eachrow(values(ts)))]
-end
-
 function rectify_datetime(da; tol=2, kwargs...)
     times = dims(da, Ti)
     t0 = times[1]
