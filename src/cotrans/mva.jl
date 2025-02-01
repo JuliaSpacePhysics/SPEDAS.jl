@@ -60,7 +60,7 @@ function mva(V::AbstractDimArray, B::AbstractDimArray; new_dim=B_LMN, kwargs...)
     set(V_mva, old_dim => new_dim)
 end
 
-function check_mva(F)
+function check_mva_mat(F)
     println(F.vectors)
     r = F.values[2] / F.values[3]
     println("Ratio of intermediate variance to minimum variance = ", r)

@@ -15,7 +15,7 @@ export degap, rectify_datetime, resolution, samplingrate, smooth
 export timeshift, tnorm
 export tplot!, tplot, ylabel
 export LMN
-export rotate, fac_matrix_make, mva, mva_mat
+export rotate, fac_mat, mva, mva_mat, check_mva_mat
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}

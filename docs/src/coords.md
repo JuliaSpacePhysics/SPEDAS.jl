@@ -34,5 +34,5 @@ fac_mat
 ```@docs
 mva_mat
 mva
-check_mva
+check_mva_mat
 ```
