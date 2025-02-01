@@ -1,6 +1,9 @@
 # SpaceTools.jl
 
 [![Build Status](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Beforerr.github.io/SpaceTools.jl/dev/)
+
+A collection of tools for space physics / heliophysics.
 
 ## Installation
 
@@ -20,5 +23,3 @@ Pkg.add(PackageSpec(url="https://github.com/Beforerr/SpaceTools.jl"))
     - coordinate transformations
 
 ⚠️ **Development Status**: This package is in active development. While functional, the API may undergo changes in future releases. Please review the documentation and test thoroughly before using in scientific work.
-
-📫 **Contributing**: We welcome contributions! If you're interested in collaborating or need assistance, please open an issue or reach out through our [GitHub repository](https://github.com/Beforerr/SpaceTools.jl).
