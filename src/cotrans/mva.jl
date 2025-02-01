@@ -8,13 +8,12 @@
 
 Generates a LMN coordinate transformation matrix from 3 orthogonal vectors `Bx`, `By`, `Bz`.
 
-Perform minimum variance analysis to vector components defined in orthogonal
-coordinates `Bx`, `By` and `Bz`.
-If λ₁ ≥ λ₂ ≥ λ₃ are 3 eigenvalues of the constructed matrix M, then a good
-indicator of nice fitting LMN coordinate system should have λ₂/λ₃ > 5. Set 
-`verbose=true` to turn on the check.
+Perform minimum variance analysis to vector components defined in orthogonal coordinates `Bx`, `By` and `Bz`.
+Set `check=true` to check the reliability of the result.
+
+The `k`th eigenvector can be obtained from the slice `F.vectors[:, k]`.
 """
-function mva_mat(Bx, By, Bz; verbose=false)
+function mva_mat(Bx, By, Bz; check=false)
 
     B̄1 = mean(Bx)
     B̄2 = mean(By)
@@ -31,7 +30,7 @@ function mva_mat(Bx, By, Bz; verbose=false)
     # Compute the eigen values and ratios (descending order)
     F = eigen(M, sortby=x -> -abs(x))
 
-    verbose && check_mva(F)
+    check && check_mva(F)
     F
 end
 
@@ -60,11 +59,18 @@ function mva(V::AbstractDimArray, B::AbstractDimArray; new_dim=B_LMN, kwargs...)
     set(V_mva, old_dim => new_dim)
 end
 
-function check_mva_mat(F)
-    println(F.vectors)
-    r = F.values[2] / F.values[3]
-    println("Ratio of intermediate variance to minimum variance = ", r)
-    if r ≥ 5
+"""
+    check_mva_mat(F; r=5, verbose=false)
+
+Check the quality of the MVA result. 
+
+If λ₁ ≥ λ₂ ≥ λ₃ are 3 eigenvalues of the constructed matrix M, then a good
+indicator of nice fitting LMN coordinate system should have λ₂ / λ₃ > r.
+"""
+function check_mva_mat(F; r=5, verbose=false)
+    verbose && println(F.vectors)
+    verbose && println("Ratio of intermediate variance to minimum variance = ", r)
+    if F.values[2] / F.values[3] ≥ r
         @info "Seems to be a proper MVA attempt!"
     else
         @warn "Take the MVA result with a grain of salt!"
