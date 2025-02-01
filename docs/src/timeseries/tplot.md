@@ -1,3 +1,10 @@
+# Tplot
+
+```@docs
+tplot
+tplot!
+```
+
 ## References
 
 - [PyTplot](https://pyspedas.readthedocs.io/en/latest/pytplot.html)

@@ -2,9 +2,16 @@
 
 This package defines common coordinate systems used in heliophysics and space physics research.
 
-More information can be found in the the following links
+```@contents
+Pages = ["coords.md"]
+Depth = 2:3
+```
 
-- https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml
+## Coordinate Transformations
+
+```@docs; canonical=false
+rotate
+```
 
 ## Standard Coordinate Systems
 
@@ -15,6 +22,10 @@ More information can be found in the the following links
 * GEO (Geographic)
 * J2000
 
+More information can be found in the the following links
+
+- [https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml](https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml)
+
 !!! note "Implementation Status"
     Transformations between these coordinate systems are planned but not yet implemented.
 
@@ -22,16 +33,23 @@ More information can be found in the the following links
 
 The package also provides transformations for analysis-specific coordinate systems:
 
-* **FAC** (Field-Aligned Coordinates): A local coordinate system defined relative to the ambient magnetic field direction, useful for studying plasma waves and particle distributions.
+### Field-Aligned Coordinates (FAC)
 
-```@docs
+A local coordinate system defined relative to the ambient magnetic field direction, useful for studying plasma waves and particle distributions.
+
+```@docs; canonical=false
 fac_mat
 ```
 
-* **MVA** (Minimum-Variance Analysis): A coordinate system derived from the eigenvalues and eigenvectors of the magnetic field variance matrix, commonly used in analyzing current sheets, discontinuities, and wave propagation.
+### Minimum Variance Analysis (MVA) and Boundary Normal Coordinates (LMN)
 
+A coordinate system derived from the eigenvalues and eigenvectors of the magnetic field variance matrix, commonly used in analyzing current sheets, discontinuities, and wave propagation.
 
-```@docs
+References:
+
+- [Minimum and Maximum Variance Analysis](https://ui.adsabs.harvard.edu/abs/1998ISSIR...1..185S)
+
+```@docs; canonical=false
 mva_mat
 mva
 check_mva_mat
