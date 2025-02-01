@@ -4,4 +4,3 @@
 Modules = [SpaceTools]
 Order   = [:function, :type]
 ```
-```
