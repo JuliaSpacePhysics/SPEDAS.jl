@@ -1,6 +1,7 @@
 # Minimum variance analysis
-# https://github.com/henry2004y/VisAnaJulia/blob/master/src/MVA.jl
-# https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar
+# References:
+# - https://github.com/henry2004y/VisAnaJulia/blob/master/src/MVA.jl
+# - https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar
 
 """
     mva_mat(Bx, By, Bz; verbose=false)
@@ -29,11 +30,13 @@ function mva_mat(Bx, By, Bz; verbose=false)
 
     # Compute the eigen values and ratios (descending order)
     F = eigen(M, sortby=x -> -abs(x))
+
     verbose && check_mva(F)
     F
 end
 
 mva_mat(B::AbstractMatrix; kwargs...) = mva_mat(eachcol(B)...; kwargs...)
+mva_mat(B::AbstractMatrix{Q}; kwargs...) where {Q<:Quantity} = mva_mat(ustrip(B); kwargs...)
 
 """
     mva(V::AbstractMatrix, B::AbstractMatrix; kwargs...)
@@ -51,8 +54,8 @@ function mva(V::AbstractMatrix, B::AbstractMatrix; kwargs...)
     rotate(V, F.vectors)
 end
 
-function mva(V::AbstractDimArray, B::AbstractDimArray; new_dim=LMN([:B_l, :B_m, :B_n]), kwargs...)
-    V_mva = invoke(mva, Tuple{AbstractMatrix,AbstractMatrix}, V, B)
+function mva(V::AbstractDimArray, B::AbstractDimArray; new_dim=B_LMN, kwargs...)
+    V_mva = mva(V, B.data)
     old_dim = otherdims(V_mva, (Ti, 𝑡))[1]
     set(V_mva, old_dim => new_dim)
 end
@@ -66,4 +69,16 @@ function check_mva(F)
     else
         @warn "Take the MVA result with a grain of salt!"
     end
+end
+
+function is_right_handed(v1, v2, v3)
+    dot(cross(v1, v2), v3) > 0
+end
+
+function is_right_handed(F::Eigen)
+    vs = F.vectors
+    v1 = vs[:, 1]
+    v2 = vs[:, 2]
+    v3 = vs[:, 3]
+    is_right_handed(v1, v2, v3)
 end
