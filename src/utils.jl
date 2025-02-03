@@ -23,3 +23,4 @@ f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
 xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
 ys(ta::DimArray) = permutedims(ustrip(ta.data))
+vs(ta::DimMatrix) = ustrip(ta.data)

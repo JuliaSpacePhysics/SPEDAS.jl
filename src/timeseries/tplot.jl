@@ -53,6 +53,8 @@ function scale(x::String)
     end
 end
 
+is_spectrogram(ta) = ta.metadata["DISPLAY_TYPE"] == "spectrogram"
+
 """
     plot_attributes(ta)
 
@@ -61,8 +63,15 @@ Plot attributes for a time array
 function plot_attributes(ta)
     yscale = get(ta.metadata, "SCALETYP", "identity") |> scale
     axis = (; ylabel=ylabel(ta), xlabel=xlabel(ta), yscale)
-    labels = label_func(dims(ta, 2).val.data)
-    (; axis, labels)
+
+    # handle spectrogram
+    if !is_spectrogram(ta)
+        labels = label_func(dims(ta, 2).val.data)
+        (; axis, labels)
+    else
+        colorscale = yscale
+        (; axis, colorscale)
+    end
 end
 
 plot_attributes(f::Function, args...) = plot_attributes(f(args...))
@@ -105,8 +114,14 @@ Plot a multivariate time series on a position in a figure
 """
 function tplot(gp::GridPosition, ta::AbstractDimMatrix; label_func=label_func, labeldim=nothing, kwargs...)
     attributes = Attributes(kwargs...; plot_attributes(ta)...)
-    args, merged_attributes = _series(ustrip(ta), attributes, labeldim)
-    series(gp, args...; merged_attributes...)
+    if !is_spectrogram(ta)
+        args, merged_attributes = _series(ustrip(ta), attributes, labeldim)
+        series(gp, args...; merged_attributes...)
+    else
+        x = ta.metadata["axes"][1].values
+        y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
+        heatmap(gp, x, y, ta.data; attributes..., kwargs...)
+    end
 end
 
 # Only add legend when the axis contains multiple labels
@@ -117,22 +132,36 @@ function tplot(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs.
     ta = f(tmin, tmax)
     attrs = plot_attributes(ta)
 
-    if ndims(ta) == 2
-        plot_func = (x, y) -> series(gp, x, y; attrs..., kwargs...)
-    else
-        plot_func = (x, y) -> lines(gp, x, y; attrs..., kwargs...)
-    end
-
     xmin, xmax = ((tmin, tmax) .- t0) ./ Millisecond(1)
 
-    # reverse from xrange to trange
-    temp_f = xrange -> begin
-        trange = round.(xrange) .* Millisecond(1) .+ t0
-        da = f(trange...)
-        xs(da, t0), ys(da)
-    end
+    if is_spectrogram(ta)
+        y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
+        ymin, ymax = Float64.(extrema(y))
+        plot_func = (x, y, mat) -> heatmap(gp, x, y, mat; attrs..., kwargs...)
 
-    data = RangeFunction1D(temp_f, xmin, xmax)
+        # reverse from xrange to trange
+        temp_f = xrange -> begin
+            trange = round.(xrange) .* Millisecond(1) .+ t0
+            da = f(trange...)
+            xs(da, t0), y, vs(da)
+        end
+        data = RangeFunction2D(temp_f, xmin, xmax, ymin, ymax)
+    else
+        if ndims(ta) == 2
+            plot_func = (x, y) -> series(gp, x, y; attrs..., kwargs...)
+        else
+            plot_func = (x, y) -> lines(gp, x, y; attrs..., kwargs...)
+        end
+
+        # reverse from xrange to trange
+        temp_f = xrange -> begin
+            trange = round.(xrange) .* Millisecond(1) .+ t0
+            da = f(trange...)
+            xs(da, t0), ys(da)
+        end
+
+        data = RangeFunction1D(temp_f, xmin, xmax)
+    end
     viz = iviz(plot_func, data)
     # format the tick labels
     current_axis().xtickformat = values -> f2time.(values, t0)

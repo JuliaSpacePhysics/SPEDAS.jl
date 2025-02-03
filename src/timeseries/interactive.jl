@@ -23,3 +23,20 @@ function InteractiveViz.sample(data::RangeFunction1D, xrange::AbstractRange, yra
 end
 
 InteractiveViz.limits(data::RangeFunction1D) = (data.xmin, data.xmax, nothing, nothing)
+
+struct RangeFunction2D{F,L} <: InteractiveViz.Continuous2D
+    f::F
+    xmin::L
+    xmax::L
+    ymin::L
+    ymax::L
+end
+
+function InteractiveViz.sample(data::RangeFunction2D, xrange::AbstractRange, yrange::AbstractRange)
+    xmin = first(xrange)
+    xmax = last(xrange)
+    x, y, z = data.f((xmin, xmax))
+    (; x, y, z)
+end
+
+InteractiveViz.limits(data::RangeFunction2D) = (data.xmin, data.xmax, data.ymin, data.ymax)
