@@ -7,7 +7,7 @@ xlabel_sources = (:long_name, "long_name", :label)
 
 # https://github.com/MakieOrg/AlgebraOfGraphics.jl/blob/master/src/entries.jl
 struct FigureAxes
-    figure::Figure
+    figure
     axes::AbstractArray{<:Axis}
 end
 
