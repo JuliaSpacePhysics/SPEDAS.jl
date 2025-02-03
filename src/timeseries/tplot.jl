@@ -2,6 +2,9 @@ DimensionalDataMakie = Base.get_extension(DimensionalData, :DimensionalDataMakie
 using .DimensionalDataMakie: _series
 using Latexify
 
+ylabel_sources = (:long_name, "long_name", :label, "FIELDNAM")
+xlabel_sources = (:long_name, "long_name", :label)
+
 # https://github.com/MakieOrg/AlgebraOfGraphics.jl/blob/master/src/entries.jl
 struct FigureAxes
     figure::Figure
@@ -16,19 +19,53 @@ end
 
 ylabel(ta) = ""
 function ylabel(ta::AbstractDimArray)
-    name = prioritized_get(ta.metadata, ["ylabel", :long_name, "long_name"], DD.label(ta))
+    name = prioritized_get(ta.metadata, ylabel_sources, DD.label(ta))
     units = get(ta.metadata, :units, "")
     units == "" ? name : "$name ($units)"
 end
 
+label_func(labels) = latexify.(labels)
+
 function ylabel(ta::AbstractDimArray{Q}) where {Q<:Quantity}
-    name = prioritized_get(ta.metadata, ["ylabel", :long_name, "long_name"], DD.label(ta))
+    name = prioritized_get(ta.metadata, ylabel_sources, DD.label(ta))
     units = unit(Q)
     units == "" ? name : "$name ($units)"
 end
 
-xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, ["xlabel", :long_name, "long_name"], DD.label(dims(da, 1)))
+xlabel(ta) = ""
+xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
 xlabel(das::AbstractVector) = xlabel(das[1])
+
+"""
+Only add legend when the axis contains multiple labels
+"""
+function add_legend!(gp, ax; min=2, position=Right(), kwargs...)
+    plots, labels = Makie.get_labeled_plots(ax; merge=false, unique=false)
+    length(plots) < min && return
+    Legend(gp[1, 1, position], ax; kwargs...)
+end
+
+function scale(x::String)
+    if x == "identity" || x == "linear"
+        identity
+    elseif x == "log10" || x == "log"
+        log10
+    end
+end
+
+"""
+    plot_attributes(ta)
+
+Plot attributes for a time array
+"""
+function plot_attributes(ta)
+    yscale = get(ta.metadata, "SCALETYP", "identity") |> scale
+    axis = (; ylabel=ylabel(ta), xlabel=xlabel(ta), yscale)
+    labels = label_func(dims(ta, 2).val.data)
+    (; axis, labels)
+end
+
+plot_attributes(f::Function, args...) = plot_attributes(f(args...))
 
 """
     tplot!(ax, tas; kwargs...)
@@ -66,51 +103,69 @@ tplot!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs...)
 """
 Plot a multivariate time series on a position in a figure
 """
-function tplot(gp::GridPosition, ta::AbstractDimMatrix; labeldim=nothing, kwargs...)
-    axis = (; ylabel=ylabel(ta))
-    labels = latexify.(dims(ta, 2).val.data)
-    attributes = Attributes(kwargs...; axis, labels)
+function tplot(gp::GridPosition, ta::AbstractDimMatrix; label_func=label_func, labeldim=nothing, kwargs...)
+    attributes = Attributes(kwargs...; plot_attributes(ta)...)
     args, merged_attributes = _series(ustrip(ta), attributes, labeldim)
     series(gp, args...; merged_attributes...)
 end
 
 # Only add legend when the axis contains multiple labels
-function tplot(gp::GridPosition, ta::AbstractDimVector; kwargs...)
-    axis = (; ylabel=ylabel(ta), xlabel=xlabel(ta))
-    lines(gp, ta; axis, kwargs...)
+tplot(gp::GridPosition, ta::AbstractDimVector; kwargs...) = lines(gp, ta; plot_attributes(ta)..., kwargs...)
+
+function tplot(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
+    # get a sample data to determine the attributes and plot types
+    ta = f(tmin, tmax)
+    attrs = plot_attributes(ta)
+
+    if ndims(ta) == 2
+        plot_func = (x, y) -> series(gp, x, y; attrs..., kwargs...)
+    else
+        plot_func = (x, y) -> lines(gp, x, y; attrs..., kwargs...)
+    end
+
+    xmin, xmax = ((tmin, tmax) .- t0) ./ Millisecond(1)
+
+    # reverse from xrange to trange
+    temp_f = xrange -> begin
+        trange = round.(xrange) .* Millisecond(1) .+ t0
+        da = f(trange...)
+        xs(da, t0), ys(da)
+    end
+
+    data = RangeFunction1D(temp_f, xmin, xmax)
+    viz = iviz(plot_func, data)
+    # format the tick labels
+    current_axis().xtickformat = values -> f2time.(values, t0)
+    viz
 end
 
 """
 Lay out multiple time series on the same figure across different panels (rows)
 """
-function tplot(f, tas::AbstractVector; add_legend=true, legend_position=:outside, legend=(;), link_xaxes=true, rowgap=5, kwargs...)
-    aps = map(enumerate(tas)) do (i, ta)
-        gp = f[i, 1]
-        ap = tplot(gp, ta; kwargs...)
+function tplot(f, tas::Union{AbstractVector,NamedTuple}, args...; add_legend=true, legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+    palette = [(i, 1) for i in 1:length(tas)]
+    gaps = map(palette, tas) do pos, ta
+        gp = f[pos...]
+        ap = tplot(gp, ta, args...; kwargs...)
         # Hide redundant x labels
-        link_xaxes && i != length(tas) && hidexdecorations!(ap.axis, grid=false)
-        ap
+        link_xaxes && pos[1] != length(tas) && hidexdecorations!(ap.axis, grid=false)
+        (gp, ap)
     end
-    axs = map(ap -> ap.axis, aps)
+    axs = map(gap -> gap[2].axis, gaps)
+    gps = map(gap -> gap[1], gaps)
     link_xaxes && linkxaxes!(axs...)
 
-    add_legend && try
-        if legend_position == :outside
-            map(enumerate(aps)) do (i, ap)
-                Legend(f[i, 1, Right()], ap.axis; legend...)
-            end
-        else
-            axislegend.(axs; position=legend_position, legend...)
-        end
-    catch
-    end
+    add_legend && add_legend!.(gps, axs; legend...)
+
     !isnothing(rowgap) && rowgap!(f.layout, rowgap)
     FigureAxes(f, axs)
 end
 
-function tplot(tas; figure=(;), kwargs...)
+tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
+
+function tplot(tas, args...; figure=(;), kwargs...)
     f = Figure(; figure...)
-    tplot(f, tas; kwargs...)
+    tplot(f, tas, args...; kwargs...)
 end
 
 

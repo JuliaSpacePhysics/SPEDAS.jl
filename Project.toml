@@ -4,8 +4,9 @@ authors = ["Beforerr <zzj956959688@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
 [deps]
-Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
+InteractiveViz = "d14badfc-0adb-4d57-980e-37858d990fa5"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
@@ -23,6 +24,7 @@ TimeSeriesExt = "TimeSeries"
 [compat]
 Dates = "1"
 DimensionalData = "0.29"
+InteractiveViz = "0.6"
 Latexify = "0.16"
 LinearAlgebra = "1"
 Makie = "0.21, 0.22"

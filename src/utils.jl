@@ -5,7 +5,7 @@ function mean_relerr(itr)
     return x_mean, relerr
 end
 
-function prioritized_get(c, keys::AbstractVector, default)
+function prioritized_get(c, keys, default)
     values = get.(Ref(c), keys, nothing)
     something(values..., default)
 end
@@ -18,3 +18,8 @@ end
 function Base.rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
 end
+
+f2time(x, t0) = string(Millisecond(round(x)) + t0)
+
+xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
+ys(ta::DimArray) = permutedims(ustrip(ta.data))
