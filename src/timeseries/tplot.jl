@@ -127,6 +127,10 @@ end
 # Only add legend when the axis contains multiple labels
 tplot(gp::GridPosition, ta::AbstractDimVector; kwargs...) = lines(gp, ta; plot_attributes(ta)..., kwargs...)
 
+
+"""
+    Interactive tplot of a function over a time range
+"""
 function tplot(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
@@ -200,6 +204,9 @@ end
 
 Base.show(io::IO, fg::FigureAxes) = show(io, fg.figure)
 Base.display(fg::FigureAxes) = display(fg.figure)
+Base.show(io::IO, m::MIME, fg::FigureAxes) = show(io, m, fg.figure)
+Base.show(io::IO, ::MIME"text/plain", fg::FigureAxes) = print(io, "FigureAxes()")
+Base.showable(mime::MIME{M}, fg::FigureAxes) where {M} = showable(mime, fg.figure)
 
 Base.iterate(fg::FigureAxes) = iterate((fg.figure, fg.axes))
 Base.iterate(fg::FigureAxes, i) = iterate((fg.figure, fg.axes), i)
