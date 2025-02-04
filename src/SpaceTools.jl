@@ -10,6 +10,7 @@ using Statistics
 using Unitful
 using RollingWindowArrays
 using InteractiveViz
+using DSP, SignalAnalysis
 
 # export AbstractDataSet, DataSet
 export degap, rectify_datetime, resolution, samplingrate, smooth

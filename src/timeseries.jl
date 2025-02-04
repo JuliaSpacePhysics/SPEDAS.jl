@@ -1,5 +1,3 @@
-using RollingWindowArrays
-
 function tnorm(da)
     norm.(eachrow(da))
 end

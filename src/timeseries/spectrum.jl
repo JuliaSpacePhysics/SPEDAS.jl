@@ -1,8 +1,6 @@
 # - [PySPEDAS : pytplot.tplot_math.dpwrspc](https://pyspedas.readthedocs.io/en/latest/pytplot.html#dynamic-power-spectrum)
 # - https://pyspedas.readthedocs.io/en/latest/pytplot.html#dynamic-power-spectrum-of-tplot-variable
 
-using SignalAnalysis
-
 export pspectrum
 
 """

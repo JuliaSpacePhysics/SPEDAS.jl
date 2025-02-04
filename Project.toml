@@ -4,8 +4,10 @@ authors = ["Beforerr <zzj956959688@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
 [deps]
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
+DimensionfulAngles = "2d4b8d7a-02d9-40f9-9abe-9c695b77de0d"
 InteractiveViz = "d14badfc-0adb-4d57-980e-37858d990fa5"
 Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -23,8 +25,10 @@ TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
 TimeSeriesExt = "TimeSeries"
 
 [compat]
+DSP = "0.7"
 Dates = "1"
 DimensionalData = "0.29"
+DimensionfulAngles = "0.2.1"
 InteractiveViz = "0.6"
 Latexify = "0.16"
 LinearAlgebra = "1"
