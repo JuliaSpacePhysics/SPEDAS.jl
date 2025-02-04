@@ -30,9 +30,26 @@ resolution(da::AbstractDimType; dim=Ti, kwargs...) =
 
 samplingrate(da) = NoUnits(1u"s" / resolution(da))
 
-function smooth(da::AbstractDimArray, span::Integer; dims=Ti, suffix="_smoothed", kwargs...)
+
+"""
+    smooth(da::AbstractDimArray, window; dim=Ti, suffix="_smoothed", kwargs...)
+
+Smooths a time series by computing a moving average over a sliding window.
+
+The size of the sliding `window` can be either:
+  - `Quantity`: A time duration that will be converted to number of samples based on data resolution
+  - `Integer`: Number of samples directly
+
+# Arguments
+- `dims=Ti`: Dimension along which to perform smoothing (default: time dimension)
+- `suffix="_smoothed"`: Suffix to append to the variable name in output
+- `kwargs...`: Additional arguments passed to `RollingWindowArrays.rolling`
+"""
+smooth(da::AbstractDimArray, window::Quantity; kwargs...) = smooth(da, convert(Integer, window / resolution(da)); kwargs...)
+
+function smooth(da::AbstractDimArray, window::Integer; dims=Ti, suffix="_smoothed", kwargs...)
     new_da = mapslices(da; dims) do slice
-        mean.(RollingWindowArrays.rolling(slice, span; kwargs...))
+        mean.(RollingWindowArrays.rolling(slice, window; kwargs...))
     end
     rebuild(new_da; name=Symbol(da.name, suffix))
 end
