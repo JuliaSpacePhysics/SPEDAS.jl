@@ -15,6 +15,16 @@ function modify_meta(da; kwargs...)
     rebuild(da; metadata=new_meta)
 end
 
+"""
+amap for intersection math
+
+https://github.com/rafaqz/DimensionalData.jl/issues/914
+"""
+function amap(f, a::AbstractDimArray, b::AbstractDimArray)
+    shared_selectors = DimSelectors(a)[DimSelectors(b)]
+    f(a[shared_selectors], b[shared_selectors])
+end
+
 function Base.rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
 end
