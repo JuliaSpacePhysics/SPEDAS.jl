@@ -28,7 +28,7 @@ end
 resolution(da::AbstractDimType; dim=Ti, kwargs...) =
     resolution(dims(da, dim).val; kwargs...)
 
-samplingrate(da) = NoUnits(1u"s" / resolution(da))
+samplingrate(da) = 1u"s" / resolution(da) * u"Hz2π" |> u"Hz2π"
 
 
 """
@@ -52,6 +52,17 @@ function smooth(da::AbstractDimArray, window::Integer; dims=Ti, suffix="_smoothe
         mean.(RollingWindowArrays.rolling(slice, window; kwargs...))
     end
     rebuild(new_da; name=Symbol(da.name, suffix))
+end
+
+"""
+References
+- https://docs.juliadsp.org/stable/filters/
+"""
+function DSP.filtfilt(da::AbstractDimArray, Wn1, Wn2; n=2)
+    fs = samplingrate(da)
+    Wn1, Wn2, fs = (Wn1, Wn2, fs) ./ 1u"Hz2π" .|> NoUnits
+    f = digitalfilter(Bandpass(Wn1, Wn2; fs), Butterworth(n))
+    DSP.filt(f, da)
 end
 
 function degap(da::DimArray; dim=Ti)

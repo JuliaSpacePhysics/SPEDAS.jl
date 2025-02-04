@@ -15,8 +15,10 @@ using InteractiveViz
 export degap, rectify_datetime, resolution, samplingrate, smooth
 export timeshift, tnorm
 export tplot!, tplot, ylabel, plot_attributes
+export tsheat
 export LMN
 export rotate, fac_mat, mva, mva_mat, check_mva_mat
+export amap
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
@@ -28,7 +30,9 @@ include("mhd.jl")
 include("timeseries.jl")
 include("timeseries/tplot.jl")
 include("timeseries/interactive.jl")
+include("timeseries/spectrum.jl")
 include("utils.jl")
+include("plot.jl")
 include("cotrans/coordinate.jl")
 include("cotrans/rotate.jl")
 include("cotrans/fac.jl")
