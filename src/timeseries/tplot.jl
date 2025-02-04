@@ -3,7 +3,7 @@ using .DimensionalDataMakie: _series
 using Latexify
 
 ylabel_sources = (:long_name, "long_name", :label, "FIELDNAM")
-xlabel_sources = (:long_name, "long_name", :label)
+xlabel_sources = (:xlabel, "xlabel")
 
 # https://github.com/MakieOrg/AlgebraOfGraphics.jl/blob/master/src/entries.jl
 struct FigureAxes
