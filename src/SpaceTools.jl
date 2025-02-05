@@ -8,6 +8,7 @@ using Makie
 using TimeseriesTools
 using Statistics
 using Unitful, DimensionfulAngles
+using Latexify, UnitfulLatexify
 using RollingWindowArrays
 using InteractiveViz
 using DSP, SignalAnalysis
@@ -15,8 +16,8 @@ using DSP, SignalAnalysis
 # export AbstractDataSet, DataSet
 export degap, rectify_datetime, resolution, samplingrate, smooth
 export timeshift, tnorm
-export tplot!, tplot, ylabel, plot_attributes
-export tsheat, tlims!
+export tplot!, tplot, tplot_panel, tplot_panel!
+export tsheat, tlims!, ylabel, plot_attributes
 export LMN
 export rotate, fac_mat, mva, mva_mat, check_mva_mat
 export amap, ω2f
@@ -28,6 +29,7 @@ const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTool
 
 # include("dataset.jl")
 include("mhd.jl")
+include("methods.jl")
 include("timeseries.jl")
 include("timeseries/tplot.jl")
 include("timeseries/interactive.jl")
