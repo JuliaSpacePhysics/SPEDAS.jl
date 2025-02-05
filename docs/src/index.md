@@ -2,6 +2,8 @@
 
 [![Build Status](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
+A collection of tools for space physics / heliophysics: from data loading and processing to plotting and analysis.
+
 ## Installation
 
 ```julia

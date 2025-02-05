@@ -2,10 +2,22 @@ using Documenter
 using SpaceTools
 using DemoCards
 
-gallery, postprocess_cb, gallery_assets = makedemos("gallery")
+demopage, postprocess_cb, gallery_assets = makedemos("gallery")
 
 makedocs(
     sitename="SpaceTools",
+    pages=[
+        "Home" => "index.md",
+        "Tutorials" => [
+            "tutorials/getting-started.md",
+            demopage
+        ],
+        "Explanation" => [
+            "explanations/tplot.md",
+            "explanations/coords.md",
+        ],
+        "API" => "api.md",
+    ],
     format=Documenter.HTML(size_threshold=nothing),
     modules=[SpaceTools],
     doctest=true

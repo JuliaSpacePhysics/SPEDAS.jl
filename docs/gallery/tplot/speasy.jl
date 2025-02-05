@@ -1,5 +1,5 @@
 # ---
-# title: Quickstart
+# title: Complex requests and layout
 # ---
 
 # ## Get data with Speasy
