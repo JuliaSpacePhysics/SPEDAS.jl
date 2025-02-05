@@ -48,6 +48,7 @@ A coordinate system derived from the eigenvalues and eigenvectors of the magneti
 References:
 
 - [Minimum and Maximum Variance Analysis](https://ui.adsabs.harvard.edu/abs/1998ISSIR...1..185S)
+- [https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar](https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar)
 
 ```@docs; canonical=false
 mva_mat
