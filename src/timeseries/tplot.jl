@@ -56,7 +56,7 @@ function tplot_panel(gp::Union{GridPosition,GridSubposition}, ta::AbstractDimMat
         args, merged_attributes = _series(ustrip(ta), attributes, labeldim)
         series(gp, args...; merged_attributes...)
     else
-        x = ta.metadata["axes"][1].values
+        x = dims(ta, Ti).val
         y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
         axisPlot = heatmap(gp, x, y, ta.data; attributes..., kwargs...)
         add_colorbar && Colorbar(gp[1, 1, Right()], axisPlot.plot; label=clabel(ta))
@@ -173,9 +173,10 @@ function tsheat(da::AbstractDimArray; colorscale=log10, colorrange=colorrange(da
     fig, ax, hm
 end
 
-Base.show(io::IO, fg::FigureAxes) = show(io, fg.figure)
 Base.display(fg::FigureAxes) = display(fg.figure)
+Base.show(io::IO, fg::FigureAxes) = show(io, fg.figure)
 Base.show(io::IO, m::MIME, fg::FigureAxes) = show(io, m, fg.figure)
+Base.show(io::IO, ::MIME"text/plain", fg::FigureAxes) = print(io, "FigureAxes()")
 Base.showable(mime::MIME{M}, fg::FigureAxes) where {M} = showable(mime, fg.figure)
 
 Base.iterate(fg::FigureAxes) = iterate((fg.figure, fg.axes))
