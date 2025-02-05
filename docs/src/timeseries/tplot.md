@@ -2,7 +2,8 @@
 
 ```@docs
 tplot
-tplot!
+tplot_panel
+tplot_panel!
 ```
 
 ## References

@@ -1,6 +1,12 @@
 [deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DemoCards = "311a05b2-6137-4a5a-b473-18580a3d38b5"
+DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 SpaceTools = "3930f61c-4d81-4846-ab8f-357babe068a6"
+Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 Documenter = "1.8"

@@ -10,6 +10,8 @@ function prioritized_get(c, keys, default)
     something(values..., default)
 end
 
+prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata, keys, default)
+
 function modify_meta(da; kwargs...)
     new_meta = merge(da.metadata, kwargs)
     rebuild(da; metadata=new_meta)
