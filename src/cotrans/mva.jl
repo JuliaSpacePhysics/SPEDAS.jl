@@ -46,7 +46,7 @@ Rotate a timeseries `V` into the LMN coordinates based on the reference field `B
 - `V::AbstractMatrix`: The timeseries data to be transformed, where each column represents a component
 - `B::AbstractMatrix`: The reference field used to determine the minimum variance directions, where each column represents a component
 
-See also: [`mva(Bx, By, Bz)`](@ref), [`rotate`](@ref)
+See also: [`mva_mat(Bx, By, Bz)`](@ref), [`rotate`](@ref)
 """
 function mva(V::AbstractMatrix, B::AbstractMatrix; kwargs...)
     F = mva_mat(B; kwargs...)
@@ -59,6 +59,8 @@ function mva(V::AbstractDimArray, B::AbstractDimArray; new_dim=B_LMN, kwargs...)
     set(V_mva, old_dim => new_dim)
 end
 
+mva(B) = mva(B, B)
+
 """
     check_mva_mat(F; r=5, verbose=false)
 
@@ -67,10 +69,11 @@ Check the quality of the MVA result.
 If λ₁ ≥ λ₂ ≥ λ₃ are 3 eigenvalues of the constructed matrix M, then a good
 indicator of nice fitting LMN coordinate system should have λ₂ / λ₃ > r.
 """
-function check_mva_mat(F; r=5, verbose=false)
+function check_mva_mat(F; r0=5, verbose=false)
+    r = F.values[2] / F.values[3]
     verbose && println(F.vectors)
     verbose && println("Ratio of intermediate variance to minimum variance = ", r)
-    if F.values[2] / F.values[3] ≥ r
+    if r > r0
         @info "Seems to be a proper MVA attempt!"
     else
         @warn "Take the MVA result with a grain of salt!"
