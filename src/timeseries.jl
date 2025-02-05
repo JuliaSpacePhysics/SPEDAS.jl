@@ -26,7 +26,7 @@ end
 resolution(da::AbstractDimType; dim=Ti, kwargs...) =
     resolution(dims(da, dim).val; kwargs...)
 
-samplingrate(da) = 1u"s" / resolution(da) * u"Hz2π" |> u"Hz2π"
+samplingrate(da) = 1u"s" / resolution(da) * u"Hz" |> u"Hz"
 
 
 """
@@ -55,12 +55,18 @@ end
 """
 References
 - https://docs.juliadsp.org/stable/filters/
+- https://www.mathworks.com/help/signal/ref/filtfilt.html
+- https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.filtfilt.html
+
+Issues
+- DSP.jl and Unitful.jl: https://github.com/JuliaDSP/DSP.jl/issues/431
 """
-function DSP.filtfilt(da::AbstractDimArray, Wn1, Wn2; n=2)
+function DSP.filtfilt(da::AbstractDimArray, Wn1, Wn2; designmethod=Butterworth(2))
     fs = samplingrate(da)
-    Wn1, Wn2, fs = (Wn1, Wn2, fs) ./ 1u"Hz2π" .|> NoUnits
-    f = digitalfilter(Bandpass(Wn1, Wn2; fs), Butterworth(n))
-    DSP.filt(f, da)
+    Wn1, Wn2, fs = (Wn1, Wn2, fs) ./ 1u"Hz" .|> NoUnits
+    f = digitalfilter(Bandpass(Wn1, Wn2; fs), designmethod)
+    res = filtfilt(f, ustrip(da))
+    rebuild(da; data=res * (da |> eltype |> unit))
 end
 
 function degap(da::DimArray; dim=Ti)

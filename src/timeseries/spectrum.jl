@@ -17,11 +17,11 @@ See also: `DSP.Spectrogram`, `DSP.stft`
 - [Matlab](https://www.mathworks.com/help/signal/ref/pspectrum.html)
 """
 function pspectrum(x::AbstractDimArray, spec::Spectrogram)
-    fs = samplingrate(x)
+    fs = samplingrate(x) |> ustrip
     y = tfd(ustrip(x), spec; fs)
     t0 = dims(x, Ti)[1]
     times = Ti(y.time .* 1u"s" .+ t0)
-    freqs = 𝑓(y.freq * 1u"Hz2π")
+    freqs = 𝑓(y.freq * 1u"Hz")
     y_da = DimArray(permutedims(y.power), (times, freqs))
 end
 
