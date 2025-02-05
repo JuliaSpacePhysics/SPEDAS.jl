@@ -16,7 +16,9 @@ function modify_meta(da; kwargs...)
 end
 
 """
-amap for intersection math
+    amap(f, a, b)
+
+Apply a function `f` to the intersection of `a` and `b`.
 
 https://github.com/rafaqz/DimensionalData.jl/issues/914
 """
@@ -34,3 +36,14 @@ f2time(x, t0) = string(Millisecond(round(x)) + t0)
 xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
 ys(ta::DimArray) = permutedims(ustrip(ta.data))
 vs(ta::DimMatrix) = ustrip(ta.data)
+
+"""
+Convert angular frequency to frequency
+
+Reference: https://www.wikiwand.com/en/articles/Angular_frequency
+"""
+ω2f(ω) = uconvert(u"Hz", ω, Periodic())
+
+
+"""Return the angle between two vectors."""
+Base.angle(v1::AbstractVector, v2::AbstractVector) = acosd(v1 ⋅ v2 / (norm(v1) * norm(v2)))

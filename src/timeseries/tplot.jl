@@ -54,6 +54,7 @@ function scale(x::String)
 end
 
 is_spectrogram(ta) = ta.metadata["DISPLAY_TYPE"] == "spectrogram"
+axes(ta) = ta.metadata["axes"]
 
 """
     plot_attributes(ta)
@@ -66,7 +67,7 @@ function plot_attributes(ta)
 
     # handle spectrogram
     if !is_spectrogram(ta)
-        labels = label_func(dims(ta, 2).val.data)
+        labels = label_func(dims(ta, 2).val)
         (; axis, labels)
     else
         colorscale = yscale

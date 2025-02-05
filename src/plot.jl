@@ -25,3 +25,6 @@ function tsheat(da::AbstractDimArray; colorscale=log10, colorrange=colorrange(da
 
     fig, ax, hm
 end
+
+tlims!(ax, tmin, tmax) = xlims!(ax, DateTime(tmin), DateTime(tmax))
+tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)

@@ -7,7 +7,7 @@ using LinearAlgebra
 using Makie
 using TimeseriesTools
 using Statistics
-using Unitful
+using Unitful, DimensionfulAngles
 using RollingWindowArrays
 using InteractiveViz
 using DSP, SignalAnalysis
@@ -16,10 +16,10 @@ using DSP, SignalAnalysis
 export degap, rectify_datetime, resolution, samplingrate, smooth
 export timeshift, tnorm
 export tplot!, tplot, ylabel, plot_attributes
-export tsheat
+export tsheat, tlims!
 export LMN
 export rotate, fac_mat, mva, mva_mat, check_mva_mat
-export amap
+export amap, ω2f
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
