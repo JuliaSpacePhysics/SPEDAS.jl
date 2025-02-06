@@ -14,7 +14,25 @@ tplot_panel
 tplot_panel!
 ```
 
-## References
+## Function as `tplot` argument for interactive exploration
+
+`tplot` can handle functions that accept time intervals as arguments.
+This allows for creating interactive plots where data is dynamically fetched. So instead of the two-step process:
+
+1. Fetch data: `da = f(t0, t1)`
+2. Plot data: `tplot(da)`
+
+We can combine these steps into a single command:
+
+`tplot(f, t0, t1)`
+
+This approach enables efficient interactive exploration of time series.
+
+!!! note
+    
+    For real-time interactivity, consider using the `GLMakie` backend instead of `CairoMakie` although it is possible to use `tlims!` or `xlims!` to update the plot dynamically.
+
+## Related packages
 
 - [PyTplot](https://pyspedas.readthedocs.io/en/latest/pytplot.html)
 - [InteractiveViz.jl](https://github.com/org-arl/InteractiveViz.jl)

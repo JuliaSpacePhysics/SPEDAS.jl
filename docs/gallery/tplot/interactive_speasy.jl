@@ -1,5 +1,7 @@
 # ---
 # title: Interactive tplot with Speasy
+# cover: assets/interactive_speasy.png
+# description: Visual exploration of OMNI data
 # ---
 
 # ## tplot with Speasy product ID strings
@@ -19,6 +21,10 @@ tvars = [
     "cda/OMNI_HRO_1MIN/Pressure"
 ]
 f, axes = tplot(tvars, t0, t1)
+
+# save cover image #src
+mkpath("assets") #src
+save("assets/interactive_speasy.png", f) #src
 
 # ## Interactive tplot
 

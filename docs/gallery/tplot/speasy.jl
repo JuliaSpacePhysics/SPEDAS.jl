@@ -1,5 +1,7 @@
 # ---
-# title: Complex requests and layout
+# title: Complex requests and flexible layout
+# cover: assets/speasy.png
+# description: Visualize multiple time series in a customized layout
 # ---
 
 # ## Get data with Speasy
@@ -34,3 +36,7 @@ let figure = (; size=(1200, 1200)), add_title = true
     tplot(f[1, 2], [data[4:5], data[6:7]...]; add_title)
     f
 end
+
+# save cover image #src
+mkpath("assets") #src
+save("assets/speasy.png", f) #src
