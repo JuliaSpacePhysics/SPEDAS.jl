@@ -15,11 +15,13 @@ end
 
 
 """
-    tplot(f, tas; add_legend=true, legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
 
 Lay out multiple time series across different panels (rows) on one Figure / GridPosition `f`
+
+If `legend` is `nothing`, no legend is added.
 """
-function tplot(f, tas::Union{AbstractVector,NamedTuple}, args...; add_legend=true, legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+function tplot(f, tas::Union{AbstractVector,NamedTuple}, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
@@ -32,7 +34,7 @@ function tplot(f, tas::Union{AbstractVector,NamedTuple}, args...; add_legend=tru
     gps = map(gap -> gap[1], gaps)
     link_xaxes && linkxaxes!(axs...)
 
-    add_legend && add_legend!.(gps, axs; legend...)
+    !isnothing(legend) && add_legend!.(gps, axs; legend...)
 
     !isnothing(rowgap) && rowgap!(f.layout, rowgap)
     FigureAxes(f, axs)
@@ -46,11 +48,11 @@ end
 function tplot! end
 
 """
-    tplot_panel(gp::Union{GridPosition,GridSubposition}, ta::AbstractDimMatrix)
+    tplot_panel(gp, ta::AbstractDimMatrix)
 
 Plot a multivariate time series / spectrogram on a panel
 """
-function tplot_panel(gp::Union{GridPosition,GridSubposition}, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, label_func=label_func, labeldim=nothing, kwargs...)
+function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, label_func=label_func, labeldim=nothing, kwargs...)
     attributes = Attributes(kwargs...; plot_attributes(ta; add_title)...)
     if !is_spectrogram(ta)
         args, merged_attributes = _series(ustrip(ta), attributes, labeldim)
@@ -65,18 +67,18 @@ function tplot_panel(gp::Union{GridPosition,GridSubposition}, ta::AbstractDimMat
 end
 
 """
-    tplot_panel(gp::Union{GridPosition,GridSubposition}, ta::AbstractDimVector)
+    tplot_panel(gp, ta::AbstractDimVector)
 
 Plot a univariate time series on a panel on a panel.
 Only add legend when the axis contains multiple labels.
 """
-function tplot_panel(gp::Union{GridPosition,GridSubposition}, ta::AbstractDimVector; add_title=false, kwargs...)
+function tplot_panel(gp, ta::AbstractDimVector; add_title=false, kwargs...)
     lines(gp, ta; plot_attributes(ta; add_title)..., kwargs...)
 end
 
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp::Union{GridPosition,GridSubposition}, tas::AbstractVector; add_title=false, kwargs...)
+function tplot_panel(gp, tas::AbstractVector; add_title=false, kwargs...)
     ax = Axis(gp, ylabel=ylabel(tas), xlabel=xlabel(tas))
     plots = map(tas) do ta
         tplot_panel!(ax, ta; kwargs...)
@@ -90,7 +92,7 @@ end
 
 Overlay multiple time series on the same axis
 """
-tplot_panel!(ax::Axis, tas::AbstractVector; kwargs...) =
+tplot_panel!(ax::Axis, tas::AbstractVector{<:AbstractDimVecOrMat}; kwargs...) =
     tplot_panel!.(ax, tas; kwargs...)
 
 
@@ -109,7 +111,7 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 """
     Interactive tplot of a function over a time range
 """
-function tplot(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
+function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = plot_attributes(ta)
