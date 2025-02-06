@@ -13,15 +13,17 @@ struct AxisPlots
     plots
 end
 
+const Drawable = Union{Figure,GridPosition,GridSubposition}
 
 """
     tplot(f, tas; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
 
 Lay out multiple time series across different panels (rows) on one Figure / GridPosition `f`
 
-If `legend` is `nothing`, no legend is added.
+If `legend` is `nothing`, no legend will be added to the plot. Otherwise, `legend` can be a `NamedTuple` containing options for legend placement and styling.
 """
-function tplot(f::Union{Figure,GridPosition}, tas::Union{AbstractVector,NamedTuple}, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+    tas = applicable(iterate, tas) ? tas : (tas,)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
@@ -39,8 +41,6 @@ function tplot(f::Union{Figure,GridPosition}, tas::Union{AbstractVector,NamedTup
     !isnothing(rowgap) && rowgap!(f.layout, rowgap)
     FigureAxes(f, axs)
 end
-
-tplot(f::Union{Figure,GridPosition}, ta, args...; kwargs...) = tplot(f, [ta], args...; kwargs...)
 
 function tplot(tas, args...; figure=(;), kwargs...)
     f = Figure(; figure...)
@@ -81,7 +81,7 @@ end
 
 "Setup the panel on a position and plot multiple time series on it"
 function tplot_panel(gp, tas::AbstractVector; add_title=false, kwargs...)
-    ax = Axis(gp, ylabel=ylabel(tas), xlabel=xlabel(tas))
+    ax = Axis(gp, axis_attributes(tas; add_title)...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta; kwargs...)
     end
@@ -113,7 +113,7 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 """
     Interactive tplot of a function over a time range
 """
-function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
+function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = plot_attributes(ta)
@@ -121,6 +121,7 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, k
     # Manually converting from time to float is needed for interactive plotting since ax.finallimits[] is represented as float
     # https://github.com/MakieOrg/Makie.jl/issues/4769
     xmin, xmax = t2x.((tmin, tmax))
+    attrs.axis.xtickformat = values -> xtickformat.(x2t.(values))
 
     if is_spectrogram(ta)
         y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
@@ -150,10 +151,7 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, k
 
         data = RangeFunction1D(temp_f, xmin, xmax)
     end
-    viz = iviz(plot_func, data)
-    # format the tick labels
-    current_axis().xtickformat = values -> string.(x2t.(values))
-    viz
+    iviz(plot_func, data)
 end
 
 tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
