@@ -19,6 +19,9 @@ function clabel(ta::AbstractDimArray{Q}) where {Q}
     units == "" ? name : "$name ($units)"
 end
 
+label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
+labels(ta::AbstractDimMatrix) = dims(ta, 2).val
+
 title(ta) = get(ta.metadata, "CATDESC", "")
 
 function colorrange(da::AbstractDimArray; scale=10)
@@ -28,28 +31,34 @@ function colorrange(da::AbstractDimArray; scale=10)
     return (cmin, cmax)
 end
 
-tlims!(ax, tmin, tmax) = xlims!(ax, DateTime(tmin), DateTime(tmax))
-tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
 label_func(labels) = latexify.(labels)
 
-"""Plot attributes for a time array"""
-function plot_attributes(ta; add_title=false)
+"""Axis attributes for a time array"""
+function axis_attributes(ta::AbstractDimArray; add_title=false)
     yscale = get(ta.metadata, "SCALETYP", "identity") |> scale
     axis = (; ylabel=ylabel(ta), xlabel=xlabel(ta), yscale)
+    add_title ? (; axis..., title=title(ta)) : axis
+end
 
-    add_title && (axis = (; axis..., title=title(ta)))
+"""Plot attributes for a time array (axis + labels)"""
+function plot_attributes(ta::AbstractDimArray; add_title=false)
+    axis = axis_attributes(ta; add_title)
 
     # handle spectrogram
     if !is_spectrogram(ta)
-        labels = label_func(dims(ta, 2).val)
-        (; axis, labels)
+        if ndims(ta) == 2
+            (; axis, labels=label_func(labels(ta)))
+        else
+            (; axis, label=label_func(label(ta)))
+        end
     else
-        colorscale = yscale
+        colorscale = axis.yscale
         (; axis, colorscale)
     end
 end
+plot_attributes(ta) = (;)
 
-plot_attributes(f::Function, args...) = plot_attributes(f(args...))
+plot_attributes(f::Function, args...; kwargs...) = plot_attributes(f(args...); kwargs...)
 
 """
 Only add legend when the axis contains multiple labels
@@ -69,3 +78,12 @@ function scale(x::String)
 end
 
 axes(ta) = ta.metadata["axes"]
+
+function tlims!(ax, tmin, tmax)
+    if ax.dim1_conversion[] isa Makie.DateTimeConversion
+        xlims!(ax, tmin, tmax)
+    else
+        xlims!(ax, t2x(tmin), t2x(tmax))
+    end
+end
+tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)

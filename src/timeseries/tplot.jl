@@ -21,7 +21,7 @@ Lay out multiple time series across different panels (rows) on one Figure / Grid
 
 If `legend` is `nothing`, no legend is added.
 """
-function tplot(f, tas::Union{AbstractVector,NamedTuple}, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+function tplot(f::Union{Figure,GridPosition}, tas::Union{AbstractVector,NamedTuple}, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
@@ -39,6 +39,8 @@ function tplot(f, tas::Union{AbstractVector,NamedTuple}, args...; legend=(; posi
     !isnothing(rowgap) && rowgap!(f.layout, rowgap)
     FigureAxes(f, axs)
 end
+
+tplot(f::Union{Figure,GridPosition}, ta, args...; kwargs...) = tplot(f, [ta], args...; kwargs...)
 
 function tplot(tas, args...; figure=(;), kwargs...)
     f = Figure(; figure...)
@@ -116,7 +118,9 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, k
     ta = f(tmin, tmax)
     attrs = plot_attributes(ta)
 
-    xmin, xmax = ((tmin, tmax) .- t0) ./ Millisecond(1)
+    # Manually converting from time to float is needed for interactive plotting since ax.finallimits[] is represented as float
+    # https://github.com/MakieOrg/Makie.jl/issues/4769
+    xmin, xmax = t2x.((tmin, tmax))
 
     if is_spectrogram(ta)
         y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
@@ -125,9 +129,9 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, k
 
         # reverse from xrange to trange
         temp_f = xrange -> begin
-            trange = round.(xrange) .* Millisecond(1) .+ t0
+            trange = x2t.(xrange)
             da = f(trange...)
-            xs(da, t0), y, vs(da)
+            t2x(da), y, vs(da)
         end
         data = RangeFunction2D(temp_f, xmin, xmax, ymin, ymax)
     else
@@ -139,16 +143,16 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, k
 
         # reverse from xrange to trange
         temp_f = xrange -> begin
-            trange = round.(xrange) .* Millisecond(1) .+ t0
+            trange = x2t.(xrange)
             da = f(trange...)
-            xs(da, t0), ys(da)
+            t2x(da), ys(da)
         end
 
         data = RangeFunction1D(temp_f, xmin, xmax)
     end
     viz = iviz(plot_func, data)
     # format the tick labels
-    current_axis().xtickformat = values -> f2time.(values, t0)
+    current_axis().xtickformat = values -> string.(x2t.(values))
     viz
 end
 
