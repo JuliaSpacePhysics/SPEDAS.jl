@@ -7,16 +7,17 @@ struct RangeFunction1D{F,L} <: InteractiveViz.Continuous1D
     xmax::L
 end
 
-function InteractiveViz.sample(data::RangeFunction1D, xrange::AbstractRange, yrange)
+function InteractiveViz.sample(data::RangeFunction1D, xrange::AbstractRange, yrange; samples=10000)
     xmin = first(xrange)
     xmax = last(xrange)
     x, y = data.f((xmin, xmax))
 
     # Limit to 10000 points if needed
-    if length(x) > 10000
-        indices = round.(Int, range(1, length(x), length=10000))
+    if length(x) > samples
+        @info "Data resampled to $samples points"
+        indices = round.(Int, range(1, length(x), length=samples))
         x = x[indices]
-        y = selectdim(y, 2, indices)
+        y = ndims(y) == 1 ? y[indices] : y[:, indices]
     end
 
     (; x, y)

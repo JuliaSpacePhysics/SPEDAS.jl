@@ -15,9 +15,10 @@ prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
 xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
-ys(ta::DimArray) = ustrip(ta.data)
-ys(ta::DimMatrix) = permutedims(ustrip(ta.data))
-vs(ta::DimMatrix) = ustrip(ta.data)
+ys(ta::DimArray) = ta.data
+"""permutedims is needed for `series` in Makie"""
+ys(ta::DimMatrix) = permutedims(ta.data)
+vs(ta::DimMatrix) = ta.data
 
 """
 Convert angular frequency to frequency
@@ -25,7 +26,7 @@ Convert angular frequency to frequency
 Reference: https://www.wikiwand.com/en/articles/Angular_frequency
 """
 ω2f(ω) = uconvert(u"Hz", ω, Periodic())
-
+·
 """
 Convert x to DateTime
 
