@@ -14,6 +14,7 @@ struct AxisPlots
 end
 
 const Drawable = Union{Figure,GridPosition,GridSubposition}
+const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
 
 """
     tplot(f, tas; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
@@ -23,7 +24,6 @@ Lay out multiple time series across different panels (rows) on one Figure / Grid
 If `legend` is `nothing`, no legend will be added to the plot. Otherwise, `legend` can be a `NamedTuple` containing options for legend placement and styling.
 """
 function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
-    tas = applicable(iterate, tas) ? tas : (tas,)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
@@ -42,6 +42,8 @@ function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxe
     FigureAxes(f, axs)
 end
 
+tplot(f::Drawable, ta::SupportTypes, args...; kwargs...) = tplot(f, (ta,), args...; kwargs...)
+
 function tplot(tas, args...; figure=(;), kwargs...)
     f = Figure(; figure...)
     tplot(f, tas, args...; kwargs...)
@@ -54,15 +56,16 @@ function tplot! end
 
 Plot a multivariate time series / spectrogram on a panel
 """
-function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, label_func=label_func, labeldim=nothing, kwargs...)
-    attributes = Attributes(kwargs...; plot_attributes(ta; add_title)...)
+function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, kwargs...)
+    attrs = Attributes(kwargs...; plot_attributes(ta; add_title)...)
     if !is_spectrogram(ta)
-        args, merged_attributes = _series(ustrip(ta), attributes, labeldim)
-        series(gp, args...; merged_attributes...)
+        ax = Axis(gp; attrs.axis...)
+        plots = tplot_panel!(ax, ta; kwargs...)
+        return AxisPlots(ax, plots)
     else
         x = dims(ta, Ti).val
         y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
-        axisPlot = heatmap(gp, x, y, ta.data; attributes..., kwargs...)
+        axisPlot = heatmap(gp, x, y, ta.data; attrs..., kwargs...)
         add_colorbar && Colorbar(gp[1, 1, Right()], axisPlot.plot; label=clabel(ta))
         axisPlot
     end
@@ -78,10 +81,14 @@ function tplot_panel(gp, ta::AbstractDimVector; add_title=false, kwargs...)
     lines(gp, ta; plot_attributes(ta; add_title)..., kwargs...)
 end
 
+function tplot_panel(gp, time::AbstractVector, values::AbstractVector; add_title=false, kwargs...)
+    lines(gp, time, values; kwargs...)
+end
+
 
 "Setup the panel on a position and plot multiple time series on it"
 function tplot_panel(gp, tas::AbstractVector; add_title=false, kwargs...)
-    ax = Axis(gp, axis_attributes(tas; add_title)...)
+    ax = Axis(gp; axis_attributes(tas; add_title)...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta; kwargs...)
     end
@@ -101,9 +108,9 @@ tplot_panel!(ax::Axis, tas::AbstractVector{<:AbstractDimVecOrMat}; kwargs...) =
 """
 Overlay multiple columns of a time series on the same axis
 """
-function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; kwargs...)
+function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; labels=labels(ta), kwargs...)
     x = dims(ta, Ti).val
-    map(eachcol(ta.data), string.(dims(ta, 2).val)) do y, label
+    map(eachcol(ta.data), labels) do y, label
         lines!(ax, x, y; label, kwargs...)
     end
 end
