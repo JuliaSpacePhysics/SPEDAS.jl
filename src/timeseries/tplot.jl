@@ -120,10 +120,10 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 """
     Interactive tplot of a function over a time range
 """
-function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, xtickformat=format_datetime, kwargs...)
+function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, add_title=false, add_colorbar=true, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
-    attrs = plot_attributes(ta)
+    attrs = plot_attributes(ta; add_title)
 
     # Manually converting from time to float is needed for interactive plotting since ax.finallimits[] is represented as float
     # https://github.com/MakieOrg/Makie.jl/issues/4769
@@ -131,8 +131,9 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, x
     attrs.axis.xtickformat = values -> xtickformat.(x2t.(values))
 
     if is_spectrogram(ta)
-        y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
+        y = spectrogram_y_values(ta)
         ymin, ymax = Float64.(extrema(y))
+        xmin, xmax = Float64.((xmin, xmax))
         plot_func = (x, y, mat) -> heatmap(gp, x, y, mat; attrs..., kwargs...)
 
         # reverse from xrange to trange
@@ -158,7 +159,9 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, x
 
         data = RangeFunction1D(temp_f, xmin, xmax)
     end
-    iviz(plot_func, data)
+    fapex = iviz(plot_func, data)
+    is_spectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
+    fapex
 end
 
 tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)

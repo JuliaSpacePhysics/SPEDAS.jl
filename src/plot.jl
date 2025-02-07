@@ -39,7 +39,7 @@ axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
 """Axis attributes for a time array"""
 function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) where {Q}
     attrs = Attributes(; kwargs...)
-    Q <: Quantity && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
+    Q <: Quantity && !is_spectrogram(ta) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
     s = scale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
