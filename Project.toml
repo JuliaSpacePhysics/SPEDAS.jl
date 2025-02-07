@@ -28,7 +28,7 @@ SpeasyExt = "Speasy"
 TimeSeriesExt = "TimeSeries"
 
 [compat]
-DSP = "0.7"
+DSP = "0.7, 0.8"
 Dates = "1"
 DimensionalData = "0.29"
 DimensionfulAngles = "0.2.1"
