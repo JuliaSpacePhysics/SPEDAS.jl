@@ -18,6 +18,8 @@ function SpaceTools.tplot_panel!(ax, ta::SpeasyVariable, args...; kwargs...)
     tplot_panel!(ax, DimArray(ta), args...; kwargs...)
 end
 
+
+SpaceTools.meta(ta::SpeasyVariable) = ta.meta
 SpaceTools.ylabel(ta::SpeasyVariable) = ta.meta["LABLAXIS"]
 
 end

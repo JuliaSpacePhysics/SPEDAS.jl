@@ -1,3 +1,5 @@
+meta(da::AbstractDimArray) = metadata(da)
+
 """
     nt2ds(nt_arr, dim; fields=propertynames(first(nt_arr)))
 

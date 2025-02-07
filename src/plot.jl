@@ -21,7 +21,7 @@ end
 label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
 labels(ta::AbstractDimMatrix) = string.(dims(ta, 2).val)
 
-title(ta) = get(ta.metadata, "CATDESC", "")
+title(ta) = get(meta(ta), "CATDESC", "")
 
 """Format datetime ticks with time on top and date on bottom."""
 format_datetime(dt) = Dates.format(dt, "HH:MM:SS\nyyyy-mm-dd")
@@ -104,8 +104,13 @@ function scale(x::String)
         log10
     end
 end
+
 scale(::Nothing) = nothing
-scale(da::AbstractDimArray) = scale(get(da.metadata, "SCALETYP", nothing))
+
+function scale(x)
+    m = meta(x)
+    isnothing(m) ? nothing : scale(get(m, "SCALETYP", nothing))
+end
 
 axes(ta) = ta.metadata["axes"]
 
