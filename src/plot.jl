@@ -19,7 +19,7 @@ function clabel(ta::AbstractDimArray{Q}) where {Q}
 end
 
 label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
-labels(ta::AbstractDimMatrix) = dims(ta, 2).val
+labels(ta::AbstractDimMatrix) = string.(dims(ta, 2).val)
 
 title(ta) = get(ta.metadata, "CATDESC", "")
 
@@ -35,10 +35,11 @@ end
 
 label_func(labels) = latexify.(labels)
 
-axis_attributes(ta; add_title=false) = (;)
+axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
 """Axis attributes for a time array"""
-function axis_attributes(ta::AbstractDimArray; add_title=false)
-    attrs = Attributes()
+function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) where {Q}
+    attrs = Attributes(; kwargs...)
+    Q <: Quantity && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
     s = scale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
@@ -49,19 +50,33 @@ function axis_attributes(ta::AbstractDimArray; add_title=false)
     attrs
 end
 
-axis_attributes(tas::AbstractVector; add_title=false) = axis_attributes(tas[1]; add_title)
+function axis_attributes(tas::AbstractVector; add_title=false, kwargs...)
+    attrs = Attributes(; kwargs...)
+    yls = ylabel.(tas)
+    xls = xlabel.(tas)
+    scales = scale.(tas)
+    if add_title
+        titles = title.(tas)
+        allequal(titles) && (attrs[:title] = titles[1])
+    end
+    allequal(yls) && (attrs[:ylabel] = yls[1])
+    allequal(xls) && (attrs[:xlabel] = xls[1])
+    s = allequal(scales) ? scales[1] : nothing
+    isnothing(s) || (attrs[:yscale] = s)
+    attrs
+end
 
 """Plot attributes for a time array (axis + labels)"""
-function plot_attributes(ta::AbstractDimArray; add_title=false)
+function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
     attrs = Attributes()
-    attrs[:axis] = axis_attributes(ta; add_title)
+    attrs[:axis] = axis_attributes(ta; add_title, axis...)
 
     # handle spectrogram
     if !is_spectrogram(ta)
         if ndims(ta) == 2
-            attrs[:labels] = label_func(labels(ta))
+            attrs[:labels] = labels(ta)
         else
-            attrs[:label] = label_func(label(ta))
+            attrs[:label] = label(ta)
         end
     else
         s = scale(ta)
