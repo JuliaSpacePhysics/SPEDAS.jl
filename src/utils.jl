@@ -12,27 +12,6 @@ end
 
 prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata, keys, default)
 
-function modify_meta(da; kwargs...)
-    new_meta = merge(da.metadata, kwargs)
-    rebuild(da; metadata=new_meta)
-end
-
-"""
-    amap(f, a, b)
-
-Apply a function `f` to the intersection of `a` and `b`.
-
-https://github.com/rafaqz/DimensionalData.jl/issues/914
-"""
-function amap(f, a::AbstractDimArray, b::AbstractDimArray)
-    shared_selectors = DimSelectors(a)[DimSelectors(b)]
-    f(a[shared_selectors], b[shared_selectors])
-end
-
-function Base.rename(da::AbstractDimArray, new_name)
-    rebuild(da; name=new_name)
-end
-
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
 xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
