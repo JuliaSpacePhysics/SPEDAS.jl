@@ -1,6 +1,11 @@
 xlabel_sources = (:xlabel, "xlabel")
 ylabel_sources = (:ylabel, :long_name, "long_name", :label, "LABLAXIS")
+unit_sources = (:unit, :units, "UNITS")
 yunit_sources = (:yunit, :units)
+
+format_unit(ta) = ""
+format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
+format_unit(ta::AbstractDimArray{Q}) where {Q<:Real} = prioritized_get(ta, unit_sources, "")
 
 xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
@@ -8,14 +13,14 @@ xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.l
 ylabel(ta) = ""
 function ylabel(ta::AbstractDimArray{Q}) where {Q}
     name = prioritized_get(ta, ylabel_sources, DD.label(ta))
-    units = is_spectrogram(ta) ? prioritized_get(ta, yunit_sources, "") : string(unit(Q))
+    units = is_spectrogram(ta) ? prioritized_get(ta, yunit_sources, "") : format_unit(ta)
     units == "" ? name : "$name ($units)"
 end
 
 function clabel(ta::AbstractDimArray{Q}) where {Q}
     name = get(ta.metadata, "LABLAXIS", "")
-    units = get(ta.metadata, :cunit, unit(Q))
-    isnothing(units) ? name : "$name ($units)"
+    units = format_unit(ta)
+    units == "" ? name : "$name ($units)"
 end
 
 label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
