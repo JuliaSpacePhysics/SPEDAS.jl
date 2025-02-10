@@ -17,7 +17,7 @@ using DSP, SignalAnalysis
 export degap, rectify_datetime, resolution, samplingrate, smooth
 export timeshift, tnorm
 export tplot!, tplot, tplot_panel, tplot_panel!
-export tsheat, tlims!, ylabel, plot_attributes
+export tsheat, tlims!, ylabel, plot_attributes, add_labels!
 export LMN
 export rotate, fac_mat, mva, mva_mat, check_mva_mat
 export modify_meta, amap, ω2f

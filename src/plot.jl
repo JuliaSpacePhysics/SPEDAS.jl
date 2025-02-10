@@ -3,6 +3,8 @@ ylabel_sources = (:ylabel, :long_name, "long_name", :label, "LABLAXIS")
 unit_sources = (:unit, :units, "UNITS")
 yunit_sources = (:yunit, :units)
 
+meta(ta) = Dict()
+
 format_unit(ta) = ""
 format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
 format_unit(ta::AbstractDimArray{Q}) where {Q<:Real} = prioritized_get(ta, unit_sources, "")
@@ -127,3 +129,37 @@ function tlims!(ax, tmin, tmax)
     end
 end
 tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
+
+"""
+Add labels to a grid of layouts
+
+# Notes
+- See `tag_facet` in `egg` for reference
+"""
+function add_labels!(layouts; labels='a':'z', open="(", close=")", position=TopLeft(), font=:bold, halign=:left, valign=:bottom, padding=(-5, 0, 5, 0), kwargs...)
+    for (label, layout) in zip(labels, layouts)
+        tag = open * label * close
+        Label(
+            layout[1, 1, position], tag;
+            font, halign, valign, padding,
+            kwargs...
+        )
+    end
+end
+
+"""
+Add labels to a figure, automatically searching for blocks to label.
+
+# Notes
+- https://github.com/brendanjohnharris/Foresight.jl/blob/main/src/Layouts.jl#L2
+"""
+function add_labels!(; f=current_figure(), allowedblocks=Union{Axis,Axis3,PolarAxis}, kwargs...)
+    axs = filter(x -> x isa allowedblocks, f.content)
+    layouts = map(axs) do x
+        b = x.layoutobservables.gridcontent[]
+        c = b.parent[b.span.rows, b.span.cols]
+        # p = x.layoutobservables.computedbbox[].origin .* [1, -1]
+        return c
+    end
+    add_labels!(layouts; kwargs...)
+end
