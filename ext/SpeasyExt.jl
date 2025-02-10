@@ -14,6 +14,11 @@ function SpaceTools.tplot_panel(gd, ta::SpeasyVariable, args...; kwargs...)
     tplot_panel(gd, DimArray(ta), args...; kwargs...)
 end
 
+function SpaceTools.tplot_panel!(ax, s::AbstractString, args...; kwargs...)
+    fs = (args...) -> DimArray(get_data(s, args...))
+    tplot_panel!(ax, fs, args...; kwargs...)
+end
+
 function SpaceTools.tplot_panel!(ax, ta::SpeasyVariable, args...; kwargs...)
     tplot_panel!(ax, DimArray(ta), args...; kwargs...)
 end

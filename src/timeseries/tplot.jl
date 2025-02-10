@@ -87,10 +87,10 @@ end
 
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::AbstractVector; add_title=false, kwargs...)
+function tplot_panel(gp, tas::AbstractVector, args...; add_title=false, kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)...)
     plots = map(tas) do ta
-        tplot_panel!(ax, ta; kwargs...)
+        tplot_panel!(ax, ta, args...; kwargs...)
     end
     AxisPlots(ax, plots)
 end
@@ -116,6 +116,9 @@ function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; labels=labels(ta), kwargs
 end
 
 tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs...)
+
+
+function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...) end
 
 """
     Interactive tplot of a function over a time range
