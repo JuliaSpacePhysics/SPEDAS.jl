@@ -135,32 +135,16 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, a
 
     if is_spectrogram(ta)
         y = spectrogram_y_values(ta)
-        ymin, ymax = Float64.(extrema(y))
-        xmin, xmax = Float64.((xmin, xmax))
-        plot_func = (x, y, mat) -> heatmap(gp, x, y, mat; attrs..., kwargs...)
-
-        # reverse from xrange to trange
-        temp_f = xrange -> begin
-            trange = x2t.(xrange)
-            da = f(trange...)
-            t2x(da), y, vs(da)
-        end
-        data = RangeFunction2D(temp_f, xmin, xmax, ymin, ymax)
+        plot_func = (x, mat) -> heatmap(gp, x, y, mat; attrs..., kwargs...)
     else
-        if ndims(ta) == 2
-            plot_func = (x, y) -> series(gp, x, y; attrs..., kwargs...)
-        else
-            plot_func = (x, y) -> lines(gp, x, y; attrs..., kwargs...)
-        end
-
+        plot_type = ndims(ta) == 2 ? series : lines
+        plot_func = (xs, vs) -> plot_type(gp, xs, vs; attrs..., kwargs...)
+    end
+    data = RangeFunction1D(xmin, xmax) do xrange
         # reverse from xrange to trange
-        temp_f = xrange -> begin
-            trange = x2t.(xrange)
-            da = f(trange...)
-            t2x(da), ys(da)
-        end
-
-        data = RangeFunction1D(temp_f, xmin, xmax)
+        trange = x2t.(xrange)
+        da = f(trange...)
+        t2x(da), vs(da)
     end
     fapex = iviz(plot_func, data)
     is_spectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
