@@ -13,7 +13,7 @@ using RollingWindowArrays
 using InteractiveViz
 using DSP, SignalAnalysis
 
-# export AbstractDataSet, DataSet
+export AbstractDataSet, DataSet
 export degap, rectify_datetime, resolution, samplingrate, smooth
 export timeshift, tnorm
 export tplot!, tplot, tplot_panel, tplot_panel!
@@ -27,7 +27,7 @@ const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
 const AbstractDimMatrix = Union{DimensionalData.AbstractDimMatrix,TimeseriesTools.AbstractDimMatrix}
 const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTools.AbstractDimVector}
 
-# include("dataset.jl")
+include("dataset.jl")
 include("mhd.jl")
 include("methods.jl")
 include("timeseries.jl")
