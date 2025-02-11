@@ -1,5 +1,6 @@
 DimensionalDataMakie = Base.get_extension(DimensionalData, :DimensionalDataMakie)
 using .DimensionalDataMakie: _series
+import Makie.SpecApi as S
 using Latexify
 
 
@@ -55,13 +56,18 @@ function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxe
 end
 
 tplot(f::Drawable, ta::SupportTypes, args...; kwargs...) = tplot(f, (ta,), args...; kwargs...)
-
-function tplot(tas, args...; figure=(;), kwargs...)
-    f = Figure(; figure...)
-    tplot(f, tas, args...; kwargs...)
-end
+tplot(tas, args...; figure=(;), kwargs...) = tplot(Figure(; figure...), tas, args...; kwargs...)
 
 function tplot! end
+
+"Setup the panel on a position and plot multiple time series on it"
+function tplot_panel(gp, tas::AbstractVector, args...; add_title=false, kwargs...)
+    ax = Axis(gp; axis_attributes(tas; add_title)...)
+    plots = map(tas) do ta
+        tplot_panel!(ax, ta, args...; kwargs...)
+    end
+    AxisPlots(ax, plots)
+end
 
 """
     tplot_panel(gp, ta::AbstractDimMatrix)
@@ -86,27 +92,12 @@ end
 """
     tplot_panel(gp, ta::AbstractDimVector)
 
-Plot a univariate time series on a panel on a panel.
+Plot a univariate time series on a panel.
 Only add legend when the axis contains multiple labels.
 """
 function tplot_panel(gp, ta::AbstractDimVector; add_title=false, kwargs...)
     lines(gp, ta; plot_attributes(ta; add_title)..., kwargs...)
 end
-
-function tplot_panel(gp, time::AbstractVector, values::AbstractVector; add_title=false, kwargs...)
-    lines(gp, time, values; kwargs...)
-end
-
-
-"Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::AbstractVector, args...; add_title=false, kwargs...)
-    ax = Axis(gp; axis_attributes(tas; add_title)...)
-    plots = map(tas) do ta
-        tplot_panel!(ax, ta, args...; kwargs...)
-    end
-    AxisPlots(ax, plots)
-end
-
 
 """
     tplot_panel!(ax, tas; kwargs...)
@@ -128,24 +119,6 @@ function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; labels=labels(ta), kwargs
 end
 
 tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs...)
-
-
-function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
-    # get a sample data to determine the attributes and plot types
-    ta = f(tmin, tmax)
-    xmin, xmax = t2x.((tmin, tmax))
-
-    if is_spectrogram(ta)
-        y = spectrogram_y_values(ta)
-        plot_func = (x, mat) -> heatmap!(ax, x, y, mat; kwargs...)
-    else
-        plot_type = ndims(ta) == 2 ? series! : lines!
-        plot_func = (xs, vs) -> plot_type(ax, xs, vs; kwargs...)
-    end
-
-    data = RangeFunction1D(time2value_transform(f), xmin, xmax)
-    iviz(plot_func, data)
-end
 
 """
     Interactive tplot of a function over a time range
@@ -174,7 +147,27 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, a
     fapex
 end
 
+function tplot_panel(gp, fs::AbstractVector, tmin::DateTime, tmax::DateTime; axis=(;), add_title=false, kwargs...)
+    tas = get_data.(fs, tmin, tmax; kwargs...)
+    ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
+    f = specs -> plotlist!(ax, specs)
+
+    plots = iviz_api(f, fs, tmin, tmax; kwargs...)
+    return AxisPlots(ax, plots)
+end
+
 tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
+
+function tplot_spec(da::AbstractDimMatrix; labels=labels(da), kwargs...)
+    x = dims(da, Ti).val
+    if !is_spectrogram(da)
+        map(eachcol(da.data), labels) do y, label
+            S.Lines(x, y; label, kwargs...)
+        end
+    else
+        S.Heatmap(x, spectrogram_y_values(da), da.data; kwargs...)
+    end
+end
 
 """
     tsheat(data; kwargs...)

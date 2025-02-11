@@ -63,19 +63,24 @@ function InteractiveViz.iviz(f, data::RangeFunction1D; delay=0.1)
     return FigureAxisPlotEx(fap, () -> update(axislimits[]), nothing)
 end
 
-struct RangeFunction2D{F,L} <: InteractiveViz.Continuous2D
-    f::F
-    xmin::L
-    xmax::L
-    ymin::L
-    ymax::L
-end
+flatten(x) = collect(Iterators.flatten(x))
 
-function InteractiveViz.sample(data::RangeFunction2D, xrange::AbstractRange, yrange::AbstractRange)
-    xmin = first(xrange)
-    xmax = last(xrange)
-    x, y, z = data.f((xmin, xmax))
-    (; x, y, z)
-end
+function iviz_api(f, tas, t0, t1, args...; delay=0.25, kwargs...)
+    specs = Observable(flatten(tplot_spec.(tas, t0, t1, args...; kwargs...)))
+    f(specs)
 
-InteractiveViz.limits(data::RangeFunction2D) = (data.xmin, data.xmax, data.ymin, data.ymax)
+    function update(lims)
+        xrange = (lims.origin[1], lims.origin[1] + lims.widths[1])
+        trange = x2t.(xrange)
+        return specs[] = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
+    end
+
+    axislimits = current_axis().finallimits
+    on(axislimits) do axlimits
+        if @isdefined(redraw_limit)
+            close(redraw_limit)
+        end
+        redraw_limit = Timer(x -> update(axlimits), delay)
+    end
+    return specs[]
+end

@@ -13,13 +13,13 @@ xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
 
 ylabel(ta) = ""
-function ylabel(ta::AbstractDimArray{Q}) where {Q}
+function ylabel(ta::AbstractDimArray)
     name = prioritized_get(ta, ylabel_sources, DD.label(ta))
     units = is_spectrogram(ta) ? prioritized_get(ta, yunit_sources, "") : format_unit(ta)
     units == "" ? name : "$name ($units)"
 end
 
-function clabel(ta::AbstractDimArray{Q}) where {Q}
+function clabel(ta::AbstractDimArray)
     name = get(ta.metadata, "LABLAXIS", "")
     units = format_unit(ta)
     units == "" ? name : "$name ($units)"
@@ -57,8 +57,14 @@ function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) wh
     attrs
 end
 
+units(ta::AbstractDimArray{Q}) where {Q} = unit(Q)
+
 function axis_attributes(tas::AbstractVector; add_title=false, kwargs...)
     attrs = Attributes(; kwargs...)
+
+    uts = units.(tas)
+    allequal(uts) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false))
+
     yls = ylabel.(tas)
     xls = xlabel.(tas)
     scales = scale.(tas)
