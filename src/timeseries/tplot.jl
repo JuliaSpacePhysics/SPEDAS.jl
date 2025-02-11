@@ -130,7 +130,22 @@ end
 tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs...)
 
 
-function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...) end
+function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, kwargs...)
+    # get a sample data to determine the attributes and plot types
+    ta = f(tmin, tmax)
+    xmin, xmax = t2x.((tmin, tmax))
+
+    if is_spectrogram(ta)
+        y = spectrogram_y_values(ta)
+        plot_func = (x, mat) -> heatmap!(ax, x, y, mat; kwargs...)
+    else
+        plot_type = ndims(ta) == 2 ? series! : lines!
+        plot_func = (xs, vs) -> plot_type(ax, xs, vs; kwargs...)
+    end
+
+    data = RangeFunction1D(time2value_transform(f), xmin, xmax)
+    iviz(plot_func, data)
+end
 
 """
     Interactive tplot of a function over a time range
