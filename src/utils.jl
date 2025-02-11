@@ -18,6 +18,7 @@ xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
 ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""
 ys(ta::DimMatrix) = permutedims(ta.data)
+vs(ta::DimArray) = ta.data
 vs(ta::DimMatrix) = is_spectrogram(ta) ? ta.data : permutedims(ta.data)
 
 """
