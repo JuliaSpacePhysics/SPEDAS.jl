@@ -2,6 +2,18 @@ DimensionalDataMakie = Base.get_extension(DimensionalData, :DimensionalDataMakie
 using .DimensionalDataMakie: _series
 using Latexify
 
+
+"""
+Transform a function that handles time range to a function that handles x range (time values) and return x and y values.
+"""
+function time2value_transform(xrange, f)
+    trange = x2t.(xrange)
+    da = f(trange...)
+    return t2x(da), vs(da)
+end
+
+time2value_transform(f) = (xrange) -> time2value_transform(xrange, f)
+
 # https://github.com/MakieOrg/AlgebraOfGraphics.jl/blob/master/src/entries.jl
 struct FigureAxes
     figure
@@ -64,7 +76,7 @@ function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=fal
         return AxisPlots(ax, plots)
     else
         x = dims(ta, Ti).val
-        y = mean(ta.metadata["axes"][2].values, dims=1) |> vec
+        y = spectrogram_y_values(ta)
         axisPlot = heatmap(gp, x, y, ta.data; attrs..., kwargs...)
         add_colorbar && Colorbar(gp[1, 1, Right()], axisPlot.plot; label=clabel(ta))
         axisPlot
@@ -140,12 +152,8 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, a
         plot_type = ndims(ta) == 2 ? series : lines
         plot_func = (xs, vs) -> plot_type(gp, xs, vs; attrs..., kwargs...)
     end
-    data = RangeFunction1D(xmin, xmax) do xrange
-        # reverse from xrange to trange
-        trange = x2t.(xrange)
-        da = f(trange...)
-        t2x(da), vs(da)
-    end
+
+    data = RangeFunction1D(time2value_transform(f), xmin, xmax)
     fapex = iviz(plot_func, data)
     is_spectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
     fapex
