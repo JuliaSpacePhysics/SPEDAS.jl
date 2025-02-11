@@ -5,6 +5,7 @@ yunit_sources = (:yunit, :units)
 
 meta(ta) = Dict()
 
+format_unit(u::Unitful.Units) = string(u)
 format_unit(ta) = ""
 format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
 format_unit(ta::AbstractDimArray{Q}) where {Q<:Real} = prioritized_get(ta, unit_sources, "")
@@ -15,7 +16,7 @@ xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.l
 ylabel(ta) = ""
 function ylabel(ta::AbstractDimArray)
     name = prioritized_get(ta, ylabel_sources, DD.label(ta))
-    units = is_spectrogram(ta) ? prioritized_get(ta, yunit_sources, "") : format_unit(ta)
+    units = isspectrogram(ta) ? prioritized_get(ta, yunit_sources, "") : format_unit(ta)
     units == "" ? name : "$name ($units)"
 end
 
@@ -46,7 +47,7 @@ axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
 """Axis attributes for a time array"""
 function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) where {Q}
     attrs = Attributes(; kwargs...)
-    Q <: Quantity && !is_spectrogram(ta) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
+    Q <: Quantity && !isspectrogram(ta) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
     s = scale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
@@ -57,25 +58,38 @@ function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) wh
     attrs
 end
 
-units(ta::AbstractDimArray{Q}) where {Q} = unit(Q)
+Unitful.unit(ta::AbstractDimArray{Q}) where {Q} = unit(Q)
+
+"""Set an attribute if all values are equal"""
+function set_if_equal!(attrs, key, values; default=first(values))
+    val = allequal(values) ? default : nothing
+    isnothing(val) || (attrs[key] = val)
+end
 
 function axis_attributes(tas::AbstractVector; add_title=false, kwargs...)
     attrs = Attributes(; kwargs...)
 
-    uts = units.(tas)
-    allequal(uts) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false))
-
-    yls = ylabel.(tas)
-    xls = xlabel.(tas)
-    scales = scale.(tas)
-    if add_title
-        titles = title.(tas)
-        allequal(titles) && (attrs[:title] = titles[1])
+    # Handle units
+    uts = unit.(tas)
+    if allequal(uts)
+        attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false)
+        # Use unit as ylabel if no common ylabel exists
+        yls = ylabel.(tas)
+        attrs[:ylabel] = allequal(yls) ? yls[1] : format_unit(uts[1])
     end
-    allequal(yls) && (attrs[:ylabel] = yls[1])
-    allequal(xls) && (attrs[:xlabel] = xls[1])
-    s = allequal(scales) ? scales[1] : nothing
-    isnothing(s) || (attrs[:yscale] = s)
+
+    # Set common attributes
+    set_if_equal!(attrs, :xlabel, xlabel.(tas))
+    set_if_equal!(attrs, :yscale, scale.(tas))
+    add_title && set_if_equal!(attrs, :title, title.(tas))
+
+    attrs
+end
+
+function heatmap_attributes(ta; kwargs...)
+    attrs = Attributes(; kwargs...)
+    s = scale(ta)
+    isnothing(s) || (attrs[:colorscale] = s)
     attrs
 end
 
@@ -85,15 +99,14 @@ function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
     attrs[:axis] = axis_attributes(ta; add_title, axis...)
 
     # handle spectrogram
-    if !is_spectrogram(ta)
+    if !isspectrogram(ta)
         if ndims(ta) == 2
             attrs[:labels] = labels(ta)
         else
             attrs[:label] = label(ta)
         end
     else
-        s = scale(ta)
-        isnothing(s) || (attrs[:colorscale] = s)
+        merge!(attrs, heatmap_attributes(ta))
     end
     attrs
 end

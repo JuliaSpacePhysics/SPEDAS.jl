@@ -22,7 +22,7 @@ function axis_attributes(ds::DataSet; add_title=false, kwargs...)
 end
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, ds::DataSet, args...; add_title=false, kwargs...)
+function tplot_panel(gp, ds::DataSet, tmin::DateTime, tmax::DateTime, args...; add_title=false, kwargs...)
     axis = axis_attributes(ds; add_title)
-    return tplot_panel(gp, ds.parameters, args...; axis, kwargs...)
+    return tplot_panel(gp, ds.parameters, tmin, tmax, args...; axis, kwargs...)
 end

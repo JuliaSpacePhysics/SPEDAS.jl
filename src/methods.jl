@@ -2,8 +2,8 @@ function get_data end
 
 function tnorm end
 
-is_spectrogram(ta::AbstractDimArray) = get(ta.metadata, "DISPLAY_TYPE", nothing) == "spectrogram"
-is_spectrogram(ta) = false
+isspectrogram(ta::AbstractDimArray) = get(ta.metadata, "DISPLAY_TYPE", nothing) == "spectrogram"
+isspectrogram(ta) = false
 
 function spectrogram_y_values(ta; check=false)
     values = ta.metadata["axes"][2].values

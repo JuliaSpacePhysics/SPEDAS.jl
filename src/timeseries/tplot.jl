@@ -1,5 +1,3 @@
-DimensionalDataMakie = Base.get_extension(DimensionalData, :DimensionalDataMakie)
-using .DimensionalDataMakie: _series
 import Makie.SpecApi as S
 using Latexify
 
@@ -22,7 +20,7 @@ struct FigureAxes
 end
 
 struct AxisPlots
-    axis::Axis
+    axis
     plots
 end
 
@@ -57,6 +55,7 @@ end
 
 tplot(f::Drawable, ta::SupportTypes, args...; kwargs...) = tplot(f, (ta,), args...; kwargs...)
 tplot(tas, args...; figure=(;), kwargs...) = tplot(Figure(; figure...), tas, args...; kwargs...)
+tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
 
 function tplot! end
 
@@ -75,18 +74,10 @@ end
 Plot a multivariate time series / spectrogram on a panel
 """
 function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, kwargs...)
-    attrs = Attributes(kwargs...; plot_attributes(ta; add_title)...)
-    if !is_spectrogram(ta)
-        ax = Axis(gp; attrs.axis...)
-        plots = tplot_panel!(ax, ta; kwargs...)
-        return AxisPlots(ax, plots)
-    else
-        x = dims(ta, Ti).val
-        y = spectrogram_y_values(ta)
-        axisPlot = heatmap(gp, x, y, ta.data; attrs..., kwargs...)
-        add_colorbar && Colorbar(gp[1, 1, Right()], axisPlot.plot; label=clabel(ta))
-        axisPlot
-    end
+    ax = Axis(gp; axis_attributes(ta; add_title)...)
+    plots = tplot_panel!(ax, ta; kwargs...)
+    add_colorbar && isspectrogram(ta) && Colorbar(gp[1, 1, Right()], plots; label=clabel(ta))
+    AxisPlots(ax, plots)
 end
 
 """
@@ -100,30 +91,29 @@ function tplot_panel(gp, ta::AbstractDimVector; add_title=false, kwargs...)
 end
 
 """
-    tplot_panel!(ax, tas; kwargs...)
-
-Overlay multiple time series on the same axis
-"""
-tplot_panel!(ax::Axis, tas::AbstractVector{<:AbstractDimVecOrMat}; kwargs...) =
-    tplot_panel!.(ax, tas; kwargs...)
-
-
-"""
-Overlay multiple columns of a time series on the same axis
+Plot heatmap / overlay multiple columns of a time series on the same axis
 """
 function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; labels=labels(ta), kwargs...)
     x = dims(ta, Ti).val
-    map(eachcol(ta.data), labels) do y, label
-        lines!(ax, x, y; label, kwargs...)
+    if !isspectrogram(ta)
+        map(eachcol(ta.data), labels) do y, label
+            lines!(ax, x, y; label, kwargs...)
+        end
+    else
+        heatmap!(ax, x, spectrogram_y_values(ta), ta.data; heatmap_attributes(ta; kwargs...)...)
     end
 end
 
 tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs...)
 
+####################
+## Interactive tplot
+####################
+
 """
     Interactive tplot of a function over a time range
 """
-function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, add_title=false, add_colorbar=true, xtickformat=format_datetime, kwargs...)
+function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; add_title=false, add_colorbar=true, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = plot_attributes(ta; add_title)
@@ -133,7 +123,7 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, a
     xmin, xmax = t2x.((tmin, tmax))
     attrs.axis.xtickformat = values -> xtickformat.(x2t.(values))
 
-    if is_spectrogram(ta)
+    if isspectrogram(ta)
         y = spectrogram_y_values(ta)
         plot_func = (x, mat) -> heatmap(gp, x, y, mat; attrs..., kwargs...)
     else
@@ -143,24 +133,27 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; t0=tmin, a
 
     data = RangeFunction1D(time2value_transform(f), xmin, xmax)
     fapex = iviz(plot_func, data)
-    is_spectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
+    isspectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
     fapex
 end
 
 function tplot_panel(gp, fs::AbstractVector, tmin::DateTime, tmax::DateTime; axis=(;), add_title=false, kwargs...)
     tas = get_data.(fs, tmin, tmax; kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
-    f = specs -> plotlist!(ax, specs)
-
-    plots = iviz_api(f, fs, tmin, tmax; kwargs...)
+    plots = iviz_api(fs, tmin, tmax; kwargs...)
     return AxisPlots(ax, plots)
 end
 
-tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
-
-function tplot_spec(da::AbstractDimMatrix; labels=labels(da), kwargs...)
+function tplot_spec(da::AbstractDimMatrix; labels=labels(da), samples=10000, kwargs...)
     x = dims(da, Ti).val
-    if !is_spectrogram(da)
+
+    if length(x) > samples
+        indices = round.(Int, range(1, length(x), length=samples))
+        x = x[indices]
+        da = da[indices, :]
+    end
+
+    if !isspectrogram(da)
         map(eachcol(da.data), labels) do y, label
             S.Lines(x, y; label, kwargs...)
         end
@@ -168,6 +161,37 @@ function tplot_spec(da::AbstractDimMatrix; labels=labels(da), kwargs...)
         S.Heatmap(x, spectrogram_y_values(da), da.data; kwargs...)
     end
 end
+
+######################
+## Extension interface
+######################
+
+"""
+    tplot_panel(gp, ta, args...; kwargs...)
+
+Extension interface for plotting custom data types. To support a new data type:
+1. Define a method for `get_data(ta, args...; kwargs...)` that converts your type to a DimensionalData array
+2. Optionally include metadata for labels, units, and other plotting attributes
+"""
+tplot_panel(gp, ta, args...; kwargs...) = tplot_panel(gp, get_data(ta, args...); kwargs...)
+
+function tplot_panel(gp, ta, tmin::DateTime, tmax::DateTime; kwargs...)
+    f = (args...) -> get_data(ta, args...)
+    tplot_panel(gp, f, tmin, tmax; kwargs...)
+end
+
+"""
+    tplot_panel!(ax::Axis, ta, args...; kwargs...)
+
+Extension interface for plotting custom data types. See `tplot_panel` for more details.
+"""
+tplot_panel!(ax::Axis, ta, args...; kwargs...) = tplot_panel!(ax, get_data(ta, args...); kwargs...)
+
+tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
+
+##########
+## Recipes
+##########
 
 """
     tsheat(data; kwargs...)

@@ -10,7 +10,7 @@ struct RangeFunction1D{F,L} <: AbstractRangeFunction
     xmax::L
 end
 
-function sample(data::RangeFunction1D, xrange::AbstractRange, yrange; samples=10000)
+function sample(data::RangeFunction1D, xrange, yrange; samples=10000)
     xmin = first(xrange)
     xmax = last(xrange)
     x, y = data.f((xmin, xmax))
@@ -64,18 +64,21 @@ function InteractiveViz.iviz(f, data::RangeFunction1D; delay=0.1)
 end
 
 flatten(x) = collect(Iterators.flatten(x))
+sample(tas, trange, args...; kwargs...) = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
 
-function iviz_api(f, tas, t0, t1, args...; delay=0.25, kwargs...)
-    specs = Observable(flatten(tplot_spec.(tas, t0, t1, args...; kwargs...)))
-    f(specs)
+function iviz_api(tas, t0, t1, args...; delay=0.25, kwargs...)
+    specs = Observable(sample(tas, (t0, t1), args...; kwargs...))
+    ax = current_axis()
+    plotlist!(ax, specs)
+    reset_limits!(ax)
 
     function update(lims)
         xrange = (lims.origin[1], lims.origin[1] + lims.widths[1])
         trange = x2t.(xrange)
-        return specs[] = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
+        specs[] = sample(tas, trange, args...; kwargs...)
     end
 
-    axislimits = current_axis().finallimits
+    axislimits = ax.finallimits
     on(axislimits) do axlimits
         if @isdefined(redraw_limit)
             close(redraw_limit)
