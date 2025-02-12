@@ -2,6 +2,7 @@ xlabel_sources = (:xlabel, "xlabel")
 ylabel_sources = (:ylabel, :long_name, "long_name", :label, "LABLAXIS")
 unit_sources = (:unit, :units, "UNITS")
 yunit_sources = (:yunit, :units)
+scale_sources = (:scale, "scale", "SCALETYP")
 
 meta(ta) = Dict()
 
@@ -14,9 +15,9 @@ xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
 
 ylabel(ta) = ""
-function ylabel(ta::AbstractDimArray)
-    name = prioritized_get(ta, ylabel_sources, DD.label(ta))
-    units = isspectrogram(ta) ? prioritized_get(ta, yunit_sources, "") : format_unit(ta)
+function ylabel(da::AbstractDimArray)
+    name = prioritized_get(da, ylabel_sources, DD.label(dims(da, 2)))
+    units = isspectrogram(da) ? prioritized_get(da, yunit_sources, "") : format_unit(da)
     units == "" ? name : "$name ($units)"
 end
 
@@ -51,7 +52,9 @@ function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) wh
     s = scale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
-    isnothing(s) || (attrs[:yscale] = s)
+    if !isspectrogram(ta)
+        isnothing(s) || (attrs[:yscale] = s)
+    end
     isempty(yl) || (attrs[:ylabel] = yl)
     isempty(xl) || (attrs[:xlabel] = xl)
     add_title && (attrs[:title] = title(ta))
@@ -135,7 +138,7 @@ scale(::Nothing) = nothing
 
 function scale(x)
     m = meta(x)
-    isnothing(m) ? nothing : scale(get(m, "SCALETYP", nothing))
+    isnothing(m) ? nothing : scale(prioritized_get(m, scale_sources, nothing))
 end
 
 axes(ta) = ta.metadata["axes"]
