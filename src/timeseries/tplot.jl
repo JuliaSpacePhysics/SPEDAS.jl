@@ -34,7 +34,7 @@ Lay out multiple time series across different panels (rows) on one Figure / Grid
 
 If `legend` is `nothing`, no legend will be added to the plot. Otherwise, `legend` can be a `NamedTuple` containing options for legend placement and styling.
 """
-function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, kwargs...)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
@@ -45,7 +45,9 @@ function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxe
     end
     axs = map(gap -> gap[2].axis, gaps)
     gps = map(gap -> gap[1], gaps)
+
     link_xaxes && linkxaxes!(axs...)
+    link_yaxes && linkyaxes!(axs...)
 
     !isnothing(legend) && add_legend!.(gps, axs; legend...)
 
@@ -76,7 +78,8 @@ Plot a multivariate time series / spectrogram on a panel
 function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, kwargs...)
     ax = Axis(gp; axis_attributes(ta; add_title)...)
     plots = tplot_panel!(ax, ta; kwargs...)
-    add_colorbar && isspectrogram(ta) && Colorbar(gp[1, 1, Right()], plots; label=clabel(ta))
+    pos = gp[1, 2]
+    add_colorbar && isspectrogram(ta) && Colorbar(pos, plots; label=clabel(ta))
     AxisPlots(ax, plots)
 end
 
