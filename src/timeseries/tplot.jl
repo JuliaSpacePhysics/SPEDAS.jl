@@ -62,13 +62,15 @@ tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
 function tplot! end
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::AbstractVector, args...; add_title=false, kwargs...)
+function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; add_title=false, kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta, args...; kwargs...)
     end
     AxisPlots(ax, plots)
 end
+
+tplot_panel(gd, ds::AbstractDimStack; kwargs...) = tplot_panel(gd, layers(ds); kwargs...)
 
 """
     tplot_panel(gp, ta::AbstractDimMatrix)

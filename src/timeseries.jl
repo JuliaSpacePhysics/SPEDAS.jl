@@ -86,3 +86,17 @@ function rectify_datetime(da; tol=2, kwargs...)
     new_times = TimeseriesTools.rectify(Ti(dtime); tol)[1]
     set(da, Ti => new_times .+ t0)
 end
+
+"""
+    tsplit(da::AbstractDimArray, dim=Ti)
+
+Splits up data along dimension `dim`.
+"""
+function tsplit(da::AbstractDimArray, dim=Ti; new_names=labels(da))
+    odims = otherdims(da, dim)
+    rows = eachslice(da; dims=odims)
+    das = map(rows, new_names) do row, name
+        rename(modify_meta(row; long_name=name), name)
+    end
+    DimStack(das...)
+end
