@@ -1,3 +1,5 @@
+using DimensionalData.Lookups
+
 meta(da::AbstractDimArray) = metadata(da)
 
 """
@@ -24,8 +26,11 @@ function rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
 end
 
+modify_meta!(da; kwargs...) = (da.metadata = merge(da.metadata, kwargs))
+
 function modify_meta(da; kwargs...)
-    new_meta = merge(da.metadata, kwargs)
+    meta = da.metadata
+    new_meta = meta isa NoMetadata ? Dict(kwargs) : merge(meta, kwargs)
     rebuild(da; metadata=new_meta)
 end
 

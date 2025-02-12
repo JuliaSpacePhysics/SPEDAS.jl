@@ -7,7 +7,7 @@ end
 
 function prioritized_get(c, keys, default)
     values = get.(Ref(c), keys, nothing)
-    something(values..., default)
+    all(isnothing, values) ? default : something(values...)
 end
 
 prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata, keys, default)

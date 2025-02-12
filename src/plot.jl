@@ -16,13 +16,14 @@ xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.l
 
 ylabel(ta) = ""
 function ylabel(da::AbstractDimArray)
-    name = prioritized_get(da, ylabel_sources, DD.label(dims(da, 2)))
+    default_name = isspectrogram(da) ? DD.label(dims(da, 2)) : DD.label(da)
+    name = prioritized_get(da, ylabel_sources, default_name)
     units = isspectrogram(da) ? prioritized_get(da, yunit_sources, "") : format_unit(da)
     units == "" ? name : "$name ($units)"
 end
 
 function clabel(ta::AbstractDimArray)
-    name = get(ta.metadata, "LABLAXIS", "")
+    name = get(ta.metadata, "LABLAXIS", DD.label(ta))
     units = format_unit(ta)
     units == "" ? name : "$name ($units)"
 end
@@ -134,6 +135,7 @@ function scale(x::String)
     end
 end
 
+scale(f::Function) = f
 scale(::Nothing) = nothing
 
 function scale(x)
