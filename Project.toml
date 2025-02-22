@@ -22,10 +22,12 @@ UnitfulLatexify = "45397f5d-5981-4c77-b2b3-fc36d6e9b728"
 [weakdeps]
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
 TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
+HAPI = "0ce0b37c-8851-4c5b-98a3-e691a5f19c53"
 
 [extensions]
 SpeasyExt = "Speasy"
 TimeSeriesExt = "TimeSeries"
+HAPIExt = "HAPI"
 
 [compat]
 DSP = "0.7, 0.8"
