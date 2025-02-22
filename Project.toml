@@ -9,6 +9,7 @@ Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 DimensionfulAngles = "2d4b8d7a-02d9-40f9-9abe-9c695b77de0d"
 InteractiveViz = "d14badfc-0adb-4d57-980e-37858d990fa5"
+Intervals = "d8418881-c3e1-53bb-8760-2df7ec849ed5"
 Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
@@ -20,14 +21,14 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulLatexify = "45397f5d-5981-4c77-b2b3-fc36d6e9b728"
 
 [weakdeps]
+HAPI = "0ce0b37c-8851-4c5b-98a3-e691a5f19c53"
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
 TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
-HAPI = "0ce0b37c-8851-4c5b-98a3-e691a5f19c53"
 
 [extensions]
+HAPIExt = "HAPI"
 SpeasyExt = "Speasy"
 TimeSeriesExt = "TimeSeries"
-HAPIExt = "HAPI"
 
 [compat]
 DSP = "0.7, 0.8"
@@ -35,6 +36,7 @@ Dates = "1"
 DimensionalData = "0.29"
 DimensionfulAngles = "0.2.1"
 InteractiveViz = "0.6"
+Intervals = "1.10.0"
 Latexify = "0.16"
 LinearAlgebra = "1"
 Makie = "0.21, 0.22"
