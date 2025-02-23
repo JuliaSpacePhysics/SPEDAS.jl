@@ -17,7 +17,7 @@ using DSP, SignalAnalysis
 export AbstractDataSet, DataSet
 export degap, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
-export timeshift, tnorm, tmean
+export timeshift, tnorm, tmean, tinterp
 export tplot!, tplot, tplot_panel, tplot_panel!
 export tsheat, tlims!, ylabel, plot_attributes, add_labels!
 export LMN
@@ -39,6 +39,7 @@ include("timeseries/spectrum.jl")
 include("utils.jl")
 include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
+include("utils/interp.jl")
 include("plot.jl")
 include("cotrans/coordinate.jl")
 include("cotrans/rotate.jl")
