@@ -1,3 +1,6 @@
+using Speasy
+speasy()
+
 using Documenter
 using SpaceTools
 # using DemoCards
