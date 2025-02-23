@@ -95,6 +95,8 @@ function tplot_panel(gp, ta::AbstractDimVector; add_title=false, kwargs...)
     lines(gp, ta; plot_attributes(ta; add_title)..., kwargs...)
 end
 
+tplot_panel(gp, ta::DD.AbstractDimVector{<:AbstractVector}; kwargs...) = tplot_panel(gp, stack_timeseries(ta); kwargs...)
+
 """
 Plot heatmap / overlay multiple columns of a time series on the same axis
 """

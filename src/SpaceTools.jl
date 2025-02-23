@@ -17,9 +17,10 @@ using DSP, SignalAnalysis
 export AbstractDataSet, DataSet
 export degap, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
-export timeshift, tnorm, tmean
+export timeshift, tnorm, tmean, tstack, tinterp
 export tplot!, tplot, tplot_panel, tplot_panel!
-export tsheat, tlims!, ylabel, plot_attributes, add_labels!
+export tsheat, tlims!, tlines!, add_labels!
+export ylabel, plot_attributes
 export LMN
 export rotate, fac_mat, mva, mva_mat, check_mva_mat
 export modify_meta, amap, ω2f

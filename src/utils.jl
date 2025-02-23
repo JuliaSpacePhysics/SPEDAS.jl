@@ -45,5 +45,23 @@ t2x(da::AbstractDimArray) = t2x.(dims(da, 1).val.data)
 """Return the angle between two vectors."""
 Base.angle(v1::AbstractVector, v2::AbstractVector) = acosd(v1 ⋅ v2 / (norm(v1) * norm(v2)))
 
+"""
+    tstack(vectors::AbstractVector{<:AbstractVector{T}})
+
+Stack a time series of `vectors` into a matrix. 
+
+By default, each row in the output matrix represents a time point from the input vector of vectors.
+"""
+function tstack(vectors::AbstractVector{<:AbstractVector})
+    return stack(vectors)
+end
+
+function tstack(vectors::DD.AbstractDimVector{<:AbstractVector})
+    n = length(first(vectors))
+    data = stack(vectors; dims=1)
+    new_dims = (dims(vectors)..., Y(1:n))
+    return DimArray(data, new_dims; name=vectors.name, metadata=vectors.metadata)
+end
+
 "https://github.com/JuliaLang/julia/issues/54542"
 tmean(vec::AbstractVector{DateTime}) = convert(Dates.DateTime, Millisecond(mean(Dates.value.(vec))))

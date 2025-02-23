@@ -154,6 +154,10 @@ function tlims!(ax, tmin, tmax)
 end
 tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
 
+"""Add vertical lines to a plot"""
+tlines!(ax, time; kwargs...) = vlines!(ax, t2x.(time); kwargs...)
+tlines!(time; kwargs...) = tlines!(current_axis(), time; kwargs...)
+
 """
 Add labels to a grid of layouts
 
