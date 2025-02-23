@@ -6,6 +6,7 @@ using DimensionalData.Dimensions
 using LinearAlgebra
 using Makie
 using TimeseriesTools
+using Intervals: Interval
 using Statistics
 using Unitful, DimensionfulAngles
 using Latexify, UnitfulLatexify
@@ -15,7 +16,8 @@ using DSP, SignalAnalysis
 
 export AbstractDataSet, DataSet
 export degap, rectify_datetime, resolution, samplingrate, smooth, tsplit
-export timeshift, tnorm
+export timerange
+export timeshift, tnorm, tmean
 export tplot!, tplot, tplot_panel, tplot_panel!
 export tsheat, tlims!, ylabel, plot_attributes, add_labels!
 export LMN
@@ -35,6 +37,7 @@ include("timeseries/tplot.jl")
 include("timeseries/interactive.jl")
 include("timeseries/spectrum.jl")
 include("utils.jl")
+include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
 include("plot.jl")
 include("cotrans/coordinate.jl")

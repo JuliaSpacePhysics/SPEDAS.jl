@@ -44,3 +44,6 @@ t2x(da::AbstractDimArray) = t2x.(dims(da, 1).val.data)
 
 """Return the angle between two vectors."""
 Base.angle(v1::AbstractVector, v2::AbstractVector) = acosd(v1 ⋅ v2 / (norm(v1) * norm(v2)))
+
+"https://github.com/JuliaLang/julia/issues/54542"
+tmean(vec::AbstractVector{DateTime}) = convert(Dates.DateTime, Millisecond(mean(Dates.value.(vec))))
