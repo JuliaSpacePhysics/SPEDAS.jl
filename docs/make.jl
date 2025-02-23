@@ -1,8 +1,8 @@
 using Documenter
 using SpaceTools
-using DemoCards
+# using DemoCards
 
-demopage, postprocess_cb, gallery_assets = makedemos("gallery")
+# demopage, postprocess_cb, gallery_assets = makedemos("gallery")
 
 makedocs(
     sitename="SpaceTools",
@@ -10,7 +10,13 @@ makedocs(
         "Home" => "index.md",
         "Tutorials" => [
             "tutorials/getting-started.md",
-            demopage
+            # demopage
+        ],
+        "Examples" => [
+            "examples/index.md",
+            "examples/speasy.md",
+            "examples/interactive.md",
+            "examples/interactive_speasy.md",
         ],
         "Explanation" => [
             "explanations/tplot.md",
@@ -23,7 +29,7 @@ makedocs(
     doctest=true
 )
 
-postprocess_cb() # redirect url for DemoCards generated files
+# postprocess_cb() # redirect url for DemoCards generated files
 
 # Documenter can also automatically deploy documentation to gh-pages.
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
