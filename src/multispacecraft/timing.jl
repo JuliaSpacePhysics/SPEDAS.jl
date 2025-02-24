@@ -29,11 +29,13 @@ function ConstantVelocityApproach(positions, times)
 end
 
 """
-Given durations ``τs`` of the 4 boundary crossings, calculate the thickness of the boundary
+    ConstantVelocityApproach(positions, times, durations)
+
+Given `durations` of the boundary crossings, calculate the thickness of the boundary
 """
-function ConstantVelocityApproach(positions, times, taus)
+function ConstantVelocityApproach(positions, times, durations)
     n, V = ConstantVelocityApproach(positions, times)
-    d = V .* taus
+    d = V .* durations
     return (; n, V, d)
 end
 

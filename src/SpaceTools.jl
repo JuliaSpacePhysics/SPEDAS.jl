@@ -34,6 +34,7 @@ const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
 const AbstractDimMatrix = Union{DimensionalData.AbstractDimMatrix,TimeseriesTools.AbstractDimMatrix}
 const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTools.AbstractDimVector}
+const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
 include("dataset.jl")
 include("mhd.jl")

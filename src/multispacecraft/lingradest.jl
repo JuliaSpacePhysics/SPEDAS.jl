@@ -62,15 +62,12 @@ function lingradest(B1, B2, B3, B4, R1, R2, R3, R4)
         div, curl, curvature, R_c)
 end
 
-matrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
-
-
 """
-    lingradest(B1::matrixLike, args...)
+    lingradest(B1::MatrixLike, args...)
 
-Vectorized `lingradest` for easy use with `StructArray`
+Vectorized method for simplified usage. Returns a `StructArray` containing the results.
 """
-function lingradest(B1::matrixLike, args...)
+function lingradest(B1::MatrixLike, args...)
     n = only(setdiff(size(B1), 3))
     B1 = ensure_nxm(B1, 3, n)
     args = ensure_nxm.(args, 3, n)
