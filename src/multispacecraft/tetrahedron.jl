@@ -8,24 +8,24 @@ with ``𝐫_b = ∑_α 𝐫_α / N`` and `N` is the number of positions.
 # References
 - [paschmannMultispacecraftAnalysisMethods2008](@citet) Paschmann & Daly, 2008. Section 4.7
 """
-function position_tensor(r0s::AbstractVector{<:AbstractVector})
-    rs = r0s .- Ref(mean(r0s))
+function position_tensor(rs::AbstractVector{<:AbstractVector})
+    rs = rs .- Ref(mean(rs))
     Rall = reduce(hcat, rs)'
     Rall' * Rall
 end
 
 """
-    volumetric_tensor(r0s::AbstractVector{<:AbstractVector})
+    volumetric_tensor(rs::AbstractVector{<:AbstractVector})
 
 ``\frac{1}{N} 𝐑'``.
 
 See also: [`position_tensor`](@ref)
 """
-volumetric_tensor(r0s::AbstractVector{<:AbstractVector}) = position_tensor(r0s) / length(rs)
+volumetric_tensor(rs::AbstractVector{<:AbstractVector}) = position_tensor(rs) / length(rs)
 
 """Calculate tetrahedron quality factors"""
-function tetrahedron_quality(positions::AbstractVector{<:AbstractVector})
-    Rvol = volumetric_tensor(positions)
+function tetrahedron_quality(rs::AbstractVector{<:AbstractVector})
+    Rvol = volumetric_tensor(rs)
     # Calculate eigenvaluesz and eigenvectors
     F = eigen(ustrip(Rvol), sortby=x -> -abs(x)) # Note: we want descending order
     semiaxes = sqrt.(F.values)  # sqrt of eigenvalues
