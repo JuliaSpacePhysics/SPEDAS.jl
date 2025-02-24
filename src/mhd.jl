@@ -1,6 +1,3 @@
-using LinearAlgebra
-export Elsässer, norm², σ_c
-
 # https://github.com/nsioulas/MHDTurbPy/blob/main/functions/calc_diagnostics.py
 # incompressible MHD [https://en.wikipedia.org/wiki/Magnetohydrodynamic_turbulence] 
 # Elsässer variables
