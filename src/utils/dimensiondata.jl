@@ -2,6 +2,9 @@ using DimensionalData.Lookups
 
 meta(da::AbstractDimArray) = metadata(da)
 
+tdim(t) = Ti(t)
+tdim(t::DD.Dimension) = t
+
 """
     nt2ds(nt_arr, dim; fields=propertynames(first(nt_arr)))
 

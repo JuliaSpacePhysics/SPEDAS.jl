@@ -21,6 +21,7 @@ Pkg.add(PackageSpec(url="https://github.com/Beforerr/SpaceTools.jl"))
     - spectral analysis
     - moving box average for filtering magnetometer data
     - coordinate transformations
+- [QSAS (C/C++)](http://www.sp.ph.ic.ac.uk/csc-web/QSAS/) : Science Analysis Software for Space Plasmas
 
 ⚠️ **Development Status**: This package is in active development. While functional, the API may undergo changes in future releases. Please review the documentation and test thoroughly before using in scientific work.
 

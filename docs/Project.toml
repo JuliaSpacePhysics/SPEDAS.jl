@@ -2,6 +2,7 @@
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
 SpaceTools = "3930f61c-4d81-4846-ab8f-357babe068a6"
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
