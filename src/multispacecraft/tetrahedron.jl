@@ -21,6 +21,7 @@ end
 
 See also: [`position_tensor`](@ref)
 """
+
 volumetric_tensor(rs::AbstractVector{<:AbstractVector}) = position_tensor(rs) / length(rs)
 
 """Calculate tetrahedron quality factors"""
