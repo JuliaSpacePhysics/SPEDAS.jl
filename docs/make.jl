@@ -2,8 +2,11 @@ using Speasy
 speasy()
 
 using Documenter
+using DocumenterCitations
 using SpaceTools
 # using DemoCards
+
+bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
 
 # demopage, postprocess_cb, gallery_assets = makedemos("gallery")
 
@@ -24,11 +27,13 @@ makedocs(
         "Explanation" => [
             "explanations/tplot.md",
             "explanations/coords.md",
+            "explanations/multispacecraft.md",
         ],
         "API" => "api.md",
     ],
     format=Documenter.HTML(size_threshold=nothing),
     modules=[SpaceTools],
+    plugins=[bib],
     doctest=true
 )
 
