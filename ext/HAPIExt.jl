@@ -1,7 +1,7 @@
-module HAPIExt
+module HAPIClientExt
 
 using SpaceTools
-using HAPI
+using HAPIClient
 using DimensionalData
 import SpaceTools: xlabel
 

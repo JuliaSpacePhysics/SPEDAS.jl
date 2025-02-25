@@ -4,7 +4,7 @@ using SpaceTools
 using TimeSeries
 using Makie
 
-function SpaceTools.degap(ts::TimeArray)
+function SpaceTools.dropna(ts::TimeArray)
     ts[all.(!isnan, eachrow(values(ts)))]
 end
 
