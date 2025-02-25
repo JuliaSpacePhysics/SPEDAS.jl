@@ -28,6 +28,7 @@ makedocs(
             "explanations/tplot.md",
             "explanations/coords.md",
             "explanations/multispacecraft.md",
+            "explanations/resampling.md",
         ],
         "API" => "api.md",
     ],
