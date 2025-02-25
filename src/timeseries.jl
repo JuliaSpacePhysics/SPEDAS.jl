@@ -69,16 +69,21 @@ function DSP.filtfilt(da::AbstractDimArray, Wn1, Wn2; designmethod=Butterworth(2
     rebuild(da; data=res * (da |> eltype |> unit))
 end
 
-function degap(da::DimArray; dim=Ti)
-    dims = otherdims(da, dim)
-    rows = filter(x -> !any(isnan, x), eachslice(da; dims))
-    if !isempty(rows)
-        cat(rows...; dims)
-    else
-        similar(da, (0, size(da, 2)))
-    end
+"""
+    dropna(da::DimArray, query)
+
+Remove slices containing NaN values along dimensions other than `query`.
+"""
+function dropna(da::DimArray, query)
+    valid_idx = .!vec(any(isnan, da; dims=otherdims(da, query)))
+    dim = dims(da, query)
+    selector = DimSelectors(dim[valid_idx])
+    da[selector]
 end
 
+dropna(da::DimArray; query=Ti) = dropna(da, query)
+
+"""Rectify the time step of a `DimArray` to be uniform."""
 function rectify_datetime(da; tol=2, kwargs...)
     times = dims(da, Ti)
     t0 = times[1]

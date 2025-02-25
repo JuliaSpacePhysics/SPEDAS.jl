@@ -34,6 +34,6 @@ interpolated = tinterp(time_series, new_times; interp=CubicSpline)
 ## Utilities
 
 ```@docs
-degap
+dropna
 rectify_datetime
 ```

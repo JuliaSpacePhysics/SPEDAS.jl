@@ -16,7 +16,7 @@ using InteractiveViz
 using DSP, SignalAnalysis
 
 export AbstractDataSet, DataSet
-export degap, rectify_datetime, resolution, samplingrate, smooth, tsplit
+export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
 export timeshift, tnorm, tmean, tstack, tinterp
 export tplot!, tplot, tplot_panel, tplot_panel!
