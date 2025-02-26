@@ -1,0 +1,99 @@
+meta(ta) = Dict()
+
+Unitful.unit(ta::AbstractDimArray{Q}) where {Q} = unit(Q)
+format_unit(u::Unitful.Units) = string(u)
+format_unit(ta) = ""
+format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
+format_unit(ta::AbstractDimArray{Q}) where {Q<:Real} = prioritized_get(ta, unit_sources, "")
+
+title(ta) = get(meta(ta), "CATDESC", "")
+
+"""Format datetime ticks with time on top and date on bottom."""
+format_datetime(dt) = Dates.format(dt, "HH:MM:SS\nyyyy-mm-dd")
+
+function colorrange(da::AbstractDimArray; scale=10)
+    cmid = median(da)
+    cmax = cmid * scale
+    cmin = cmid / scale
+    return (cmin, cmax)
+end
+
+label_func(labels) = latexify.(labels)
+
+axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
+"""Axis attributes for a time array"""
+function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) where {Q}
+    attrs = Attributes(; kwargs...)
+    Q <: Quantity && !isspectrogram(ta) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
+    s = yscale(ta)
+    xl = xlabel(ta)
+    yl = ylabel(ta)
+    isnothing(s) || (attrs[:yscale] = s)
+    isempty(yl) || (attrs[:ylabel] = yl)
+    isempty(xl) || (attrs[:xlabel] = xl)
+    add_title && (attrs[:title] = title(ta))
+    attrs
+end
+
+"""Set an attribute if all values are equal"""
+function set_if_equal!(attrs, key, values; default=first(values))
+    val = allequal(values) ? default : nothing
+    isnothing(val) || (attrs[key] = val)
+end
+
+function axis_attributes(tas::AbstractVector; add_title=false, kwargs...)
+    attrs = Attributes(; kwargs...)
+
+    # Handle units
+    uts = unit.(tas)
+    if allequal(uts)
+        attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false)
+        # Use unit as ylabel if no common ylabel exists
+        yls = ylabel.(tas)
+        attrs[:ylabel] = allequal(yls) ? yls[1] : format_unit(uts[1])
+    end
+
+    # Set common attributes
+    set_if_equal!(attrs, :xlabel, xlabel.(tas))
+    set_if_equal!(attrs, :yscale, scale.(tas))
+    add_title && set_if_equal!(attrs, :title, title.(tas))
+
+    attrs
+end
+
+function heatmap_attributes(ta; kwargs...)
+    attrs = Attributes(; kwargs...)
+    s = scale(ta)
+    m = meta(ta)
+    cr = get(m, :colorrange, nothing)
+    isnothing(s) || (attrs[:colorscale] = s)
+    isnothing(cr) || (attrs[:colorrange] = cr)
+    attrs
+end
+
+"""Plot attributes for a time array (axis + labels)"""
+function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
+    attrs = Attributes()
+    attrs[:axis] = axis_attributes(ta; add_title, axis...)
+
+    # handle spectrogram
+    if !isspectrogram(ta)
+        if ndims(ta) == 2
+            attrs[:labels] = labels(ta)
+        else
+            attrs[:label] = label(ta)
+        end
+    else
+        merge!(attrs, heatmap_attributes(ta))
+    end
+    attrs
+end
+
+plot_attributes(ta; add_title=false) = Attributes(; axis=axis_attributes(ta; add_title))
+plot_attributes(f::Function, args...; kwargs...) = plot_attributes(f(args...); kwargs...)
+
+axes(ta) = ta.metadata["axes"]
+
+# TODO: implement tspan!
+function tspan! end
+# tspan!(ax, tmin, tmax; alpha=0.618, linestyle=:dash, kwargs...) = vspan!(ax, ([tmin]), ([tmax]); alpha, linestyle, kwargs...)
