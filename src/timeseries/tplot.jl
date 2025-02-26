@@ -62,7 +62,7 @@ tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
 function tplot! end
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; add_title=false, kwargs...)
+function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta, args...; kwargs...)
@@ -77,7 +77,7 @@ tplot_panel(gd, ds::AbstractDimStack; kwargs...) = tplot_panel(gd, layers(ds); k
 
 Plot a multivariate time series / spectrogram on a panel
 """
-function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=false, kwargs...)
+function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(ta; add_title)...)
     plots = tplot_panel!(ax, ta; kwargs...)
     pos = gp[1, 2]
@@ -91,7 +91,7 @@ end
 Plot a univariate time series on a panel.
 Only add legend when the axis contains multiple labels.
 """
-function tplot_panel(gp, ta::AbstractDimVector; add_title=false, kwargs...)
+function tplot_panel(gp, ta::AbstractDimVector; add_title=DEFAULTS.add_title, kwargs...)
     lines(gp, ta; plot_attributes(ta; add_title)..., kwargs...)
 end
 
@@ -120,7 +120,7 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 """
     Interactive tplot of a function over a time range
 """
-function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; add_title=false, add_colorbar=true, xtickformat=format_datetime, kwargs...)
+function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; add_title=DEFAULTS.add_title, add_colorbar=true, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = plot_attributes(ta; add_title)
