@@ -1,7 +1,3 @@
-function tnorm(da)
-    norm.(eachrow(da))
-end
-
 function timeshift(ta; dim=1, t0=nothing)
     td = dims(ta, dim)
     times = td.val.data

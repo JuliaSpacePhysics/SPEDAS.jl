@@ -29,7 +29,6 @@ function clabel(ta::AbstractDimArray)
 end
 
 label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
-labels(ta::AbstractDimMatrix) = string.(dims(ta, 2).val)
 
 title(ta) = get(meta(ta), "CATDESC", "")
 
@@ -50,12 +49,10 @@ axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
 function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) where {Q}
     attrs = Attributes(; kwargs...)
     Q <: Quantity && !isspectrogram(ta) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
-    s = scale(ta)
+    s = yscale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
-    if !isspectrogram(ta)
-        isnothing(s) || (attrs[:yscale] = s)
-    end
+    isnothing(s) || (attrs[:yscale] = s)
     isempty(yl) || (attrs[:ylabel] = yl)
     isempty(xl) || (attrs[:xlabel] = xl)
     add_title && (attrs[:title] = title(ta))
@@ -93,7 +90,10 @@ end
 function heatmap_attributes(ta; kwargs...)
     attrs = Attributes(; kwargs...)
     s = scale(ta)
+    m = meta(ta)
+    cr = get(m, :colorrange, nothing)
     isnothing(s) || (attrs[:colorscale] = s)
+    isnothing(cr) || (attrs[:colorrange] = cr)
     attrs
 end
 
@@ -138,9 +138,9 @@ end
 scale(f::Function) = f
 scale(::Nothing) = nothing
 
-function scale(x)
+function scale(x; sources=scale_sources)
     m = meta(x)
-    isnothing(m) ? nothing : scale(prioritized_get(m, scale_sources, nothing))
+    isnothing(m) ? nothing : scale(prioritized_get(m, sources, nothing))
 end
 
 axes(ta) = ta.metadata["axes"]

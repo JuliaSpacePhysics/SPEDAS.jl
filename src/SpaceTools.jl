@@ -14,11 +14,13 @@ using Latexify, UnitfulLatexify
 using RollingWindowArrays
 using InteractiveViz
 using DSP, SignalAnalysis
+using InverseFunctions
 
 export AbstractDataSet, DataSet
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
-export timeshift, tnorm, tmean, tstack, tinterp
+export timeshift, tnorm, tmean, tcross, tdot
+export tstack, tinterp
 export tplot!, tplot, tplot_panel, tplot_panel!
 export tsheat, tlims!, tlines!, add_labels!
 export ylabel, plot_attributes
@@ -43,10 +45,12 @@ include("timeseries.jl")
 include("timeseries/tplot.jl")
 include("timeseries/interactive.jl")
 include("timeseries/spectrum.jl")
+include("timeseries/methods.jl")
 include("utils.jl")
 include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
 include("resampling/interp.jl")
+include("meta.jl")
 include("plot.jl")
 include("cotrans/coordinate.jl")
 include("cotrans/rotate.jl")
