@@ -30,7 +30,7 @@ TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
 
 [extensions]
 HAPIClientExt = "HAPIClient"
-SpeasyExt = "Speasy"
+SpaceToolsSpeasyExt = "Speasy"
 TimeSeriesExt = "TimeSeries"
 
 [compat]
