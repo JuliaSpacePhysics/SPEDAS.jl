@@ -13,3 +13,9 @@ A global constant that holds default parameters:
 const DEFAULTS = Defaults(
     add_title=false
 )
+
+struct SpeasyProduct
+    id::String
+end
+
+transform_speasy(x) = x isa String ? SpeasyProduct(x) : x

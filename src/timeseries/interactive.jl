@@ -66,9 +66,8 @@ end
 flatten(x) = collect(Iterators.flatten(x))
 sample(tas, trange, args...; kwargs...) = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
 
-function iviz_api(tas, t0, t1, args...; delay=0.25, kwargs...)
+function iviz_api!(ax::Axis, tas, t0, t1, args...; delay=0.25, kwargs...)
     specs = Observable(sample(tas, (t0, t1), args...; kwargs...))
-    ax = current_axis()
     plotlist!(ax, specs)
     reset_limits!(ax)
 
@@ -87,3 +86,5 @@ function iviz_api(tas, t0, t1, args...; delay=0.25, kwargs...)
     end
     return specs[]
 end
+
+iviz_api(tas, args...; kwargs...) = iviz_api!(current_axis(), tas, args...; kwargs...)

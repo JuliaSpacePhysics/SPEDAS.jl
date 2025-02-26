@@ -19,37 +19,33 @@ struct FigureAxes
     axes::AbstractArray{<:Axis}
 end
 
-struct AxisPlots
-    axis
-    plots
-end
-
 const Drawable = Union{Figure,GridPosition,GridSubposition}
 const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
 
 """
-    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, rowgap=5, kwargs...)
+    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_speasy, kwargs...)
 
 Lay out multiple time series across different panels (rows) on one Figure / GridPosition `f`
 
 If `legend` is `nothing`, no legend will be added to the plot. Otherwise, `legend` can be a `NamedTuple` containing options for legend placement and styling.
+By default, the time series are transformed by `transform_speasy` which converts strings to `SpeasyProduct`.
 """
-function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, kwargs...)
+function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_speasy, kwargs...)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
-        ap = tplot_panel(gp, ta, args...; kwargs...)
+        pap = tplot_panel(gp, transform.(ta), args...; kwargs...)
         # Hide redundant x labels
-        link_xaxes && pos[1] != length(tas) && hidexdecorations!(ap.axis, grid=false)
-        (gp, ap)
+        link_xaxes && pos[1] != length(tas) && hidexdecorations!.(pap.axis, grid=false)
+        pap
     end
-    axs = map(gap -> gap[2].axis, gaps)
-    gps = map(gap -> gap[1], gaps)
+    axs = reduce(vcat, getproperty.(gaps, :axis))
+    gps = getproperty.(gaps, :pos)
 
     link_xaxes && linkxaxes!(axs...)
     link_yaxes && linkyaxes!(axs...)
 
-    !isnothing(legend) && add_legend!.(gps, axs; legend...)
+    !isnothing(legend) && add_legend!.(gaps; legend...)
 
     !isnothing(rowgap) && rowgap!(f.layout, rowgap)
     FigureAxes(f, axs)
@@ -67,7 +63,51 @@ function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; a
     plots = map(tas) do ta
         tplot_panel!(ax, ta, args...; kwargs...)
     end
-    AxisPlots(ax, plots)
+    PanelAxesPlots(gp, AxisPlots(ax, plots))
+end
+
+"""
+    tplot_panel(gp, tas::AbstractMatrix, args...; kwargs...)
+
+For a matrix input with dimensions n×2, the first column is plotted against the left y-axis
+and the second column against the right y-axis.
+"""
+function tplot_panel(gp, tas::AbstractMatrix, args...; kwargs...)
+    tplot_panel(gp, collect(eachcol(tas))..., args...; kwargs...)
+end
+
+
+"Setup the panel with both primary and secondary y-axes"
+function tplot_panel(gp,
+    ax1tas::Union{AbstractVector,NamedTuple,Tuple},
+    ax2tas::Union{AbstractVector,NamedTuple,Tuple}, args...;
+    color2=Makie.wong_colors()[6],
+    add_title=DEFAULTS.add_title, kwargs...
+)
+    # Primary axis
+    ax1 = Axis(gp; axis_attributes(ax1tas, args...; add_title)...)
+    plots1 = map(ax1tas) do ta
+        tplot_panel!(ax1, ta, args...; kwargs...)
+    end
+
+    # Secondary axis
+    ax2attrs = axis_attributes(ax2tas, args...; add_title=false)
+    ax2 = Axis(gp;
+        yaxisposition=:right,
+        yticklabelcolor=color2,
+        ylabelcolor=color2,
+        rightspinecolor=color2,
+        ytickcolor=color2,
+        ax2attrs...
+    )
+    hidespines!(ax2)
+    hidexdecorations!(ax2)
+
+    plots2 = map(ax2tas) do ta
+        tplot_panel!(ax2, ta, args...; color=color2, kwargs...)
+    end
+
+    return PanelAxesPlots(gp, [AxisPlots(ax1, plots1), AxisPlots(ax2, plots2)])
 end
 
 tplot_panel(gd, ds::AbstractDimStack; kwargs...) = tplot_panel(gd, layers(ds); kwargs...)
@@ -82,7 +122,7 @@ function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=DEF
     plots = tplot_panel!(ax, ta; kwargs...)
     pos = gp[1, 2]
     add_colorbar && isspectrogram(ta) && Colorbar(pos, plots; label=clabel(ta))
-    AxisPlots(ax, plots)
+    PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
 
 """
@@ -142,14 +182,18 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; add_title=
     fapex = iviz(plot_func, data)
     isspectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
     fapex
+    PanelAxesPlots(gp, AxisPlots(fapex.axis, fapex.plot))
 end
 
 function tplot_panel(gp, fs::AbstractVector, tmin::DateTime, tmax::DateTime; axis=(;), add_title=false, kwargs...)
     tas = get_data.(fs, tmin, tmax; kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
-    plots = iviz_api(fs, tmin, tmax; kwargs...)
-    return AxisPlots(ax, plots)
+    plots = iviz_api!(ax, fs, tmin, tmax; kwargs...)
+    return PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
+
+tplot_panel!(ax, fs::AbstractVector, tmin::DateTime, tmax::DateTime; kwargs...) =
+    iviz_api!(ax, fs, tmin, tmax; kwargs...)
 
 function tplot_spec(da::AbstractDimMatrix; labels=labels(da), samples=10000, kwargs...)
     x = dims(da, Ti).val
@@ -180,9 +224,9 @@ Extension interface for plotting custom data types. To support a new data type:
 1. Define a method for `get_data(ta, args...; kwargs...)` that converts your type to a DimensionalData array
 2. Optionally include metadata for labels, units, and other plotting attributes
 """
-tplot_panel(gp, ta, args...; kwargs...) = tplot_panel(gp, get_data(ta, args...); kwargs...)
+# tplot_panel(gp, ta, args...; kwargs...) = tplot_panel(gp, get_data(ta, args...); kwargs...)
 
-function tplot_panel(gp, ta, tmin::DateTime, tmax::DateTime; kwargs...)
+function tplot_panel(gp, ta, tmin, tmax; kwargs...)
     f = (args...) -> get_data(ta, args...)
     tplot_panel(gp, f, tmin, tmax; kwargs...)
 end

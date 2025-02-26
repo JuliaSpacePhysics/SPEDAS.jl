@@ -15,11 +15,11 @@ xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
 
 ylabel(ta) = ""
-function ylabel(da::AbstractDimArray)
+function ylabel(da::AbstractDimArray; multiline=true)
     default_name = isspectrogram(da) ? DD.label(dims(da, 2)) : DD.label(da)
     name = prioritized_get(da, ylabel_sources, default_name)
     units = isspectrogram(da) ? prioritized_get(da, yunit_sources, "") : format_unit(da)
-    units == "" ? name : "$name ($units)"
+    units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
 end
 
 function clabel(ta::AbstractDimArray)
@@ -127,6 +127,13 @@ function add_legend!(gp, ax; min=2, position=Right(), kwargs...)
     Legend(gp[1, 1, position], ax; kwargs...)
 end
 
+
+# TODO: support legend merge for secondary axes
+function add_legend!(p::PanelAxesPlots; kwargs...)
+    ax = p.axisPlots[1].axis
+    add_legend!(p.pos, ax; kwargs...)
+end
+
 function scale(x::String)
     if x == "linear"
         identity
@@ -157,6 +164,10 @@ tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
 """Add vertical lines to a plot"""
 tlines!(ax, time; kwargs...) = vlines!(ax, t2x.(time); kwargs...)
 tlines!(time; kwargs...) = tlines!(current_axis(), time; kwargs...)
+
+# TODO: implement tspan!
+function tspan! end
+# tspan!(ax, tmin, tmax; alpha=0.618, linestyle=:dash, kwargs...) = vspan!(ax, ([tmin]), ([tmax]); alpha, linestyle, kwargs...)
 
 """
 Add labels to a grid of layouts
