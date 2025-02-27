@@ -3,6 +3,7 @@
 ## Get data with Speasy
 
 ```@example share
+using Speasy: get_data
 using SpaceTools
 
 # da = get_data("amda/imf", "2016-6-2", "2016-6-5")
