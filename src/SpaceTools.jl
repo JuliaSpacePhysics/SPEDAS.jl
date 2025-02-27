@@ -1,6 +1,5 @@
 module SpaceTools
 
-using Speasy
 using Dates
 using DimensionalData
 using DimensionalData.Dimensions
