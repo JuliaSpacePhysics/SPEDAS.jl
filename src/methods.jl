@@ -21,7 +21,7 @@ function spectrogram_y_values(ta; check=false, center=false, transform=yscale(ta
             if check
                 all(allequal, eachcol(values)) || @warn "Spectrogram y-axis values are not constant along time"
             end
-            mean(values, dims=2)
+            vec(mean(values; dims=1))
         end
     else
         dims(ta, 2).val
