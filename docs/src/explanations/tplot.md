@@ -32,6 +32,22 @@ This approach enables efficient interactive exploration of time series.
     
     For real-time interactivity, consider using the `GLMakie` backend instead of `CairoMakie` although it is possible to use `tlims!` or `xlims!` to update the plot dynamically.
 
+## Data Transformation
+
+Before plotting, data goes through a transformation pipeline to ensure it's in a plottable format (e.g., `DimArray`).
+
+```@docs
+SpaceTools.transform_pipeline
+SpaceTools.transform
+```
+
+You can extend the transformation system by defining methods for your types:
+
+```julia
+# Convert MyType to DimArray for plotting
+transform(x::MyType) = DimArray(x.data)
+```
+
 ## Related packages
 
 - [PyTplot](https://pyspedas.readthedocs.io/en/latest/pytplot.html)
