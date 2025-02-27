@@ -71,10 +71,21 @@ function iviz_api!(ax::Axis, tas, t0, t1, args...; delay=0.25, kwargs...)
     plotlist!(ax, specs)
     reset_limits!(ax)
 
+    # Keep track of the previous range
+    prev_range = Observable((t0, t1))
+
     function update(lims)
         xrange = (lims.origin[1], lims.origin[1] + lims.widths[1])
         trange = x2t.(xrange)
-        specs[] = sample(tas, trange, args...; kwargs...)
+
+        # Update if new range extends beyond previously loaded range
+        prev_tmin, prev_tmax = prev_range[]
+        needs_update = trange[1] < prev_tmin || trange[2] > prev_tmax
+
+        if needs_update
+            specs[] = sample(tas, trange, args...; kwargs...)
+            prev_range[] = trange
+        end
     end
 
     axislimits = ax.finallimits
