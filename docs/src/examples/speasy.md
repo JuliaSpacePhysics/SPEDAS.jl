@@ -6,7 +6,7 @@ Visualize multiple time series in a customized layout.
 
 ```@example speasy
 using Speasy
-spz = speasy()
+spz = speasy
 
 using CairoMakie
 using DimensionalData

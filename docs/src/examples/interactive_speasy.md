@@ -4,11 +4,8 @@
 ## tplot with Speasy product ID strings
 
 ```@example interactive_speasy
-using Speasy
-spz = speasy()
-
-using Dates
 using SpaceTools
+using Dates
 using CairoMakie
 
 t0 = DateTime("2008-09-05T10:00:00")
