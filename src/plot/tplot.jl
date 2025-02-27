@@ -17,14 +17,16 @@ const Drawable = Union{Figure,GridPosition,GridSubposition}
 const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
 
 """
-    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_data, kwargs...)
+    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, kwargs...)
 
 Lay out multiple time series across different panels (rows) on one Figure / GridPosition `f`
 
 If `legend` is `nothing`, no legend will be added to the plot. Otherwise, `legend` can be a `NamedTuple` containing options for legend placement and styling.
-By default, the time series are transformed by `transform_data`.
+By default, the time series are transformed via `transform_pipeline`, which is extensible via `transform`.
+
+See also: [`tplot_panel`](@ref), [`transform_pipeline`](@ref), [`transform`](@ref)
 """
-function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_data, kwargs...)
+function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, kwargs...)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
@@ -132,31 +134,37 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; add_title=DEFAULTS.add_title, add_colorbar=true, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
-    attrs = plot_attributes(ta; add_title)
+    attrs = axis_attributes(ta; add_title, xtickformat=values -> xtickformat.(x2t.(values)))
+    ax = Axis(gp; attrs...)
+    plot = tplot_panel!(ax, f, tmin, tmax; kwargs...)
+    isspectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], plot; label=clabel(ta))
+    PanelAxesPlots(gp, AxisPlots(ax, plot))
+end
+
+"""
+    Interactive tplot of a function over a time range
+"""
+function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; add_colorbar=true, xtickformat=format_datetime, kwargs...)
+    # get a sample data to determine the attributes and plot types
+    ta = f(tmin, tmax)
+    attrs = plottype_attributes(ta)
 
     # Manually converting from time to float is needed for interactive plotting since ax.finallimits[] is represented as float
     # https://github.com/MakieOrg/Makie.jl/issues/4769
     xmin, xmax = t2x.((tmin, tmax))
-    attrs.axis.xtickformat = values -> xtickformat.(x2t.(values))
-
     if isspectrogram(ta)
         y = spectrogram_y_values(ta)
-        plot_func = (x, mat) -> heatmap(gp, x, y, mat; attrs..., kwargs...)
+        plot_func = (x, mat) -> heatmap!(ax, x, y, mat; attrs..., kwargs...)
     else
-        plot_type = ndims(ta) == 2 ? series : lines
-        plot_func = (xs, vs) -> plot_type(gp, xs, vs; attrs..., kwargs...)
+        plot_type = ndims(ta) == 2 ? series! : lines!
+        plot_func = (xs, vs) -> plot_type(ax, xs, vs; attrs..., kwargs...)
     end
-
     data = RangeFunction1D(time2value_transform(f), xmin, xmax)
-    fapex = iviz(plot_func, data)
-    isspectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], fapex.fap.plot; label=clabel(ta))
-    fapex
-    PanelAxesPlots(gp, AxisPlots(fapex.axis, fapex.plot))
+    iviz(plot_func, data)
 end
 
 function tplot_panel(gp, fs::AbstractVector, tmin::DateTime, tmax::DateTime; axis=(;), add_title=false, kwargs...)
-    tas = get_data.(fs, tmin, tmax; kwargs...)
-    ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
+    ax = Axis(gp; axis_attributes(fs, tmin, tmax; add_title)..., axis...)
     plots = iviz_api!(ax, fs, tmin, tmax; kwargs...)
     return PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
@@ -189,23 +197,13 @@ end
 """
     tplot_panel(gp, ta, args...; kwargs...)
 
-Extension interface for plotting custom data types. To support a new data type:
-1. Define a method for `get_data(ta, args...; kwargs...)` that converts your type to a DimensionalData array
-2. Optionally include metadata for labels, units, and other plotting attributes
+Extension interface for interactively plotting custom data types. 
+To support a new data type, define a method for `get_data(ta, args...; kwargs...)` that converts your type to a DimensionalData array
 """
-tplot_panel(gp, ta, args...; kwargs...) = tplot_panel(gp, get_data(ta, args...); kwargs...)
-
 function tplot_panel(gp, ta, tmin, tmax; kwargs...)
     f = (args...) -> get_data(ta, args...)
     tplot_panel(gp, f, tmin, tmax; kwargs...)
 end
-
-"""
-    tplot_panel!(ax, ta, args...; kwargs...)
-
-Extension interface for plotting custom data types. See `tplot_panel` for more details.
-"""
-tplot_panel!(ax, ta, args...; kwargs...) = tplot_panel!(ax, get_data(ta, args...); kwargs...)
 
 tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
 

@@ -1,20 +1,20 @@
 """
-    transform_data(x)
+    transform_pipeline(x)
 
 Transform data for plotting with the following pipeline:
-1. Custom transformations (`_transform(x)`)
+1. Custom transformations (`transform(x)`)
 2. String -> `SpeasyProduct`
 3. 2-column matrix -> `DualAxisData`
 
-Define methods for `_transform(x::MyType)` to add custom transformations.
+Define methods for `transform(x::MyType)` to add custom transformations.
 """
-transform_data(x) = x |> _transform |> _transform_speasy |> _transform_matrix
+transform_pipeline(x) = x |> transform |> transform_speasy |> transform_matrix
 
-_transform(x) = x
-_transform_speasy(x::Union{String,AbstractArray{String}}) = SpeasyProduct.(x)
-_transform_speasy(x) = x
-_transform_matrix(x::AbstractMatrix) = size(x, 2) == 2 ? DualAxisData(view(x, :, 1), view(x, :, 2)) : x
-_transform_matrix(x) = x
+transform(x) = x
+transform_speasy(x::Union{String,AbstractArray{String}}) = SpeasyProduct.(x)
+transform_speasy(x) = x
+transform_matrix(x::AbstractMatrix) = size(x, 2) == 2 ? DualAxisData(view(x, :, 1), view(x, :, 2)) : x
+transform_matrix(x) = x
 
 "Create and configure a secondary y-axis"
 function make_secondary_axis!(gp; color=Makie.wong_colors()[6], kwargs...)
