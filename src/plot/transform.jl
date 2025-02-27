@@ -17,9 +17,8 @@ Transform data into plottable format (e.g., `DimArray`).
 
 Extend with `transform(x::MyType)` for custom types.
 """
-function transform end
-
 transform(x) = x
+
 transform_speasy(x::Union{String,AbstractArray{String}}) = SpeasyProduct.(x)
 transform_speasy(x) = x
 transform_matrix(x::AbstractMatrix) = size(x, 2) == 2 ? DualAxisData(view(x, :, 1), view(x, :, 2)) : x

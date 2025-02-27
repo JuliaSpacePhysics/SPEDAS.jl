@@ -4,6 +4,7 @@
 ## tplot with Speasy product ID strings
 
 ```@example interactive_speasy
+using Speasy
 using SpaceTools
 using Dates
 using CairoMakie
