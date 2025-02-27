@@ -71,11 +71,9 @@ function heatmap_attributes(ta; kwargs...)
     attrs
 end
 
-"""Plot attributes for a time array (axis + labels)"""
-function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
+"""Plot attributes for a time array (labels)"""
+function plottype_attributes(ta::AbstractDimArray)
     attrs = Attributes()
-    attrs[:axis] = axis_attributes(ta; add_title, axis...)
-
     # handle spectrogram
     if !isspectrogram(ta)
         if ndims(ta) == 2
@@ -86,6 +84,13 @@ function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
     else
         merge!(attrs, heatmap_attributes(ta))
     end
+    attrs
+end
+
+"""Plot attributes for a time array (axis + labels)"""
+function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
+    attrs = plottype_attributes(ta)
+    attrs[:axis] = axis_attributes(ta; add_title, axis...)
     attrs
 end
 
