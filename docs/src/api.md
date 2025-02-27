@@ -3,6 +3,9 @@
 ```@index
 Pages = ["api.md]
 ```
+```@docs
+SpaceTools.DEFAULTS
+```
 
 ```@autodocs
 Modules = [SpaceTools]
