@@ -17,18 +17,18 @@ const Drawable = Union{Figure,GridPosition,GridSubposition}
 const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
 
 """
-    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_speasy, kwargs...)
+    tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_data, kwargs...)
 
 Lay out multiple time series across different panels (rows) on one Figure / GridPosition `f`
 
 If `legend` is `nothing`, no legend will be added to the plot. Otherwise, `legend` can be a `NamedTuple` containing options for legend placement and styling.
-By default, the time series are transformed by `transform_speasy` which converts strings to `SpeasyProduct`.
+By default, the time series are transformed by `transform_data`.
 """
-function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_speasy, kwargs...)
+function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_data, kwargs...)
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
-        pap = tplot_panel(gp, transform.(ta), args...; kwargs...)
+        pap = tplot_panel(gp, transform(ta), args...; kwargs...)
         # Hide redundant x labels
         link_xaxes && pos[1] != length(tas) && hidexdecorations!.(pap.axis, grid=false)
         pap
@@ -60,16 +60,7 @@ function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; a
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
 
-"""
-    tplot_panel(gp, tas::AbstractMatrix, args...; kwargs...)
-
-For a matrix input with dimensions n×2, the first column is plotted against the left y-axis
-and the second column against the right y-axis.
-"""
-function tplot_panel(gp, tas::AbstractMatrix, args...; kwargs...)
-    tplot_panel(gp, collect(eachcol(tas))..., args...; kwargs...)
-end
-
+tplot_panel(gp, ta::DualAxisData, args...; kwargs...) = tplot_panel(gp, ta.data1, ta.data2, args...; kwargs...)
 
 "Setup the panel with both primary and secondary y-axes"
 function tplot_panel(gp,
@@ -202,7 +193,7 @@ Extension interface for plotting custom data types. To support a new data type:
 1. Define a method for `get_data(ta, args...; kwargs...)` that converts your type to a DimensionalData array
 2. Optionally include metadata for labels, units, and other plotting attributes
 """
-# tplot_panel(gp, ta, args...; kwargs...) = tplot_panel(gp, get_data(ta, args...); kwargs...)
+tplot_panel(gp, ta, args...; kwargs...) = tplot_panel(gp, get_data(ta, args...); kwargs...)
 
 function tplot_panel(gp, ta, tmin, tmax; kwargs...)
     f = (args...) -> get_data(ta, args...)

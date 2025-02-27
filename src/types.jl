@@ -1,4 +1,3 @@
-
 @kwdef mutable struct Defaults
     add_title::Bool = false
 end
@@ -17,5 +16,3 @@ const DEFAULTS = Defaults(
 struct SpeasyProduct
     id::String
 end
-
-transform_speasy(x) = x isa String ? SpeasyProduct(x) : x

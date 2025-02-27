@@ -16,6 +16,25 @@ end
 
 PanelAxesPlots(pos, ap::AxisPlots) = PanelAxesPlots(pos, [ap])
 
+"""
+    DualAxisData(data1, data2; meta=nothing)
+
+A type for handling dual-axis data where each field represents data for a different axis.
+The first field is plotted against the left y-axis and the second field against the right y-axis.
+
+# Fields
+- `data1`: Data for the left y-axis
+- `data2`: Data for the right y-axis
+- `metadata`: Metadata for the data (e.g., title)
+"""
+struct DualAxisData{T1,T2,M}
+    data1::T1
+    data2::T2
+    metadata::M
+end
+
+DualAxisData(data1, data2) = DualAxisData(data1, data2, nothing)
+
 function Base.getproperty(obj::PanelAxesPlots, sym::Symbol)
     sym in fieldnames(PanelAxesPlots) && return getfield(obj, sym)
     getproperty.(obj.axisPlots, sym)
