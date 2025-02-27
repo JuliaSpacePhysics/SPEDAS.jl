@@ -13,7 +13,6 @@ end
 
 time2value_transform(f) = (xrange) -> time2value_transform(xrange, f)
 
-const Drawable = Union{Figure,GridPosition,GridSubposition}
 const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
 
 """
@@ -54,7 +53,7 @@ tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
 function tplot! end
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
+function tplot_panel(gp, tas::MultiPlottable, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta, args...; kwargs...)
@@ -66,8 +65,8 @@ tplot_panel(gp, ta::DualAxisData, args...; kwargs...) = tplot_panel(gp, ta.data1
 
 "Setup the panel with both primary and secondary y-axes"
 function tplot_panel(gp,
-    ax1tas::Union{AbstractVector,NamedTuple,Tuple},
-    ax2tas::Union{AbstractVector,NamedTuple,Tuple}, args...;
+    ax1tas::MultiPlottable,
+    ax2tas::MultiPlottable, args...;
     color2=Makie.wong_colors()[6],
     axis=(;),
     add_title=DEFAULTS.add_title, kwargs...
@@ -89,8 +88,8 @@ tplot_panel(gd, ds::AbstractDimStack; kwargs...) = tplot_panel(gd, layers(ds); k
 
 Plot a multivariate time series / spectrogram on a panel
 """
-function tplot_panel(gp, ta::AbstractDimMatrix; add_colorbar=true, add_title=DEFAULTS.add_title, kwargs...)
-    ax = Axis(gp; axis_attributes(ta; add_title)...)
+function tplot_panel(gp, ta::AbstractDimMatrix; axis=(;), add_colorbar=true, add_title=DEFAULTS.add_title, kwargs...)
+    ax = Axis(gp; axis_attributes(ta; add_title)..., axis...)
     plots = tplot_panel!(ax, ta; kwargs...)
     pos = gp[1, 2]
     add_colorbar && isspectrogram(ta) && Colorbar(pos, plots; label=clabel(ta))
@@ -103,8 +102,8 @@ end
 Plot a univariate time series on a panel.
 Only add legend when the axis contains multiple labels.
 """
-function tplot_panel(gp, ta::AbstractDimVector; add_title=DEFAULTS.add_title, kwargs...)
-    lines(gp, ta; plot_attributes(ta; add_title)..., kwargs...)
+function tplot_panel(gp, ta::AbstractDimVector; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
+    lines(gp, ta; plot_attributes(ta; add_title)..., axis..., kwargs...)
 end
 
 tplot_panel(gp, ta::DD.AbstractDimVector{<:AbstractVector}; kwargs...) = tplot_panel(gp, tstack(ta); kwargs...)
@@ -114,6 +113,7 @@ Plot heatmap / overlay multiple columns of a time series on the same axis
 """
 function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; labels=labels(ta), kwargs...)
     x = dims(ta, Ti).val
+
     if !isspectrogram(ta)
         map(eachcol(ta.data), labels) do y, label
             lines!(ax, x, y; label, kwargs...)

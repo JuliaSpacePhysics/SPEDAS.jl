@@ -35,13 +35,13 @@ function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) wh
     attrs
 end
 
-"""Set an attribute if all values are equal"""
-function set_if_equal!(attrs, key, values; default=first(values))
-    val = allequal(values) ? default : nothing
-    isnothing(val) || (attrs[key] = val)
+"""Set an attribute if all values are equal and non-empty"""
+function set_if_equal!(attrs, key, values; default=nothing)
+    val = allequal(values) ? first(values) : default
+    isnothing(val) || val == "" || (attrs[key] = val)
 end
 
-function axis_attributes(tas::AbstractVector; add_title=false, kwargs...)
+function axis_attributes(tas::Union{AbstractVector,Tuple}; add_title=false, kwargs...)
     attrs = Attributes(; kwargs...)
 
     # Handle units
@@ -49,8 +49,7 @@ function axis_attributes(tas::AbstractVector; add_title=false, kwargs...)
     if allequal(uts)
         attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false)
         # Use unit as ylabel if no common ylabel exists
-        yls = ylabel.(tas)
-        attrs[:ylabel] = allequal(yls) ? yls[1] : format_unit(uts[1])
+        set_if_equal!(attrs, :ylabel, ylabel.(tas); default=format_unit(uts[1]))
     end
 
     # Set common attributes

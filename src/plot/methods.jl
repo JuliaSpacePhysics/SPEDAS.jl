@@ -12,6 +12,7 @@ transform_pipeline(x) = x |> transform |> transform_speasy |> transform_matrix
 
 transform(x) = x
 transform(p::SpeasyVariable; kwargs...) = DimArray(p; kwargs...)
+transform(p::AbstractArray{SpeasyVariable}; kwargs...) = DimArray.(p; kwargs...)
 transform_speasy(x::Union{String,AbstractArray{String}}) = SpeasyProduct.(x)
 transform_speasy(x) = x
 transform_matrix(x::AbstractMatrix) = size(x, 2) == 2 ? DualAxisData(view(x, :, 1), view(x, :, 2)) : x
