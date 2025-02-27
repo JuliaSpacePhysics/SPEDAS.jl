@@ -1,9 +1,6 @@
-using Speasy
-speasy()
-
+using SpaceTools
 using Documenter
 using DocumenterCitations
-using SpaceTools
 # using DemoCards
 
 bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
