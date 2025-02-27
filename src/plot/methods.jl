@@ -11,10 +11,15 @@ Define methods for `transform(x::MyType)` to add custom transformations.
 transform_pipeline(x) = x |> transform |> transform_speasy |> transform_matrix
 
 transform(x) = x
+transform(p::SpeasyVariable; kwargs...) = DimArray(p; kwargs...)
 transform_speasy(x::Union{String,AbstractArray{String}}) = SpeasyProduct.(x)
 transform_speasy(x) = x
 transform_matrix(x::AbstractMatrix) = size(x, 2) == 2 ? DualAxisData(view(x, :, 1), view(x, :, 2)) : x
 transform_matrix(x) = x
+
+get_data(p::SpeasyProduct, args...; kwargs...) = transform(Speasy.get_data(p.id, args...; kwargs...))
+axis_attributes(sps::AbstractVector{SpeasyProduct}, tmin, tmax; kwargs...) =
+    axis_attributes(get_data.(sps, tmin, tmax); kwargs...)
 
 "Create and configure a secondary y-axis"
 function make_secondary_axis!(gp; color=Makie.wong_colors()[6], kwargs...)
