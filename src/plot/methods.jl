@@ -69,9 +69,7 @@ function add_labels!(; f=current_figure(), allowedblocks=Union{Axis,Axis3,PolarA
     axs = filter(x -> x isa allowedblocks, f.content)
     layouts = map(axs) do x
         b = x.layoutobservables.gridcontent[]
-        c = b.parent[b.span.rows, b.span.cols]
-        # p = x.layoutobservables.computedbbox[].origin .* [1, -1]
-        return c
+        b.parent[b.span.rows, b.span.cols]
     end
-    add_labels!(layouts; kwargs...)
+    add_labels!(unique(layouts); kwargs...)
 end
