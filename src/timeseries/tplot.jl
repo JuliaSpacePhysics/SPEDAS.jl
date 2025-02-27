@@ -13,12 +13,6 @@ end
 
 time2value_transform(f) = (xrange) -> time2value_transform(xrange, f)
 
-# https://github.com/MakieOrg/AlgebraOfGraphics.jl/blob/master/src/entries.jl
-struct FigureAxes
-    figure
-    axes::AbstractArray{<:Axis}
-end
-
 const Drawable = Union{Figure,GridPosition,GridSubposition}
 const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
 
@@ -86,27 +80,11 @@ function tplot_panel(gp,
 )
     # Primary axis
     ax1 = Axis(gp; axis_attributes(ax1tas, args...; add_title)...)
-    plots1 = map(ax1tas) do ta
-        tplot_panel!(ax1, ta, args...; kwargs...)
-    end
+    plots1 = tplot_panel!(ax1, ax1tas, args...; kwargs...)
 
     # Secondary axis
-    ax2attrs = axis_attributes(ax2tas, args...; add_title=false)
-    ax2 = Axis(gp;
-        yaxisposition=:right,
-        yticklabelcolor=color2,
-        ylabelcolor=color2,
-        rightspinecolor=color2,
-        ytickcolor=color2,
-        ax2attrs...
-    )
-    hidespines!(ax2)
-    hidexdecorations!(ax2)
-
-    plots2 = map(ax2tas) do ta
-        tplot_panel!(ax2, ta, args...; color=color2, kwargs...)
-    end
-
+    ax2 = make_secondary_axis!(gp; color=color2, axis_attributes(ax2tas, args...; add_title=false)...)
+    plots2 = tplot_panel!(ax2, ax2tas, args...; color=color2, kwargs...)
     return PanelAxesPlots(gp, [AxisPlots(ax1, plots1), AxisPlots(ax2, plots2)])
 end
 
@@ -232,11 +210,11 @@ function tplot_panel(gp, ta, tmin, tmax; kwargs...)
 end
 
 """
-    tplot_panel!(ax::Axis, ta, args...; kwargs...)
+    tplot_panel!(ax, ta, args...; kwargs...)
 
 Extension interface for plotting custom data types. See `tplot_panel` for more details.
 """
-tplot_panel!(ax::Axis, ta, args...; kwargs...) = tplot_panel!(ax, get_data(ta, args...); kwargs...)
+tplot_panel!(ax, ta, args...; kwargs...) = tplot_panel!(ax, get_data(ta, args...); kwargs...)
 
 tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
 
@@ -264,12 +242,3 @@ function tsheat(da::AbstractDimArray; colorscale=log10, colorrange=colorrange(da
 
     fig, ax, hm
 end
-
-Base.display(fg::FigureAxes) = display(fg.figure)
-Base.show(io::IO, fg::FigureAxes) = show(io, fg.figure)
-Base.show(io::IO, m::MIME, fg::FigureAxes) = show(io, m, fg.figure)
-Base.show(io::IO, ::MIME"text/plain", fg::FigureAxes) = print(io, "FigureAxes()")
-Base.showable(mime::MIME{M}, fg::FigureAxes) where {M} = showable(mime, fg.figure)
-
-Base.iterate(fg::FigureAxes) = iterate((fg.figure, fg.axes))
-Base.iterate(fg::FigureAxes, i) = iterate((fg.figure, fg.axes), i)
