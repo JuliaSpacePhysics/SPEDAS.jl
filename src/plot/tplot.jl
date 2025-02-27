@@ -30,14 +30,14 @@ function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxe
     palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
-        pap = tplot_panel(gp, transform(ta), args...; kwargs...)
+        axis = axis_attributes(ta; kwargs...)
+        pap = tplot_panel(gp, transform(ta), args...; axis, kwargs...)
         # Hide redundant x labels
         link_xaxes && pos[1] != length(tas) && hidexdecorations!.(pap.axis, grid=false)
         pap
     end
-    axs = reduce(vcat, getproperty.(gaps, :axis))
-    gps = getproperty.(gaps, :pos)
 
+    axs = reduce(vcat, getproperty.(gaps, :axis))
     link_xaxes && linkxaxes!(axs...)
     link_yaxes && linkyaxes!(axs...)
 
@@ -54,8 +54,8 @@ tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
 function tplot! end
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; add_title=DEFAULTS.add_title, kwargs...)
-    ax = Axis(gp; axis_attributes(tas; add_title)...)
+function tplot_panel(gp, tas::Union{AbstractVector,NamedTuple,Tuple}, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
+    ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta, args...; kwargs...)
     end
@@ -69,10 +69,11 @@ function tplot_panel(gp,
     ax1tas::Union{AbstractVector,NamedTuple,Tuple},
     ax2tas::Union{AbstractVector,NamedTuple,Tuple}, args...;
     color2=Makie.wong_colors()[6],
+    axis=(;),
     add_title=DEFAULTS.add_title, kwargs...
 )
     # Primary axis
-    ax1 = Axis(gp; axis_attributes(ax1tas, args...; add_title)...)
+    ax1 = Axis(gp; axis_attributes(ax1tas, args...; add_title)..., axis...)
     plots1 = tplot_panel!(ax1, ax1tas, args...; kwargs...)
 
     # Secondary axis
@@ -131,11 +132,11 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 """
     Interactive tplot of a function over a time range
 """
-function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; add_title=DEFAULTS.add_title, add_colorbar=true, xtickformat=format_datetime, kwargs...)
+function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=true, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = axis_attributes(ta; add_title, xtickformat=values -> xtickformat.(x2t.(values)))
-    ax = Axis(gp; attrs...)
+    ax = Axis(gp; attrs..., axis...)
     plot = tplot_panel!(ax, f, tmin, tmax; kwargs...)
     isspectrogram(ta) && add_colorbar && Colorbar(gp[1, 1, Right()], plot; label=clabel(ta))
     PanelAxesPlots(gp, AxisPlots(ax, plot))
@@ -144,7 +145,7 @@ end
 """
     Interactive tplot of a function over a time range
 """
-function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; add_colorbar=true, xtickformat=format_datetime, kwargs...)
+function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = plottype_attributes(ta)
@@ -200,9 +201,9 @@ end
 Extension interface for interactively plotting custom data types. 
 To support a new data type, define a method for `get_data(ta, args...; kwargs...)` that converts your type to a DimensionalData array
 """
-function tplot_panel(gp, ta, tmin, tmax; kwargs...)
+function tplot_panel(gp, ta, tmin, tmax; axis=(;), kwargs...)
     f = (args...) -> get_data(ta, args...)
-    tplot_panel(gp, f, tmin, tmax; kwargs...)
+    tplot_panel(gp, f, tmin, tmax; axis, kwargs...)
 end
 
 tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
