@@ -98,6 +98,7 @@ tplot_panel!(ax::Axis, vs::AbstractVector{<:SupportTypes}; kwargs...) =
 Plot heatmap / overlay multiple columns of a time series on the same axis
 """
 function tplot_panel!(ax::Axis, ta::AbstractDimMatrix; labels=labels(ta), kwargs...)
+    ta = resample(ta)
     x = dims(ta, Ti).val
 
     if !isspectrogram(ta)

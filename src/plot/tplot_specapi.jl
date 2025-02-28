@@ -1,14 +1,8 @@
 # S.Colorbar(plots; label=clabel(ta))] # TODO: find a way to make SpecApi.Colorbar work on grid positions
 
-function tplot_spec(da::AbstractDimMatrix; labels=labels(da), samples=10000, kwargs...)
+function tplot_spec(da::AbstractDimMatrix; labels=labels(da), kwargs...)
+    da = resample(da)
     x = dims(da, Ti).val
-
-    if length(x) > samples
-        indices = round.(Int, range(1, length(x), length=samples))
-        x = x[indices]
-        da = da[indices, :]
-        @info "Data resampled to $samples points"
-    end
 
     if !isspectrogram(da)
         map(eachcol(da.data), labels) do y, label

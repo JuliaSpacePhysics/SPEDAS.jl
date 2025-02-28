@@ -11,5 +11,4 @@
     rs = [[0, 3, 4], [0, 2, 0]]
     qs = fac_mat.(rs)
     @test all(Itest.(qs .* adjoint.(qs)))
-    # @test all(qs .* rs .≈ [[0, 0, 5], [3, 0, 0]])
 end
