@@ -13,6 +13,23 @@ function make_secondary_axis!(gp; color=Makie.wong_colors()[6], kwargs...)
     return ax2
 end
 
+"Setup the panel with both primary and secondary y-axes"
+function dual_axis_plot(
+    gp, ax1tas, ax2tas, plot_func, args...;
+    color2=Makie.wong_colors()[6],
+    axis=(;),
+    add_title=DEFAULTS.add_title, kwargs...
+)
+    # Primary axis
+    ax1 = Axis(gp; axis_attributes(ax1tas, args...; add_title)..., axis...)
+    plots1 = plot_func(ax1, ax1tas, args...; kwargs...)
+
+    # Secondary axis
+    ax2 = make_secondary_axis!(gp; color=color2, axis_attributes(ax2tas, args...; add_title=false)...)
+    plots2 = plot_func(ax2, ax2tas, args...; color=color2, kwargs...)
+    return PanelAxesPlots(gp, [AxisPlots(ax1, plots1), AxisPlots(ax2, plots2)])
+end
+
 function tlims!(ax, tmin, tmax)
     if ax.dim1_conversion[] isa Makie.DateTimeConversion
         xlims!(ax, tmin, tmax)
@@ -33,6 +50,16 @@ function add_legend!(gp, ax; min=2, position=Right(), kwargs...)
     plots, labels = Makie.get_labeled_plots(ax; merge=false, unique=false)
     length(plots) < min && return
     Legend(gp[1, 1, position], ax; kwargs...)
+end
+
+"""
+Only add legend when the axis contains multiple labels
+"""
+function add_legend!(ap::Makie.AxisPlot; kwargs...)
+    ax = ap.axis
+    b = ax.layoutobservables.gridcontent[]
+    gp = b.parent[b.span.rows, b.span.cols]
+    add_legend!(gp, ax; kwargs...)
 end
 
 

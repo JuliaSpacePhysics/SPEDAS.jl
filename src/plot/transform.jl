@@ -4,11 +4,11 @@
 Transform data for plotting with the following pipeline:
 1. Custom transformations (`transform(x)`)
 2. String -> `SpeasyProduct`
-3. 2-column matrix -> `DualAxisData`
+3. 2-element tuple -> `DualAxisData`
 
 See also: [`transform`](@ref)
 """
-transform_pipeline(x) = x |> transform |> transform_speasy |> transform_matrix
+transform_pipeline(x) = x |> transform |> transform_speasy |> transform_dual
 
 """
     transform(args...; kwargs...)
@@ -21,5 +21,6 @@ transform(x) = x
 
 transform_speasy(x::Union{String,AbstractArray{String}}) = SpeasyProduct.(x)
 transform_speasy(x) = x
-transform_matrix(x::AbstractMatrix) = size(x, 2) == 2 ? DualAxisData(view(x, :, 1), view(x, :, 2)) : x
-transform_matrix(x) = x
+
+transform_dual(x::Tuple{Any,Any}) = DualAxisData(x[1], x[2])
+transform_dual(x) = x

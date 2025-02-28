@@ -13,8 +13,6 @@ end
 
 time2value_transform(f) = (xrange) -> time2value_transform(xrange, f)
 
-const SupportTypes = Union{AbstractDimArray,AbstractDimMatrix,Function,String}
-
 """
     tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, kwargs...)
 
@@ -53,7 +51,7 @@ tplot(ds::AbstractDimStack; kwargs...) = tplot(layers(ds); kwargs...)
 function tplot! end
 
 "Setup the panel on a position and plot multiple time series on it"
-function tplot_panel(gp, tas::MultiPlottable, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
+function tplot_panel(gp, tas::AbstractVector{<:SupportTypes}, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
     plots = map(tas) do ta
         tplot_panel!(ax, ta, args...; kwargs...)
@@ -61,25 +59,10 @@ function tplot_panel(gp, tas::MultiPlottable, args...; axis=(;), add_title=DEFAU
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
 
-tplot_panel(gp, ta::DualAxisData, args...; kwargs...) = tplot_panel(gp, ta.data1, ta.data2, args...; kwargs...)
-
-"Setup the panel with both primary and secondary y-axes"
-function tplot_panel(gp,
-    ax1tas::MultiPlottable,
-    ax2tas::MultiPlottable, args...;
-    color2=Makie.wong_colors()[6],
-    axis=(;),
-    add_title=DEFAULTS.add_title, kwargs...
-)
-    # Primary axis
-    ax1 = Axis(gp; axis_attributes(ax1tas, args...; add_title)..., axis...)
-    plots1 = tplot_panel!(ax1, ax1tas, args...; kwargs...)
-
-    # Secondary axis
-    ax2 = make_secondary_axis!(gp; color=color2, axis_attributes(ax2tas, args...; add_title=false)...)
-    plots2 = tplot_panel!(ax2, ax2tas, args...; color=color2, kwargs...)
-    return PanelAxesPlots(gp, [AxisPlots(ax1, plots1), AxisPlots(ax2, plots2)])
-end
+tplot_panel(gp, ta::DualAxisData, args...; kwargs...) = dual_axis_plot(gp, ta.data1, ta.data2, tplot_panel!, args...; kwargs...)
+tplot_panel(gp, ta::NTuple{2,Any}, args...; kwargs...) = dual_axis_plot(gp, ta[1], ta[2], tplot_panel!, args...; kwargs...)
+tplot_panel(gp, ax1tas::MultiPlottable, ax2tas::MultiPlottable, args...; kwargs...) =
+    dual_axis_plot(gp, ax1tas, ax2tas, tplot_panel!, args...; kwargs...)
 
 tplot_panel(gd, ds::AbstractDimStack; kwargs...) = tplot_panel(gd, layers(ds); kwargs...)
 
@@ -207,6 +190,7 @@ function tplot_panel(gp, ta, tmin, tmax; axis=(;), kwargs...)
 end
 
 tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
+
 
 ##########
 ## Recipes

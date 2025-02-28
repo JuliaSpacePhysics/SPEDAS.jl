@@ -1,5 +1,6 @@
 const Drawable = Union{Figure,GridPosition,GridSubposition}
-const MultiPlottable = Union{AbstractVector,NamedTuple,Tuple}
+const SupportTypes = Union{AbstractArray{<:Number},Function,String}
+const MultiPlottable = Union{AbstractVector{<:SupportTypes},NamedTuple,Tuple}
 
 # https://github.com/MakieOrg/AlgebraOfGraphics.jl/blob/master/src/entries.jl
 struct FigureAxes
