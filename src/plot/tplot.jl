@@ -191,6 +191,9 @@ end
 
 tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
 
+# default fallback
+tplot_panel(gp, args...; kwargs...) = panelplot(gp, args...; kwargs...)
+tplot_panel!(ax, args...; kwargs...) = panelplot!(ax, args...; kwargs...)
 
 ##########
 ## Recipes

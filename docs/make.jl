@@ -18,6 +18,7 @@ makedocs(
         "Examples" => [
             "examples/index.md",
             "examples/speasy.md",
+            "examples/tplot.md",
             "examples/interactive.md",
             "examples/interactive_speasy.md",
         ],
