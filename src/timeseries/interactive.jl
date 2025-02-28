@@ -77,7 +77,8 @@ function InteractiveViz.iviz(f, data::RangeFunction1D; delay=DEFAULTS.delay)
 end
 
 flatten(x) = collect(Iterators.flatten(x))
-sample(tas, trange, args...; kwargs...) = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
+sample(ta, trange, args...; kwargs...) = tplot_spec(ta, trange..., args...; kwargs...)
+sample(tas::AbstractVector, trange, args...; kwargs...) = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
 
 function iviz_api!(ax::Axis, tas, t0, t1, args...; delay=DEFAULTS.delay, kwargs...)
     specs = Observable(sample(tas, (t0, t1), args...; kwargs...))

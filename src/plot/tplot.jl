@@ -53,9 +53,7 @@ function tplot! end
 "Setup the panel on a position and plot multiple time series on it"
 function tplot_panel(gp, tas::AbstractVector{<:SupportTypes}, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
-    plots = map(tas) do ta
-        tplot_panel!(ax, ta, args...; kwargs...)
-    end
+    plots = tplot_panel!(ax, tas, args...; kwargs...)
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
 
@@ -71,10 +69,10 @@ tplot_panel(gd, ds::AbstractDimStack; kwargs...) = tplot_panel(gd, layers(ds); k
 
 Plot a multivariate time series / spectrogram on a panel
 """
-function tplot_panel(gp, ta::AbstractDimMatrix; axis=(;), add_colorbar=true, add_title=DEFAULTS.add_title, kwargs...)
+function tplot_panel(gp, ta::AbstractDimMatrix; axis=(;), add_colorbar=DEFAULTS.add_colorbar, add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(ta; add_title)..., axis...)
     plots = tplot_panel!(ax, ta; kwargs...)
-    pos = gp[1, 2]
+    pos = gp[1, 1, Right()]
     add_colorbar && isspectrogram(ta) && Colorbar(pos, plots; label=clabel(ta))
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
@@ -90,6 +88,11 @@ function tplot_panel(gp, ta::AbstractDimVector; axis=(;), add_title=DEFAULTS.add
 end
 
 tplot_panel(gp, ta::DD.AbstractDimVector{<:AbstractVector}; kwargs...) = tplot_panel(gp, tstack(ta); kwargs...)
+
+tplot_panel!(ax::Axis, vs::AbstractVector{<:SupportTypes}; kwargs...) =
+    map(vs) do ta
+        tplot_panel!(ax, ta; kwargs...)
+    end
 
 """
 Plot heatmap / overlay multiple columns of a time series on the same axis
@@ -113,9 +116,11 @@ tplot_panel!(ax::Axis, ta::AbstractDimVector; kwargs...) = lines!(ax, ta; kwargs
 ####################
 
 """
-    Interactive tplot of a function over a time range
+    tplot_panel(gp, f::Function, tmin, tmax; kwargs...)
+
+Interactive tplot of a function over a time range on a grid position
 """
-function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=true, xtickformat=format_datetime, kwargs...)
+function tplot_panel(gp, f::Function, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=DEFAULTS.add_colorbar, xtickformat=format_datetime, kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = axis_attributes(ta; add_title, xtickformat=values -> xtickformat.(x2t.(values)))
@@ -126,9 +131,11 @@ function tplot_panel(gp, f::Function, tmin::DateTime, tmax::DateTime; axis=(;), 
 end
 
 """
-    Interactive tplot of a function over a time range
+    tplot_panel!(ax, f::Function, tmin, tmax; kwargs...)
+
+Interactive tplot of a function `f` on `ax` for a time range from `tmin` to `tmax`
 """
-function tplot_panel!(ax, f::Function, tmin::DateTime, tmax::DateTime; kwargs...)
+function tplot_panel!(ax, f::Function, tmin, tmax; kwargs...)
     # get a sample data to determine the attributes and plot types
     ta = f(tmin, tmax)
     attrs = plottype_attributes(ta)
@@ -156,24 +163,6 @@ end
 tplot_panel!(ax, fs::AbstractVector, tmin::DateTime, tmax::DateTime; kwargs...) =
     iviz_api!(ax, fs, tmin, tmax; kwargs...)
 
-function tplot_spec(da::AbstractDimMatrix; labels=labels(da), samples=10000, kwargs...)
-    x = dims(da, Ti).val
-
-    if length(x) > samples
-        indices = round.(Int, range(1, length(x), length=samples))
-        x = x[indices]
-        da = da[indices, :]
-    end
-
-    if !isspectrogram(da)
-        map(eachcol(da.data), labels) do y, label
-            S.Lines(x, y; label, kwargs...)
-        end
-    else
-        S.Heatmap(x, spectrogram_y_values(da), da.data; kwargs...)
-    end
-end
-
 ######################
 ## Extension interface
 ######################
@@ -188,8 +177,6 @@ function tplot_panel(gp, ta, tmin, tmax; axis=(;), kwargs...)
     f = (args...) -> get_data(ta, args...)
     tplot_panel(gp, f, tmin, tmax; axis, kwargs...)
 end
-
-tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
 
 # default fallback
 tplot_panel(gp, args...; kwargs...) = panelplot(gp, args...; kwargs...)
