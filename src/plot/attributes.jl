@@ -1,6 +1,13 @@
+"""Set an attribute if all values are equal and non-empty"""
+function set_if_equal!(attrs, key, values; default=nothing)
+    val = allequal(values) ? first(values) : default
+    isnothing(val) || val == "" || (attrs[key] = val)
+end
+
 meta(ta) = Dict()
 
-Unitful.unit(ta::AbstractDimArray{Q}) where {Q} = unit(Q)
+uunit(x) = unit(x)
+uunit(x::AbstractArray{Q}) where {Q<:Number} = unit(Q)
 format_unit(u::Unitful.Units) = string(u)
 format_unit(ta) = ""
 format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
@@ -22,9 +29,12 @@ label_func(labels) = latexify.(labels)
 
 axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
 """Axis attributes for a time array"""
-function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) where {Q}
+function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where {Q<:Number}
     attrs = Attributes(; kwargs...)
-    Q <: Quantity && !isspectrogram(ta) && (attrs[:dim2_conversion] = Makie.UnitfulConversion(unit(Q); units_in_label=false))
+    # Note: `u != Unitful.NoUnits` would handle cases where `ta` is a array of mixed units
+    u = uunit(ta)
+    Q <: Quantity && u != Unitful.NoUnits && !isspectrogram(ta) &&
+        (attrs[:dim2_conversion] = Makie.UnitfulConversion(u; units_in_label=false))
     s = yscale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
@@ -35,17 +45,11 @@ function axis_attributes(ta::AbstractDimArray{Q}; add_title=false, kwargs...) wh
     attrs
 end
 
-"""Set an attribute if all values are equal and non-empty"""
-function set_if_equal!(attrs, key, values; default=nothing)
-    val = allequal(values) ? first(values) : default
-    isnothing(val) || val == "" || (attrs[key] = val)
-end
-
-function axis_attributes(tas::Union{AbstractVector,Tuple}; add_title=false, kwargs...)
+function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwargs...)
     attrs = Attributes(; kwargs...)
 
     # Handle units
-    uts = unit.(tas)
+    uts = uunit.(tas)
     if allequal(uts)
         attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false)
         # Use unit as ylabel if no common ylabel exists

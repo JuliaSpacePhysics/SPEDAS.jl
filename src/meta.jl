@@ -8,6 +8,7 @@ const yunit_sources = (:yunit, :units)
 xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
 ylabel(ta) = ""
+ylabel(x::AbstractVector) = format_unit(x)
 function ylabel(da::AbstractDimArray; multiline=true)
     default_name = isspectrogram(da) ? DD.label(dims(da, 2)) : DD.label(da)
     name = prioritized_get(da, ylabel_sources, default_name)
@@ -38,14 +39,13 @@ function scale(x::String)
     end
 end
 
+scale(::Any) = nothing
 scale(f::Function) = f
-scale(::Nothing) = nothing
-
-function scale(x; sources=scale_sources)
+function scale(x::AbstractDimArray; sources=scale_sources)
     m = meta(x)
     isnothing(m) ? nothing : scale(prioritized_get(m, sources, nothing))
 end
 
-function yscale(x::AbstractDimArray)
+function yscale(x)
     !isspectrogram(x) ? scale(x) : scale(x; sources=(:yscale,))
 end
