@@ -53,3 +53,29 @@ Base.showable(mime::MIME{M}, fg::FigureAxes) where {M} = showable(mime, fg.figur
 
 Base.iterate(fg::FigureAxes) = iterate((fg.figure, fg.axes))
 Base.iterate(fg::FigureAxes, i) = iterate((fg.figure, fg.axes), i)
+
+"""
+    Debouncer
+
+A struct that creates a debounced version of a function `f`.
+
+The debounced function will only execute after a specified `delay` (in seconds) of inactivity.
+If called again before the delay expires, the `timer` resets.
+"""
+mutable struct Debouncer
+    f::Function
+    delay::Float64
+    timer::Timer
+end
+
+Debouncer(f, delay) = Debouncer(f, delay, Timer(donothing, delay))
+
+function (d::Debouncer)(args...; kwargs...)
+    # Cancel any existing timer
+    d.timer isa Timer && close(d.timer)
+
+    # Create a new timer
+    d.timer = Timer(d.delay) do _
+        d.f(args...; kwargs...)
+    end
+end

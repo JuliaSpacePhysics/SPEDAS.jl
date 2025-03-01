@@ -1,4 +1,5 @@
 using InteractiveViz: Continuous1D, iviz
+using Makie: events, Mouse
 
 abstract type AbstractRangeFunction end
 
@@ -17,10 +18,8 @@ function sample(data::RangeFunction1D, xrange; samples=10000)
 
     # Limit to 10000 points if needed
     if length(x) > samples
-        @info "Data resampled to $samples points"
-        indices = round.(Int, range(1, length(x), length=samples))
-        x = x[indices]
-        y = ndims(y) == 1 ? y[indices] : y[:, indices]
+        x = resample(x, samples)
+        y = resample(y, samples)
     end
 
     (; x, y)
@@ -66,12 +65,8 @@ function InteractiveViz.iviz(f, data::RangeFunction1D; delay=DEFAULTS.delay)
         end
     end
 
-    on(axislimits) do axlimits
-        if @isdefined(redraw_limit)
-            close(redraw_limit)
-        end
-        redraw_limit = Timer(x -> update(axlimits), delay)
-    end
+    # Apply the debounced update when axis limits change
+    on(Debouncer(update, delay), axislimits)
 
     return fap
 end
@@ -102,12 +97,8 @@ function iviz_api!(ax::Axis, tas, t0, t1, args...; delay=DEFAULTS.delay, kwargs.
         end
     end
 
-    on(axislimits) do axlimits
-        if @isdefined(redraw_limit)
-            close(redraw_limit)
-        end
-        redraw_limit = Timer(x -> update(axlimits), delay)
-    end
+    on(Debouncer(update, delay), axislimits)
+
     return specs[]
 end
 

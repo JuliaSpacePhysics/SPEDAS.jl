@@ -1,3 +1,5 @@
+function donothing(args...; kwargs...) end
+
 function mean_relerr(itr)
     x_mean = mean(itr)
     relerrs = abs.(extrema(itr) .- x_mean) ./ x_mean
