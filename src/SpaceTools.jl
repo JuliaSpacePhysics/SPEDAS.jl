@@ -19,7 +19,7 @@ using InverseFunctions
 export AbstractDataSet, DataSet
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
-export timeshift, tnorm, tmean, tcross, tdot
+export timeshift, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
 export tstack, tinterp, resample, tresample
 export tplot!, tplot, tplot_panel, tplot_panel!
 export tsheat, tlims!, tlines!, add_labels!
