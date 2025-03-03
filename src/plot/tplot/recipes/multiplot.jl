@@ -12,7 +12,7 @@ end
 
 multiplot!(ax::Axis, data, args...; plotfunc=tplot_panel!, kwargs...) =
     map(data) do x
-        plotfunc(ax, x; kwargs...)
+        plotfunc(ax, x, args...; kwargs...)
     end
 
 """
@@ -21,7 +21,7 @@ multiplot!(ax::Axis, data, args...; plotfunc=tplot_panel!, kwargs...) =
 Setup the panel on a position and plot multiple time series on it
 """
 function multiplot(gp, tas, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
-    ax = Axis(gp; axis_attributes(tas; add_title)..., axis...)
+    ax = Axis(gp; axis_attributes(tas, args...; add_title)..., axis...)
     plots = multiplot!(ax, tas, args...; kwargs...)
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end

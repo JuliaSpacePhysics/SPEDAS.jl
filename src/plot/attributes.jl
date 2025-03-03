@@ -65,6 +65,13 @@ function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwarg
     attrs
 end
 
+apply(f, args...) = f(args...)
+
+function axis_attributes(fs, tmin, tmax; kwargs...)
+    data = apply.(fs, tmin, tmax)
+    axis_attributes(data; kwargs...)
+end
+
 function heatmap_attributes(ta; kwargs...)
     attrs = Attributes(; kwargs...)
     s = scale(ta)
