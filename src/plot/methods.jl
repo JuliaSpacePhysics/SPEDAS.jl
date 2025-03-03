@@ -13,6 +13,11 @@ function make_secondary_axis!(gp; color=Makie.wong_colors()[6], kwargs...)
     return ax2
 end
 
+function gridposition(ax)
+    gc = ax.layoutobservables.gridcontent[]
+    gc.parent[gc.span.rows, gc.span.cols]
+end
+
 "Setup the panel with both primary and secondary y-axes"
 function dual_axis_plot(
     gp, ax1tas, ax2tas, plot_func, args...;
@@ -57,8 +62,7 @@ Only add legend when the axis contains multiple labels
 """
 function add_legend!(ap::Makie.AxisPlot; kwargs...)
     ax = ap.axis
-    b = ax.layoutobservables.gridcontent[]
-    gp = b.parent[b.span.rows, b.span.cols]
+    gp = gridposition(ax)
     add_legend!(gp, ax; kwargs...)
 end
 
@@ -94,9 +98,6 @@ Add labels to a figure, automatically searching for blocks to label.
 """
 function add_labels!(; f=current_figure(), allowedblocks=Union{Axis,Axis3,PolarAxis}, kwargs...)
     axs = filter(x -> x isa allowedblocks, f.content)
-    layouts = map(axs) do x
-        b = x.layoutobservables.gridcontent[]
-        b.parent[b.span.rows, b.span.cols]
-    end
+    layouts = gridposition.(axs)
     add_labels!(unique(layouts); kwargs...)
 end

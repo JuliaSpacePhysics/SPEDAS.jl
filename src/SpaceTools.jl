@@ -17,6 +17,7 @@ using DSP, SignalAnalysis
 using InverseFunctions
 
 export AbstractDataSet, DataSet
+export AbstractProduct, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
 export timeshift, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
@@ -56,8 +57,6 @@ include("plot/types.jl")
 include("plot/transform.jl")
 include("plot/attributes.jl")
 include("plot/tplot.jl")
-include("plot/tplot_specapi.jl")
-include("plot/panelplot.jl")
 include("plot/methods.jl")
 include("cotrans/coordinate.jl")
 include("cotrans/rotate.jl")

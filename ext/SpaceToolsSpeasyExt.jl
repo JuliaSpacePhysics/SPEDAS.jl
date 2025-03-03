@@ -10,7 +10,7 @@ SpaceTools.transform(p::SpeasyVariable; kwargs...) = DimArray(p; kwargs...)
 SpaceTools.transform(p::AbstractArray{SpeasyVariable}; kwargs...) = DimArray.(p; kwargs...)
 
 function SpaceTools.get_data(p::SpeasyProduct, args...; kwargs...)
-    SpaceTools.transform(Speasy.get_data(p.id, args...; kwargs...))
+    DimArray(Speasy.get_data(p.id, args...; kwargs...))
 end
 
 function SpaceTools.axis_attributes(sps::AbstractVector{SpeasyProduct}, tmin, tmax; kwargs...)

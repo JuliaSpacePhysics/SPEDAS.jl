@@ -1,3 +1,5 @@
+import Makie.SpecApi as S
+
 # S.Colorbar(plots; label=clabel(ta))] # TODO: find a way to make SpecApi.Colorbar work on grid positions
 
 function tplot_spec(da::AbstractDimMatrix; labels=labels(da), kwargs...)

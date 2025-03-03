@@ -39,6 +39,13 @@ end
 
 DualAxisData(data1, data2) = DualAxisData(data1, data2, nothing)
 
+function Base.getindex(obj::DualAxisData, i::Int)
+    i == 1 && return obj.data1
+    i == 2 && return obj.data2
+    throw(BoundsError(obj, i))
+end
+
+
 function Base.getproperty(obj::PanelAxesPlots, sym::Symbol)
     sym in fieldnames(PanelAxesPlots) && return getfield(obj, sym)
     getproperty.(obj.axisPlots, sym)
