@@ -7,6 +7,7 @@ end
 meta(ta) = Dict()
 
 uunit(x) = unit(x)
+uunit(::String) = nothing
 uunit(x::AbstractArray{Q}) where {Q<:Number} = unit(Q)
 format_unit(u::Unitful.Units) = string(u)
 format_unit(ta) = ""
@@ -27,7 +28,7 @@ end
 
 label_func(labels) = latexify.(labels)
 
-axis_attributes(ta; add_title=false, kwargs...) = (; kwargs...)
+axis_attributes(ta, args...; add_title=false, kwargs...) = (; kwargs...)
 """Axis attributes for a time array"""
 function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where {Q<:Number}
     attrs = Attributes(; kwargs...)
@@ -50,7 +51,7 @@ function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwarg
 
     # Handle units
     uts = uunit.(tas)
-    if allequal(uts)
+    if allequal(uts) && uts[1] != Unitful.NoUnits && !isnothing(uts[1])
         attrs[:dim2_conversion] = Makie.UnitfulConversion(uts[1]; units_in_label=false)
         # Use unit as ylabel if no common ylabel exists
         set_if_equal!(attrs, :ylabel, ylabel.(tas); default=format_unit(uts[1]))

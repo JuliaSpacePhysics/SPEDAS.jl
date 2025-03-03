@@ -21,7 +21,6 @@ ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""
 ys(ta::DimMatrix) = permutedims(ta.data)
 vs(ta::DimArray) = ta.data
-vs(ta::DimMatrix) = isspectrogram(ta) ? ta.data : permutedims(ta.data)
 
 """
 Convert angular frequency to frequency
