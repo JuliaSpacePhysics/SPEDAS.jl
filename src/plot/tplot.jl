@@ -1,3 +1,5 @@
+export LinesPlot, linesplot, linesplot!
+
 include("tplot/core.jl")
 include("tplot/panel.jl")
 include("tplot/specapi.jl")
