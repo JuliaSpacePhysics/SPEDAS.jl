@@ -18,8 +18,9 @@ function sample(data::RangeFunction1D, xrange; samples=10000)
 
     # Limit to 10000 points if needed
     if length(x) > samples
-        x = resample(x, samples)
-        y = resample(y, samples)
+        indices = round.(Int, range(1, length(x), length=samples))
+        x = x[indices]
+        y = collect(selectdim(y, 1, indices))
     end
 
     (; x, y)
@@ -103,3 +104,57 @@ function iviz_api!(ax::Axis, tas, t0, t1, args...; delay=DEFAULTS.delay, kwargs.
 end
 
 iviz_api(tas, args...; kwargs...) = iviz_api!(current_axis(), tas, args...; kwargs...)
+
+
+# Not working yet, depends on https://github.com/MakieOrg/Makie.jl/issues/4774
+struct RangeFunctionData1D{F,L} <: AbstractRangeFunction
+    f::F
+    xmin::L
+    xmax::L
+end
+
+function sample(rf::RangeFunctionData1D, xrange; samples=10000)
+    xmin = first(xrange)
+    xmax = last(xrange)
+    data = rf.f((xmin, xmax))
+    resample(data, samples)
+end
+
+limits(rf::RangeFunctionData1D) = (rf.xmin, rf.xmax, nothing, nothing)
+
+function InteractiveViz.iviz(f, data::RangeFunctionData1D; delay=DEFAULTS.delay)
+    lims = limits(data)
+    r = range(lims[1], lims[2]; length=2)
+    qdata = sample(data, r)
+    obs_data = Observable(qdata)
+    fap = f(obs_data)
+
+    if current_axis().limits[] == (nothing, nothing)
+        xlims!(current_axis(), lims[1], lims[2])
+    end
+
+    ax = current_axis()
+    reset_limits!(ax)
+
+    axislimits = ax.finallimits
+    prev_xrange = Observable(get_xrange(axislimits[]))
+
+    function update(lims)
+        xrange = get_xrange(lims)
+        # Update if new range extends beyond previously loaded range
+        prev_xmin, prev_xmax = prev_xrange[]
+        needs_update = xrange[1] < prev_xmin || xrange[2] > prev_xmax
+
+        # Add range check to avoid unnecessary data fetching
+        if needs_update
+            qdata = sample(data, xrange)
+            obs_data[] = qdata
+            prev_xrange[] = xrange
+        end
+    end
+
+    # Apply the debounced update when axis limits change
+    on(Debouncer(update, delay), axislimits)
+
+    return fap
+end
