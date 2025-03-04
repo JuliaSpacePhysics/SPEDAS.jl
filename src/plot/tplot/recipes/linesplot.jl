@@ -6,6 +6,7 @@ struct NoDimConversion <: Makie.ConversionTrait end
 
 @recipe LinesPlot begin
     labels = nothing
+    # Makie.MakieCore.documented_attributes(Lines)...
     # resample = 10000
 end
 
@@ -33,9 +34,17 @@ function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractV
     return (curves,)
 end
 
-function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::DimensionalData.AbstractDimMatrix)
-    x = lookup(dims(ys, 1)).data
-    return Makie.convert_arguments(T, x, parent(ys))
+function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix)
+    x = lookup(dims(da, 1)).data
+    labels = SpaceTools.labels(da)
+    map(eachcol(parent(da)), labels) do y, label
+        S.Lines(x, y; label)
+    end
+end
+
+function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector)
+    x = lookup(dims(da, 1)).data
+    S.Lines(x, parent(da))
 end
 
 function Makie.plot!(plot::LinesPlot)
@@ -54,30 +63,19 @@ end
 
 Plot a multivariate time series on a panel
 """
-function linesplot(gp::GridPosition, ta; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
+function linesplot(gp::Drawable, ta; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(ta; add_title)..., axis...)
     plots = linesplot!(ax, ta; kwargs...)
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
 
-# """
-# Plot multiple columns of a time series on the same axis
-# """
-# function linesplot!(ax::Axis, ta; labels=labels(ta), kwargs...)
-#     ta = resample(ta)
-#     x = dims(ta, Ti).val
-#     map(eachcol(ta.data), labels) do y, label
-#         lines!(ax, x, y; label, kwargs...)
+# function linesplot!(ax, xs, vs::Observable; labels, kwargs...)
+#     nseries = size(vs[], 2)
+#     plots = []
+#     for i in 1:nseries
+#         y_col = @lift($vs[:, i])
+#         plot = lines!(ax, xs, y_col; label=labels[i], kwargs...)
+#         push!(plots, plot)
 #     end
+#     plots
 # end
-
-function linesplot!(ax, xs, vs::Observable; labels, kwargs...)
-    nseries = size(vs[], 2)
-    plots = []
-    for i in 1:nseries
-        y_col = @lift($vs[:, i])
-        plot = lines!(ax, xs, y_col; label=labels[i], kwargs...)
-        push!(plots, plot)
-    end
-    plots
-end

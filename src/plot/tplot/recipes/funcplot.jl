@@ -28,8 +28,6 @@ function functionplot!(ax, f, tmin, tmax; data=nothing, plotfunc=tplot_spec, kwa
     iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end
 
-apply(f, args...) = f(args...)
-
 """
     multiplot!(ax, fs, t0, t1; plotfunc=tplot_spec, kwargs...)
 
@@ -37,7 +35,9 @@ Specialized multiplot function for `functionplot`.
 Merge specs before plotting so as to cycle through them.
 """
 function multiplot!(ax::Axis, fs, tmin, tmax; plotfunc=tplot_spec, kwargs...)
-    to_plotspec = trange -> reduce(vcat, plotfunc.(apply.(fs, trange...); kwargs...))
+    to_plotspec = trange -> mapreduce(vcat, fs) do f
+        plotfunc(f(trange...); kwargs...)
+    end
     iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end
 
