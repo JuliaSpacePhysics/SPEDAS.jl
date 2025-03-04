@@ -5,6 +5,7 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
 SpaceTools = "3930f61c-4d81-4846-ab8f-357babe068a6"
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]

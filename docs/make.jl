@@ -13,6 +13,7 @@ makedocs(
         "Home" => "index.md",
         "Tutorials" => [
             "tutorials/getting-started.md",
+            "tutorials/outliers.md",
             # demopage
         ],
         "Examples" => [

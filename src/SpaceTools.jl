@@ -22,6 +22,7 @@ export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
 export timeshift, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
 export tstack, tinterp, resample, tresample
+export find_spikes, replace_outliers
 export tplot!, tplot, tplot_panel, tplot_panel!
 export tsheat, tlims!, tlines!, add_labels!
 export ylabel, plot_attributes
@@ -46,6 +47,7 @@ include("timeseries.jl")
 include("timeseries/interactive.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/methods.jl")
+include("timeseries/spike.jl")
 include("utils.jl")
 include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
