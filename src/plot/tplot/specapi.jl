@@ -15,7 +15,6 @@ function tplot_spec(da::AbstractDimMatrix; labels=labels(da), kwargs...)
     end
 end
 
-tplot_spec(f::Function, tmin, tmax; kwargs...) = tplot_spec(f(tmin, tmax); kwargs...)
 tplot_spec(args...; kwargs...) = tplot_spec(get_data(args...); kwargs...)
 
 """

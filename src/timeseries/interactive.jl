@@ -72,39 +72,6 @@ function InteractiveViz.iviz(f, data::RangeFunction1D; delay=DEFAULTS.delay)
     return fap
 end
 
-flatten(x) = collect(Iterators.flatten(x))
-sample(ta, trange, args...; kwargs...) = tplot_spec(ta, trange..., args...; kwargs...)
-sample(tas::AbstractVector, trange, args...; kwargs...) = flatten(tplot_spec.(tas, trange..., args...; kwargs...))
-
-function iviz_api!(ax::Axis, tas, t0, t1, args...; delay=DEFAULTS.delay, kwargs...)
-    specs = Observable(sample(tas, (t0, t1), args...; kwargs...))
-    plotlist!(ax, specs)
-    reset_limits!(ax)
-
-    axislimits = ax.finallimits
-    # Keep track of the previous range
-    prev_xrange = Observable(get_xrange(axislimits[]))
-
-    function update(lims)
-        xrange = get_xrange(lims)
-        # Update if new range extends beyond previously loaded range
-        prev_xmin, prev_xmax = prev_xrange[]
-        needs_update = xrange[1] < prev_xmin || xrange[2] > prev_xmax
-
-        if needs_update
-            trange = x2t.(xrange)
-            specs[] = sample(tas, trange, args...; kwargs...)
-            prev_xrange[] = xrange
-        end
-    end
-
-    on(Debouncer(update, delay), axislimits)
-
-    return specs[]
-end
-
-iviz_api(tas, args...; kwargs...) = iviz_api!(current_axis(), tas, args...; kwargs...)
-
 
 # Not working yet, depends on https://github.com/MakieOrg/Makie.jl/issues/4774
 struct RangeFunctionData1D{F,L} <: AbstractRangeFunction

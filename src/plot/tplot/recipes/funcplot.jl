@@ -23,38 +23,53 @@ end
 
 Interactive plot of a function `f` on `ax` for a time range from `tmin` to `tmax`
 """
-function functionplot!(ax, f, tmin, tmax; data=nothing, xtickformat=format_datetime, kwargs...)
-    # get a sample data to determine the attributes and plot types
-    data = @something data f(tmin, tmax)
-    attrs = plottype_attributes(data)
+function functionplot!(ax, f, tmin, tmax; data=nothing, plotfunc=tplot_spec, kwargs...)
+    to_plotspec = trange -> plotfunc(f(trange...); kwargs...)
+    iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
+end
 
-    # Manually converting from time to float is needed for interactive plotting since ax.finallimits[] is represented as float
-    # https://github.com/MakieOrg/Makie.jl/issues/4769
-    xmin, xmax = t2x.((tmin, tmax))
-    ax.xtickformat = values -> xtickformat.(x2t.(values))
-    rf = RangeFunction1D(time2value_transform(f), xmin, xmax)
-    plot_func = if isspectrogram(data)
-        y = spectrogram_y_values(data)
-        (x, mat) -> heatmap!(ax, x, y, mat; attrs..., kwargs...)
-    else
-        lbls = labels(data)
-        (xs, vs) -> linesplot!(ax, xs, vs; labels=lbls, kwargs...)
-    end
-    iviz(plot_func, rf)
+apply(f, args...) = f(args...)
+
+"""
+    multiplot!(ax, fs, t0, t1; plotfunc=tplot_spec, kwargs...)
+
+Specialized multiplot function for `functionplot`.
+Merge specs before plotting so as to cycle through them.
+"""
+function multiplot!(ax::Axis, fs, tmin, tmax; plotfunc=tplot_spec, kwargs...)
+    to_plotspec = trange -> reduce(vcat, plotfunc.(apply.(fs, trange...); kwargs...))
+    iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end
 
 
-# Not working yet, depends on https://github.com/MakieOrg/Makie.jl/issues/4774
-function _functionplot!(ax, f, tmin, tmax; data=nothing, kwargs...)
-    # get a sample data to determine the attributes and plot types
-    data = @something data f(tmin, tmax)
-    attrs = plottype_attributes(data)
-    rf = RangeFunctionData1D((xrange) -> f(x2t.(xrange)...), tmin, tmax)
-    plot_func = if isspectrogram(data)
-        y = spectrogram_y_values(data)
-        (x, mat) -> heatmap!(ax, x, y, mat; attrs..., kwargs...)
-    else
-        data -> linesplot!(ax, data; attrs..., kwargs...)
-    end
-    iviz(plot_func, rf)
-end
+
+# """
+# Transform a function that handles time range to a function that handles x range (time values) and return x and y values.
+# """
+# function time2value_transform(xrange, f)
+#     trange = x2t.(xrange)
+#     da = f(trange...)
+#     return t2x(da), vs(da)
+# end
+
+# time2value_transform(f) = (xrange) -> time2value_transform(xrange, f)
+
+# function functionplot!(ax, f, tmin, tmax; data=nothing, xtickformat=format_datetime, kwargs...)
+#     # get a sample data to determine the attributes and plot types
+#     data = @something data f(tmin, tmax)
+#     attrs = plottype_attributes(data)
+
+#     # Manually converting from time to float is needed for interactive plotting since ax.finallimits[] is represented as float
+#     # https://github.com/MakieOrg/Makie.jl/issues/4769
+#     xmin, xmax = t2x.((tmin, tmax))
+#     ax.xtickformat = values -> xtickformat.(x2t.(values))
+#     rf = RangeFunction1D(time2value_transform(f), xmin, xmax)
+#     plot_func = if isspectrogram(data)
+#         y = spectrogram_y_values(data)
+#         (x, mat) -> heatmap!(ax, x, y, mat; attrs..., kwargs...)
+#     else
+#         lbls = labels(data)
+#         (xs, vs) -> linesplot!(ax, xs, vs; labels=lbls, kwargs...)
+#     end
+#     iviz(plot_func, rf)
+# end

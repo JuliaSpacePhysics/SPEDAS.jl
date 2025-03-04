@@ -5,6 +5,8 @@ end
 
 @testitem "LinesPlot" begin
     using Makie
+    using DimensionalData
+    using Unitful
     @test_nowarn linesplot((rand(3), rand(4)))
     ys = [[1, 2, 4] [3, 4, 10]]
     @test_nowarn linesplot(ys)
