@@ -16,6 +16,13 @@ prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata
 
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
+times(x::DimArray; query=(Ti, Dim{:time})) = lookup(dims(x, query)[1])
+
+# hack as `Makie` does not support `NanoDate` directly
+function xs(da::AbstractDimArray)
+    x = lookup(dims(da, 1)) |> parent
+    eltype(x) == NanoDate ? DateTime.(x) : x
+end
 xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
 ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""

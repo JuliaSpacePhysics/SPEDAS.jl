@@ -20,7 +20,7 @@ title(ta) = get(meta(ta), "CATDESC", "")
 format_datetime(dt) = Dates.format(dt, "HH:MM:SS\nyyyy-mm-dd")
 
 function colorrange(da::AbstractDimArray; scale=10)
-    cmid = median(da)
+    cmid = NaNMath.median(da)
     cmax = cmid * scale
     cmin = cmid / scale
     return (cmin, cmax)

@@ -5,12 +5,13 @@ end
 
 function tlims!(ax, tmin, tmax)
     if ax.dim1_conversion[] isa Makie.DateTimeConversion
-        xlims!(ax, tmin, tmax)
+        xlims!(ax, DateTime(tmin), DateTime(tmax))
     else
         xlims!(ax, t2x(tmin), t2x(tmax))
     end
 end
 tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
+tlims!(trange) = tlims!(trange...)
 
 """Add vertical lines to a plot"""
 tlines!(ax, time; kwargs...) = vlines!(ax, t2x.(time); kwargs...)

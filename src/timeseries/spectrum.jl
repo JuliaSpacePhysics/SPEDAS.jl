@@ -19,7 +19,7 @@ See also: `DSP.Spectrogram`, `DSP.stft`
 function pspectrum(x::AbstractDimArray, spec::Spectrogram; name="Power")
     fs = samplingrate(x) |> ustrip
     y = tfd(ustrip(x), spec; fs)
-    t0 = dims(x, Ti)[1]
+    t0 = DateTime(SpaceTools.times(x)[1])
     times = Ti(y.time .* 1u"s" .+ t0)
     freqs = 𝑓(y.freq * 1u"Hz")
     metadata = Dict(:DISPLAY_TYPE => "spectrogram", :scale => log10)

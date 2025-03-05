@@ -1,9 +1,11 @@
 module SpaceTools
 
 using Dates
+using NanoDates
 using DimensionalData
 using DimensionalData.Dimensions
 using LinearAlgebra
+import NaNMath
 using Makie
 using TimeseriesTools
 using Intervals: Interval

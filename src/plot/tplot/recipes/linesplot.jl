@@ -35,7 +35,7 @@ function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractV
 end
 
 function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix)
-    x = lookup(dims(da, 1)).data
+    x = xs(da)
     labels = SpaceTools.labels(da)
     map(eachcol(parent(da)), labels) do y, label
         S.Lines(x, y; label)

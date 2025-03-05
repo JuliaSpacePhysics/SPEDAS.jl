@@ -19,8 +19,8 @@ function resolution(times; tol=2)
     round(Integer, dtf_mean) * dt0
 end
 
-resolution(da::AbstractDimType; dim=Ti, kwargs...) =
-    resolution(dims(da, dim).val; kwargs...)
+resolution(da::AbstractDimType; kwargs...) =
+    resolution(times(da); kwargs...)
 
 samplingrate(da) = 1u"s" / resolution(da) * u"Hz" |> u"Hz"
 
