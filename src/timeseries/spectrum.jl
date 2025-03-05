@@ -26,7 +26,7 @@ function pspectrum(x::AbstractDimArray, spec::Spectrogram; name="Power")
     y_da = DimArray(permutedims(y.power), (times, freqs); name, metadata)
 end
 
-function pspectrum(x::AbstractDimArray; nfft=256, noverlap=128, window=hamming)
+function pspectrum(x::AbstractDimArray; nfft=256, noverlap=div(nfft, 2), window=hamming)
     spec = Spectrogram(nfft, noverlap, window)
     pspectrum(x, spec)
 end
