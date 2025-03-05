@@ -9,14 +9,14 @@ function timeshift(ta; dim=1, t0=nothing)
     DimArray(ta.data, (new_dim, otherdims(ta, dim)...), name=ta.name, metadata=ta.metadata)
 end
 
-function resolution(times; tol=2)
+function resolution(times; tol=2, f=stat_relerr(median))
     dt = diff(times)
     dt0 = eltype(dt)(1)
-    dtf_mean, relerr = mean_relerr(dt ./ dt0)
+    dt_m, relerr = f(dt ./ dt0)
     if relerr > exp10(-tol - 1)
         @warn "Time resolution is is not approximately constant (relerr ≈ $relerr)"
     end
-    round(Integer, dtf_mean) * dt0
+    round(Integer, dt_m) * dt0
 end
 
 resolution(da::AbstractDimType; kwargs...) =

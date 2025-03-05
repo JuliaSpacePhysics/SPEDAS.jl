@@ -1,11 +1,14 @@
 function donothing(args...; kwargs...) end
 
-function mean_relerr(itr)
-    x_mean = mean(itr)
-    relerrs = abs.(extrema(itr) .- x_mean) ./ x_mean
+function stat_relerr(itr, f)
+    m = f(itr)
+    relerrs = abs.(extrema(itr) .- m) ./ m
     relerr = maximum(relerrs)
-    return x_mean, relerr
+    return m, relerr
 end
+
+stat_relerr(f) = (x -> stat_relerr(x, f))
+mean_relerr(itr) = stat_relerr(itr, mean)
 
 function prioritized_get(c, keys, default)
     values = get.(Ref(c), keys, nothing)
