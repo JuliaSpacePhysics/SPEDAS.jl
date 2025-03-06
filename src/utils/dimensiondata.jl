@@ -2,6 +2,9 @@ using DimensionalData.Lookups
 
 meta(da::AbstractDimArray) = metadata(da)
 
+function standardize(x::AbstractArray)
+    set(x, Dim{:time} => Ti)
+end
 tdim(t) = Ti(t)
 tdim(t::DD.Dimension) = t
 
