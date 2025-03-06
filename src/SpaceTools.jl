@@ -22,8 +22,8 @@ export AbstractDataSet, DataSet
 export AbstractProduct, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange
-export timeshift, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
-export tstack, tinterp, resample, tresample
+export tclip, timeshift, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
+export tstack, tinterp, resample, tresample, tfilter
 export find_spikes, replace_outliers
 export fill_gaps
 export tplot!, tplot, tplot_panel, tplot_panel!

@@ -1,3 +1,9 @@
+function tclip(da, trange)
+    tmin = trange |> first |> DateTime
+    tmax = trange |> last |> DateTime
+    da[Ti=tmin .. tmax]
+end
+
 function timeshift(ta; dim=1, t0=nothing)
     td = dims(ta, dim)
     times = td.val.data
@@ -49,6 +55,10 @@ function smooth(da::AbstractDimArray, window::Integer; dims=Ti, suffix="_smoothe
 end
 
 """
+    tfilter(da, Wn1, Wn2=samplingrate(da) / 2; designmethod=Butterworth(2))
+
+By default, the max frequency corresponding to the Nyquist frequency is used.
+
 References
 - https://docs.juliadsp.org/stable/filters/
 - https://www.mathworks.com/help/signal/ref/filtfilt.html
@@ -57,13 +67,15 @@ References
 Issues
 - DSP.jl and Unitful.jl: https://github.com/JuliaDSP/DSP.jl/issues/431
 """
-function DSP.filtfilt(da::AbstractDimArray, Wn1, Wn2; designmethod=Butterworth(2))
+function tfilter(da::AbstractDimArray, Wn1, Wn2=0.999 * samplingrate(da) / 2; designmethod=Butterworth(2))
     fs = samplingrate(da)
     Wn1, Wn2, fs = (Wn1, Wn2, fs) ./ 1u"Hz" .|> NoUnits
     f = digitalfilter(Bandpass(Wn1, Wn2; fs), designmethod)
-    res = filtfilt(f, ustrip(da))
+    res = filtfilt(f, ustrip(parent(da)))
     rebuild(da; data=res * (da |> eltype |> unit))
 end
+
+tfilter(args...; kwargs...) = da -> tfilter(da, args...; kwargs...)
 
 """
     dropna(da::DimArray, query)

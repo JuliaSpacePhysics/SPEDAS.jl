@@ -1,9 +1,14 @@
 using DimensionalData.Lookups
 
+const timeDimType = (Dim{:time}, Ti)
+
 meta(da::AbstractDimArray) = metadata(da)
 
-function standardize(x::AbstractArray)
-    set(x, Dim{:time} => Ti)
+function standardize(x::AbstractDimArray; floatify=true)
+    # Convert integer values to floats
+    floatify && eltype(x) <: Integer && (x = modify(float, x))
+    # Check if any of the dimensions match our time dimension types
+    x = any(d -> d isa Dim{:time}, dims(x)) ? set(x, Dim{:time} => Ti) : x
 end
 tdim(t) = Ti(t)
 tdim(t::DD.Dimension) = t
