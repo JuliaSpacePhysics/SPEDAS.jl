@@ -2,8 +2,8 @@ import Makie.SpecApi as S
 
 # S.Colorbar(plots; label=clabel(ta))] # TODO: find a way to make SpecApi.Colorbar work on grid positions
 
-function tplot_spec(da; kwargs...)
-    da = resample(da)
+function tplot_spec(da; verbose=true, kwargs...)
+    da = resample(da; verbose)
 
     if !isspectrogram(da)
         Makie.convert_arguments(LinesPlot, da)
