@@ -50,7 +50,7 @@ Reference:
 x2t(x::Millisecond) = DateTime(Dates.UTM(x))
 x2t(x::Float64) = DateTime(Dates.UTM(round(Int64, x)))
 
-t2x(t::DateTime) = Dates.value(t)
+t2x(t) = Dates.value(t)
 t2x(da::AbstractDimArray) = t2x.(dims(da, 1).val.data)
 
 """Return the angle between two vectors."""
@@ -70,7 +70,7 @@ end
 function tstack(vectors::DD.AbstractDimVector{<:AbstractVector}; dims=1)
     n = length(first(vectors))
     data = stack(vectors; dims)
-    new_dims = (dims(vectors)..., Y(1:n))
+    new_dims = (vectors.dims..., Y(1:n))
     return DimArray(data, new_dims; name=vectors.name, metadata=vectors.metadata)
 end
 

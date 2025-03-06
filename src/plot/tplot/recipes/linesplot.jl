@@ -43,9 +43,12 @@ function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.Abstra
     end
 end
 
+function Makie.convert_arguments(t::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector{<:AbstractVector})
+    Makie.convert_arguments(t, tstack(da))
+end
+
 function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector)
-    x = lookup(dims(da, 1)).data
-    S.Lines(x, parent(da))
+    S.Lines(xs(da), parent(da))
 end
 
 function Makie.plot!(plot::LinesPlot)
