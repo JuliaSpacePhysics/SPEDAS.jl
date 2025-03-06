@@ -3,6 +3,15 @@
 
 export pspectrum
 
+function pspectrum(x::AbstractVector, times, spec::Spectrogram; name=:power, metadata=Dict("DISPLAY_TYPE" => "spectrogram", "scale" => log10))
+    fs = samplingrate(times) |> ustrip
+    y = tfd(ustrip(x), spec; fs)
+    t0 = DateTime(times[1])
+    t_dim = Ti(y.time .* 1u"s" .+ t0)
+    f_dim = 𝑓(y.freq * 1u"Hz")
+    DimArray(permutedims(y.power), (t_dim, f_dim); name, metadata)
+end
+
 """
     pspectrum(x::AbstractDimArray, spec::Spectrogram)
     pspectrum(x::AbstractDimArray; nfft=256, noverlap=128, window=hamming)
@@ -16,14 +25,17 @@ See also: `DSP.Spectrogram`, `DSP.stft`
 # Reference
 - [Matlab](https://www.mathworks.com/help/signal/ref/pspectrum.html)
 """
-function pspectrum(x::AbstractDimArray, spec::Spectrogram; name="Power")
-    fs = samplingrate(x) |> ustrip
-    y = tfd(ustrip(x), spec; fs)
-    t0 = DateTime(SpaceTools.times(x)[1])
-    times = Ti(y.time .* 1u"s" .+ t0)
-    freqs = 𝑓(y.freq * 1u"Hz")
-    metadata = Dict(:DISPLAY_TYPE => "spectrogram", :scale => log10)
-    y_da = DimArray(permutedims(y.power), (times, freqs); name, metadata)
+function pspectrum(x::AbstractDimVector, spec::Spectrogram; kwargs...)
+    return pspectrum(x, times(x), spec; kwargs...)
+end
+
+function pspectrum(x::AbstractDimArray, spec::Spectrogram; query=Ti, kwargs...)
+    times = SpaceTools.times(x)
+    dims = otherdims(x, query)
+    specs = map(eachslice(x; dims)) do slice
+        pspectrum(slice, times, spec; kwargs...)
+    end
+    cat(specs...; dims)
 end
 
 function pspectrum(x::AbstractDimArray; nfft=256, noverlap=div(nfft, 2), window=hamming)
