@@ -31,9 +31,14 @@ end
 
 modify_meta!(da; kwargs...) = (da.metadata = merge(da.metadata, kwargs))
 
-function modify_meta(da; kwargs...)
+function modify_meta(da, args...; kwargs...)
     meta = da.metadata
-    new_meta = meta isa NoMetadata ? Dict(kwargs) : merge(meta, kwargs)
+
+    # Create a dictionary from both positional pair arguments and keyword arguments
+    pair_args = filter(arg -> arg isa Pair, collect(args))
+    added_meta = merge(Dict(pair_args...), kwargs)
+
+    new_meta = meta isa NoMetadata ? added_meta : merge(meta, added_meta)
     rebuild(da; metadata=new_meta)
 end
 

@@ -9,6 +9,7 @@ function tlims!(ax, tmin, tmax)
     else
         xlims!(ax, t2x(tmin), t2x(tmax))
     end
+    return current_figure()
 end
 tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
 tlims!(trange) = tlims!(trange...)
