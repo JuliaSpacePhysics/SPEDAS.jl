@@ -19,10 +19,13 @@ prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata
 
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
-function times(x::DimArray; query=timeDimType)
+function timedim(x; query=timeDimType)
     qdims = dims(x, query)
-    dim = isempty(qdims) ? dims(x, 1) : qdims[1]
-    lookup(dim)
+    isempty(qdims) ? dims(x, 1) : qdims[1]
+end
+
+function times(x::DimArray; query=timeDimType)
+    lookup(timedim(x; query))
 end
 
 # hack as `Makie` does not support `NanoDate` directly

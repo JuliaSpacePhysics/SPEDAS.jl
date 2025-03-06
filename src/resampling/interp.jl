@@ -35,3 +35,54 @@ function _tinterp(A::T, t; interp=LinearInterpolation) where {T<:AbstractDimMatr
     newdims = (tdim(t), otherdims(A, Ti)...)
     return DimArray(data, newdims; name=A.name, metadata=A.metadata)
 end
+
+"""
+    interpolate_nans(da; interp=LinearInterpolation)
+
+Interpolate only the NaN values in `da` along the specified dimension `dims`.
+Non-NaN values are preserved exactly as they are.
+
+The default interpolation method `interp` is `LinearInterpolation`.
+"""
+function interpolate_nans(u, t; interp=LinearInterpolation)
+    # For 1D arrays, directly interpolate the NaN values
+    nan_indices = findall(isnan, u)
+
+    if !isempty(nan_indices) && length(nan_indices) < length(u)
+        # Find valid (non-NaN) data points
+        valid_indices = findall(!isnan, u)
+        valid_t = t[valid_indices]
+        valid_u = u[valid_indices]
+        interp_obj = interp(valid_u, valid_t)
+
+        # Interpolate only at NaN positions
+        new_u = deepcopy(u)
+        new_u[nan_indices] = interp_obj(t[nan_indices])
+        return new_u
+    else
+        return u
+    end
+end
+
+
+function interpolate_nans(u, t::AbstractArray{<:Dates.AbstractDateTime}; kwargs...)
+    interpolate_nans(u, t2x.(t); kwargs...)
+end
+
+"""
+    tinterp_nans(da::AbstractDimArray; query=timeDimType, kwargs...)
+
+Interpolate only the NaN values in `da` along the specified dimensions `query`.
+Non-NaN values are preserved exactly as they are.
+
+See also [`interpolate_nans`](@ref)
+"""
+function tinterp_nans(da::AbstractDimArray; query=timeDimType, kwargs...)
+    u = parent(da)
+    dim = timedim(da; query)
+    t = parent(lookup(dim))
+    new_data = mapslices(u; dims=dimnum(da, dim)) do slice
+        interpolate_nans(slice, t; kwargs...)
+    end
+    return rebuild(da; data=new_data)
+end
