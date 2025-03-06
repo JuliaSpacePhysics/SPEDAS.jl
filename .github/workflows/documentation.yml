@@ -25,6 +25,7 @@ jobs:
             using Pkg
             Pkg.develop([
               PackageSpec(url="https://github.com/SciQLop/Speasy.jl"),
+              PackageSpec(url="https://github.com/Beforerr/PySPEDAS.jl"),
               PackageSpec(path=pwd())
             ])
             Pkg.instantiate()

@@ -37,6 +37,7 @@ export reciprocal_vector, reciprocal_vectors, lingradest
 export volumetric_tensor, tetrahedron_quality
 export ConstantVelocityApproach, CVA, ConstantThicknessApproach, CTA, DiscontinuityAnalyzer, DA
 export Elsässer, σ_c
+export wavpol, twavpol
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
@@ -73,5 +74,6 @@ include("multispacecraft/reciprocal_vector.jl")
 include("multispacecraft/tetrahedron.jl")
 include("multispacecraft/lingradest.jl")
 include("multispacecraft/timing.jl")
+include("waves/polarization.jl")
 
 end
