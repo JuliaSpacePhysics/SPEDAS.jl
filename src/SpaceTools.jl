@@ -30,7 +30,8 @@ export tplot!, tplot, tplot_panel, tplot_panel!
 export tsheat, tlims!, tlines!, add_labels!
 export ylabel, plot_attributes
 export LMN
-export rotate, fac_mat, mva, mva_mat, check_mva_mat
+export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_mat, check_mva_mat
+export get_coord, get_coords, set_coord
 export modify_meta, amap, ω2f
 export reciprocal_vector, reciprocal_vectors, lingradest
 export volumetric_tensor, tetrahedron_quality

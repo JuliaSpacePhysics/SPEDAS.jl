@@ -19,3 +19,7 @@ function fac_mat(
     # Build 3x3 transformation matrix
     return vcat(x0', y0', z0')
 end
+
+function tfac_mat(da::AbstractDimArray; dims=Ti)
+    fac_mat.(eachslice(da; dims))
+end

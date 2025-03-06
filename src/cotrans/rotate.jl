@@ -27,3 +27,6 @@ function select_rotate(da::AbstractDimArray, mats::AbstractVector; selectors=Nea
     data = stack(da_rot; dims=1)
     DimArray(data, dims(da); name=da.name, metadata=da.metadata)
 end
+
+select_rotate(da, mats, coord; kwargs...) =
+    select_rotate(da, mats; kwargs...) |> set_coord(coord)
