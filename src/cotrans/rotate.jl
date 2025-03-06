@@ -18,3 +18,12 @@ function rotate(da::AbstractDimArray, mats::AbstractVector)
     data = hcat(da_rot...)'
     DimArray(data, dims(da); name=da.name, metadata=da.metadata)
 end
+
+function select_rotate(da::AbstractDimArray, mats::AbstractVector; selectors=Near())
+    all_mats = mats[DimSelectors(da; selectors)]
+    da_rot = map(eachrow(parent(da)), all_mats) do row, mat
+        mat * row
+    end
+    data = stack(da_rot; dims=1)
+    DimArray(data, dims(da); name=da.name, metadata=da.metadata)
+end

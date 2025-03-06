@@ -63,13 +63,13 @@ Stack a time series of `vectors` into a matrix.
 
 By default, each row in the output matrix represents a time point from the input vector of vectors.
 """
-function tstack(vectors::AbstractVector{<:AbstractVector})
-    return stack(vectors)
+function tstack(vectors::AbstractVector{<:AbstractVector}; kwargs...)
+    return stack(vectors; kwargs...)
 end
 
-function tstack(vectors::DD.AbstractDimVector{<:AbstractVector})
+function tstack(vectors::DD.AbstractDimVector{<:AbstractVector}; dims=1)
     n = length(first(vectors))
-    data = stack(vectors; dims=1)
+    data = stack(vectors; dims)
     new_dims = (dims(vectors)..., Y(1:n))
     return DimArray(data, new_dims; name=vectors.name, metadata=vectors.metadata)
 end
