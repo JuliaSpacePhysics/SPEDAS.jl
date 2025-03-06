@@ -4,8 +4,11 @@ function gridposition(ax)
 end
 
 function tlims!(ax, tmin, tmax)
-    if ax.dim1_conversion[] isa Makie.DateTimeConversion
+    dim_conversion = ax.dim1_conversion[]
+    if dim_conversion isa Makie.DateTimeConversion
         xlims!(ax, DateTime(tmin), DateTime(tmax))
+    elseif dim_conversion isa Makie.UnitfulConversion
+        xlims!(ax, tmin, tmax)
     else
         xlims!(ax, t2x(tmin), t2x(tmax))
     end
