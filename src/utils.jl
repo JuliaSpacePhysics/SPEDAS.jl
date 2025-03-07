@@ -148,3 +148,7 @@ function binedges(centers; transform=identity)
         return inverse(transform).(transformed_edges)
     end
 end
+
+function binedges(centers::AbstractVector{Q}; kwargs...) where {Q<:Quantity}
+    return binedges(ustrip(centers); kwargs...) * unit(Q)
+end
