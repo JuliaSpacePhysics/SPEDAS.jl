@@ -24,10 +24,15 @@ makedocs(
             "examples/interactive_speasy.md",
         ],
         "Explanation" => [
+            "explanations/data.md",
             "explanations/tplot.md",
             "explanations/coords.md",
             "explanations/multispacecraft.md",
             "explanations/resampling.md",
+            "explanations/waves.md",
+        ],
+        "Validation" => [
+            "validation/pyspedas.md",
         ],
         "API" => "api.md",
     ],
