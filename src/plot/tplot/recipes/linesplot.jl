@@ -13,7 +13,8 @@ end
 Makie.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
 
 function Makie.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys::AbstractMatrix)
-    curves = map(i -> (x, view(ys, :, i)), 1:size(ys, 2))
+    A = parent(ys)
+    curves = map(i -> (x, view(A, :, i)), 1:size(A, 2))
     return (curves,)
 end
 
@@ -72,14 +73,3 @@ function linesplot(gp::Drawable, ta; axis=(;), add_title=DEFAULTS.add_title, kwa
     plots = linesplot!(ax, ta; kwargs...)
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end
-
-# function linesplot!(ax, xs, vs::Observable; labels, kwargs...)
-#     nseries = size(vs[], 2)
-#     plots = []
-#     for i in 1:nseries
-#         y_col = @lift($vs[:, i])
-#         plot = lines!(ax, xs, y_col; label=labels[i], kwargs...)
-#         push!(plots, plot)
-#     end
-#     plots
-# end
