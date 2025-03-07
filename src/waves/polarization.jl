@@ -4,79 +4,46 @@
 # https://pyspedas.readthedocs.io/en/latest/_modules/pyspedas/analysis/twavpol.html
 # https://github.com/spedas/pyspedas/blob/master/pyspedas/analysis/twavpol.py
 
-"""
-    spectral_matrix(x, y, z; window)
-
-Apply a window function to a segment of three time series and compute their FFT.
-Then construct the spectral matrix ``S(f)`` (for positive frequencies only) defined by
-
-```math
-S_{ij}(f) = X_i(f) X_j^*(f),
-```
-
-where ``X_i(f)`` is the FFT of the i-th component and * denotes complex conjugation.
-
-# Arguments
-- `x, y, z`: Vectors of the three field components.
-- `window`: A window function.
-
-# Returns
-- `S`: A 3‑D array of size ``N_{freq}, 3, 3`` where ``_{freq} = \\texttt{nfft}÷``.
-"""
-function spectral_matrix(x, y, z; window::Vector)
-    # Apply the window to the data
-    xw = x .* window
-    yw = y .* window
-    zw = z .* window
-    # Compute FFTs and normalize (the normalization here is chosen for energy preservation)
-    n = length(x)
-    X = fft(xw) / sqrt(n)
-    Y = fft(yw) / sqrt(n)
-    Z = fft(zw) / sqrt(n)
-    Nfreq = div(n, 2)
-    # Only keep the positive frequencies
-    X = X[1:Nfreq]
-    Y = Y[1:Nfreq]
-    Z = Z[1:Nfreq]
-
-    # Initialize the spectral matrix
-    S = zeros(ComplexF64, Nfreq, 3, 3)
-    XYZ = [X, Y, Z]
-    for i in 1:3, j in 1:3
-        @. S[:, i, j] = XYZ[i] * conj(XYZ[j])
-    end
-    return S
+struct StokesVector{T}
+    S0::T
+    S1::T
+    S2::T
+    S3::T
 end
 
 """
-    smooth_spectral_matrix(S, aa)
+    polarization(S0, S1, S2, S3)
+    polarization(S::StokesVector)
 
-Smooth the spectral matrix ``S(f)`` by applying a weighted average over frequency.
-The smoothing uses a symmetric window `aa` (for example, a Hamming window) of length M.
+Compute the degree of polarization (p) from Stoke parameters or a Stokes vector.
 
-# Arguments
-- `S`: Spectral matrix array of size ``N_{freq}, 3, 3``.
-- `aa`: Weighting vector of length M.
+# Reference
+- [Wikipedia](https://en.wikipedia.org/wiki/Polarization_(waves))
+- [Stokes parameters](https://en.wikipedia.org/wiki/Stokes_parameters)
 """
-function smooth_spectral_matrix(S, aa::Vector{Float64})
-    Nfreq, _, _ = size(S)
-    M = length(aa)
-    halfM = div(M, 2)
-    S_smooth = similar(S)
-    # For frequencies where the full smoothing window fits
-    for f in (halfM+1):(Nfreq-halfM)
-        for i in 1:3, j in 1:3
-            S_smooth[f, i, j] = sum(aa .* S[(f-halfM):(f+halfM), i, j])
-        end
-    end
-    # For boundary frequencies, copy original S (or you might handle edges separately)
-    for f in 1:halfM
-        S_smooth[f, :, :] = S[f, :, :]
-    end
-    for f in (Nfreq-halfM+1):Nfreq
-        S_smooth[f, :, :] = S[f, :, :]
-    end
-    return S_smooth
+function polarization(S0, S1, S2, S3)
+    return sqrt(S1^2 + S2^2 + S3^2) / S0
+end
+
+polarization(S::StokesVector) = polarization(S.S0, S.S1, S.S2, S.S3)
+
+"""
+    polarization(S)
+
+Compute the degree of polarization (DOP) `p^2` from spectral matrix `S`.
+
+```math
+\\begin{aligned}
+p^2  &= 1-\\frac{(tr 𝐒)^2-(tr 𝐒^2)}{(tr 𝐒)^2-n^{-1}(tr 𝐒)^2} \\\\
+    &= \\frac{n(tr 𝐒^2)-(tr 𝐒)^2}{(n-1)(tr 𝐒)^2}
+\\end{aligned}
+```
+"""
+function polarization(S)
+    n = size(S, 1)
+    trS2 = tr(S * S)
+    trS = tr(S)
+    (n * trS2 - trS^2) / ((n - 1) * trS^2)
 end
 
 """
@@ -193,32 +160,6 @@ function wpol_helicity(S::AbstractMatrix{ComplexF64}, waveangle::Number)
 end
 
 """
-# Reference
-- [Wikipedia](https://en.wikipedia.org/wiki/Polarization_(waves))
-- [Stokes parameters](https://en.wikipedia.org/wiki/Stokes_parameters)
-"""
-function polarization end
-
-"""
-    polarization(S)
-
-Compute the degree of polarization (DOP) `P^2` from spectral matrix `S`.
-
-```math
-\\begin{aligned}
-P^2  &= 1-\\frac{(tr 𝐒)^2-(tr 𝐒^2)}{(tr 𝐒)^2-n^{-1}(tr 𝐒)^2} \\\\
-    &= \\frac{n(tr 𝐒^2)-(tr 𝐒)^2}{(n-1)(tr 𝐒)^2}
-\\end{aligned}
-```
-"""
-function polarization(S)
-    n = size(S, 1)
-    trS2 = tr(S * S)
-    trS = tr(S)
-    (n * trS2 - trS^2) / ((n - 1) * trS^2)
-end
-
-"""
     compute_polarization_parameters(S)
 
 Compute the following polarization parameters from the spectral matrix ``S``:
@@ -250,9 +191,10 @@ function compute_polarization_parameters(Ss)
 end
 
 """
-    wavpol(ct, bx, by, bz; nfft=256, steplength=nfft÷2, bin_freq=3)
+    wavpol(ct, X; nfft=256, noverlap=nfft÷2, bin_freq=3)
 
-Perform polarization analysis of three-component time series data.
+Perform polarization analysis of `n`-component time series data.
+
 Assumes the data are in a right-handed, field-aligned coordinate system 
 (with Z along the ambient magnetic field).
 
@@ -264,33 +206,31 @@ For each FFT window (with specified overlap), the routine:
 
 # Arguments
 - `ct`: Time vector.
-- `bx, by, bz`: Field components.
+- `X`: Field components (where each column is a component).
 - Keyword arguments:
   - `nfft`: Number of FFT points (default 256).
-  - `steplength`: Step between successive FFT windows (default `nfft÷2`).
+  - `noverlap`: Step between successive FFT windows (default `nfft÷2`).
   - `bin_freq`: Number of frequency bins for smoothing (default 3; will be made odd if needed).
 
 # Returns
 A tuple: where each parameter (except `freqline`) is an array with one row per FFT window.
 """
-function wavpol(ct, bx, by, bz; nfft=256, steplength=div(nfft, 2), bin_freq=3)
-    N = length(bx)
+function wavpol(ct, X; nfft=256, noverlap=div(nfft, 2), bin_freq=3)
+    # Ensure the smoothing window length is odd.
+    iseven(bin_freq) && (bin_freq += 1)
+
+    N = size(X, 1)
     samp_freq = samplingrate(ct)
     Nfreq = div(nfft, 2)
     fs = (samp_freq / nfft) * (0:(Nfreq-1))
 
     # Define the number of FFT windows and times (center time of each window)
-    nsteps = floor(Int, (N - nfft) / steplength) + 1
+    nsteps = floor(Int, (N - nfft) / noverlap) + 1
     times = similar(ct, nsteps)
 
     # Define the FFT window (here a smooth window similar to Hanning)
     window = 0.08 .+ 0.46 .* (1 .- cos.(2π .* (0:(nfft-1)) ./ nfft))
     half = div(nfft, 2)
-
-    # Ensure the smoothing window length is odd.
-    if iseven(bin_freq)
-        bin_freq += 1
-    end
     # Use a Hamming window for frequency smoothing.
     smooth_win = 0.54 .- 0.46 * cos.(2π .* (0:(bin_freq-1)) ./ (bin_freq - 1))
     smooth_win = smooth_win / sum(smooth_win)
@@ -304,22 +244,13 @@ function wavpol(ct, bx, by, bz; nfft=256, steplength=div(nfft, 2), bin_freq=3)
 
     # Process each FFT window.
     Threads.@threads for j in 1:nsteps
-        start_idx = 1 + (j - 1) * steplength
+        start_idx = 1 + (j - 1) * noverlap
         end_idx = start_idx + nfft - 1
         if end_idx > N
             continue
         end
-
-        # Extract the segment for this FFT window.
-        seg_x = @view bx[start_idx:end_idx]
-        seg_y = @view by[start_idx:end_idx]
-        seg_z = @view bz[start_idx:end_idx]
-
-        # Compute the spectral matrix for this window.
-        S = spectral_matrix(seg_x, seg_y, seg_z; window)
-        # Smooth the spectral matrix in the frequency domain.
+        S = spectral_matrix(@view(X[start_idx:end_idx, :]), window)
         S_smooth = smooth_spectral_matrix(S, smooth_win)
-        # Compute polarization parameters for each frequency.
         params = compute_polarization_parameters(S_smooth)
 
         # Store the results.
@@ -328,15 +259,18 @@ function wavpol(ct, bx, by, bz; nfft=256, steplength=div(nfft, 2), bin_freq=3)
         waveangle[j, :] = params.waveangle
         ellipticity[j, :] = params.ellipticity
         helicity[j, :] = params.helicity
-
-        # Set the times at the center of the FFT window.
-        times[j] = ct[start_idx+half]
+        times[j] = ct[start_idx+half] # Set the times at the center of the FFT window.
     end
     return (; times, fs, power, degpol, waveangle, ellipticity, helicity)
 end
 
-wavpol(t, M; kwargs...) = wavpol(t, eachcol(M)...; kwargs...)
+"""
+    twavpol(x)
 
+A convenience wrapper around [`wavpol`](@ref) that works with DimensionalData arrays.
+
+It automatically extracts the time dimension and returns the results as a DimStack with properly labeled dimensions.
+"""
 function twavpol(x)
     res = wavpol(times(x), parent(x))
     dims = (Ti(res.times), 𝑓(res.fs))

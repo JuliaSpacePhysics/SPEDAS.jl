@@ -75,5 +75,6 @@ include("multispacecraft/tetrahedron.jl")
 include("multispacecraft/lingradest.jl")
 include("multispacecraft/timing.jl")
 include("waves/polarization.jl")
+include("waves/spectral_matrix.jl")
 
 end
