@@ -15,7 +15,7 @@ using Unitful, DimensionfulAngles
 using Latexify, UnitfulLatexify
 using RollingWindowArrays
 using InteractiveViz
-using DSP, SignalAnalysis
+using FFTW, DSP, SignalAnalysis
 using InverseFunctions
 
 export AbstractDataSet, DataSet
@@ -37,7 +37,7 @@ export reciprocal_vector, reciprocal_vectors, lingradest
 export volumetric_tensor, tetrahedron_quality
 export ConstantVelocityApproach, CVA, ConstantThicknessApproach, CTA, DiscontinuityAnalyzer, DA
 export Elsässer, σ_c
-export wavpol, twavpol
+export spectral_matrix, wavpol, twavpol, wpol_helicity, polarization
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}

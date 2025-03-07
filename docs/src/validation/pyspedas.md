@@ -33,12 +33,8 @@ py_result = get_data(DimStack, py_tvars)
 res = twavpol(thc_scf_fac)
 
 f = Figure(;size=(1200, 800))
-tplot(f[1:5,1], py_result)
-plot(f[1,2], res.power)
-plot(f[2,2], res.degpol)
-plot(f[3,2], res.waveangle)
-plot(f[4,2], res.ellipticity)
-plot(f[5,2], res.helicity)
+tplot(f[1,1], py_result)
+tplot(f[1,2], res)
 f
 ```
 
@@ -46,5 +42,7 @@ f
 
 ```julia
 @b twavpol(thc_scf_fac)
-@b TwavpolDataValidation.setUpClass()
+@b pyspedas.twavpol("thc_scf_fac")
 ```
+
+Julia is about 100 times faster than Python.
