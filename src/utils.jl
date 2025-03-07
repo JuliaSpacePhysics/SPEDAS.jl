@@ -24,13 +24,13 @@ function timedim(x; query=timeDimType)
     isempty(qdims) ? dims(x, 1) : qdims[1]
 end
 
-function times(x::DimArray; query=timeDimType)
+function times(x::AbstractDimArray; query=timeDimType)
     lookup(timedim(x; query))
 end
 
 # hack as `Makie` does not support `NanoDate` directly
 function xs(da::AbstractDimArray)
-    x = lookup(dims(da, 1)) |> parent
+    x = times(da) |> parent
     eltype(x) == NanoDate ? DateTime.(x) : x
 end
 xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
