@@ -13,6 +13,10 @@ function SpaceTools.get_data(p::SpeasyProduct, args...; kwargs...)
     DimArray(Speasy.get_data(p.id, args...; kwargs...))
 end
 
+function Speasy.get_data(p, tr::TimeRange; kwargs...)
+    Speasy.get_data(p, tr.first, tr.last; kwargs...)
+end
+
 function SpaceTools.axis_attributes(sps::AbstractVector{SpeasyProduct}, tmin, tmax; kwargs...)
     tas = SpaceTools.get_data.(sps, tmin, tmax)
     SpaceTools.axis_attributes(tas; kwargs...)

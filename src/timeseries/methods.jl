@@ -1,3 +1,7 @@
+function tmean(x; dims=timedim(x))
+    mean(x; dims)
+end
+
 function tnorm(x; dims=Ti)
     norm.(eachslice(x; dims))
 end
@@ -7,8 +11,10 @@ end
 References:
 - https://docs.xarray.dev/en/stable/generated/xarray.cross.html
 """
-function tcross(x, y; dims=Ti)
-    cross.(eachslice(x; dims), eachslice(y; dims))
+function tcross(x, y; dims=Ti, stack=nothing)
+    stack = @something stack (ndims(x) == 2)
+    res = cross.(eachslice(x; dims), eachslice(y; dims))
+    stack ? tstack(res) : res
 end
 
 function tdot(x, y; dims=Ti)
