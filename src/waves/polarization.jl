@@ -271,11 +271,11 @@ A convenience wrapper around [`wavpol`](@ref) that works with DimensionalData ar
 
 It automatically extracts the time dimension and returns the results as a DimStack with properly labeled dimensions.
 """
-function twavpol(x)
-    res = wavpol(times(x), parent(x))
+function twavpol(x; kwargs...)
+    res = wavpol(times(x), parent(x); kwargs...)
     dims = (Ti(res.times), 𝑓(res.fs))
     DimStack((
-        power=DimArray(res.power, dims; name="Power"),
+        power=DimArray(res.power, dims; name="Power", metadata=Dict("scale" => log10)),
         degpol=DimArray(res.degpol, dims; name="Degree of polarization"),
         waveangle=DimArray(res.waveangle, dims; name="Wave normal angle"),
         ellipticity=DimArray(res.ellipticity, dims; name="Ellipticity"),

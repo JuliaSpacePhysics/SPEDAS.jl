@@ -51,8 +51,10 @@ function Base.getproperty(obj::PanelAxesPlots, sym::Symbol)
     getproperty.(obj.axisPlots, sym)
 end
 
+_display(o::GridPosition) = display(o.layout.parent)
+_display(fg::Figure) = display(fg)
 
-Base.display(fg::FigureAxes) = display(fg.figure)
+Base.display(fg::FigureAxes) = _display(fg.figure)
 Base.show(io::IO, fg::FigureAxes) = show(io, fg.figure)
 Base.show(io::IO, m::MIME, fg::FigureAxes) = show(io, m, fg.figure)
 Base.show(io::IO, ::MIME"text/plain", fg::FigureAxes) = print(io, "FigureAxes()")

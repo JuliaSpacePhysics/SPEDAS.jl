@@ -8,8 +8,7 @@ function tplot_spec(da; verbose=true, kwargs...)
     if !isspectrogram(da)
         Makie.convert_arguments(LinesPlot, da)
     else
-        x = dims(da, Ti).val
-        S.Heatmap(x, spectrogram_y_values(da), da.data; heatmap_attributes(da; kwargs...)...)
+        S.Heatmap(xs(da), spectrogram_y_values(da), parent(da); heatmap_attributes(da; kwargs...)...)
     end
 end
 
