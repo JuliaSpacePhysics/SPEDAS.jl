@@ -34,8 +34,18 @@ function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where
     attrs = Attributes(; kwargs...)
     # Note: `u != Unitful.NoUnits` would handle cases where `ta` is a array of mixed units
     u = uunit(ta)
-    Q <: Quantity && u != Unitful.NoUnits && !isspectrogram(ta) &&
-        (attrs[:dim2_conversion] = Makie.UnitfulConversion(u; units_in_label=false))
+
+    if !isspectrogram(ta)
+        Q <: Quantity && u != Unitful.NoUnits &&
+            (attrs[:dim2_conversion] = Makie.UnitfulConversion(u; units_in_label=false))
+    else
+        y_values = spectrogram_y_values(ta)
+        yunit = uunit(y_values)
+        if yunit != Unitful.NoUnits
+            attrs[:dim2_conversion] = Makie.UnitfulConversion(yunit; units_in_label=false)
+        end
+    end
+
     s = yscale(ta)
     xl = xlabel(ta)
     yl = ylabel(ta)
