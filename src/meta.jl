@@ -28,7 +28,14 @@ labels(ta::AbstractDimMatrix) = prioritized_get(ta, labels_sources, string.(dims
 set_colorrange(x, range) = modify_meta(x; colorrange=range)
 set_colorrange(x; kwargs...) = set_colorrange(x, colorrange(x; kwargs...))
 
-isspectrogram(ta::AbstractDimArray) = prioritized_get(ta, ("DISPLAY_TYPE", :DISPLAY_TYPE), nothing) == "spectrogram"
+function isspectrogram(ta::AbstractDimArray; threshold=5)
+    m = prioritized_get(ta, ("DISPLAY_TYPE", :DISPLAY_TYPE), nothing)
+    if isnothing(m)
+        size(ta, 2) >= threshold
+    else
+        m == "spectrogram"
+    end
+end
 isspectrogram(ta) = false
 
 function scale(x::String)

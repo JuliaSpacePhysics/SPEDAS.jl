@@ -18,6 +18,5 @@ Plot heatmap of a time series on the same axis
 """
 function specplot!(ax::Axis, ta; labels=labels(ta), verbose=true, kwargs...)
     ta = resample(ta; verbose)
-    x = dims(ta, Ti).val
-    heatmap!(ax, x, spectrogram_y_values(ta), ta.data; heatmap_attributes(ta; kwargs...)...)
+    heatmap!(ax, times(ta), spectrogram_y_values(ta), ta.data; heatmap_attributes(ta; kwargs...)...)
 end

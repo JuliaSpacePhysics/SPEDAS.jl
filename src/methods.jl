@@ -11,7 +11,7 @@ Can return either bin centers or edges. By default, return bin edges for better 
 - `center`: If true, return bin centers instead of edges
 - `transform`: Optional transform function for edge calculation (e.g., log for logarithmic bins)
 """
-function spectrogram_y_values(ta; check=false, center=false, transform=yscale(ta))
+function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta))
     metadata = meta(ta)
     centers = if haskey(metadata, "axes")
         values = metadata["axes"][2].values
