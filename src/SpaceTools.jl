@@ -16,6 +16,7 @@ using Latexify, UnitfulLatexify
 using RollingWindowArrays
 using InteractiveViz
 using FFTW, DSP, SignalAnalysis
+using Tullio
 using InverseFunctions
 
 export AbstractDataSet, DataSet

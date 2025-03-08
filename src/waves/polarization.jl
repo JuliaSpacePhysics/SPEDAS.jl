@@ -157,6 +157,8 @@ function wpol_helicity(S::AbstractMatrix{ComplexF64}, waveangle::Number)
     return helicity, ellipticity
 end
 
+_smooth_t(nfft) = 0.08 .+ 0.46 .* (1 .- cos.(2π .* (0:(nfft-1)) ./ nfft))
+
 """
     wavpol(ct, X; nfft=256, noverlap=nfft÷2, bin_freq=3)
 
@@ -184,10 +186,7 @@ A tuple: where each parameter (except `freqline`) is an array with one row per F
 
 See [`polarization`](@ref), [`wave_normal_angle`](@ref), [`wpol_helicity`](@ref).
 """
-function wavpol(ct, X; nfft=256, noverlap=div(nfft, 2), bin_freq=3)
-    # Ensure the smoothing window length is odd.
-    iseven(bin_freq) && (bin_freq += 1)
-
+function wavpol(ct::AbstractArray, X; nfft=256, noverlap=div(nfft, 2), smooth_t=_smooth_t(nfft), smooth_f=hamming(3))
     N = size(X, 1)
     samp_freq = samplingrate(ct)
     Nfreq = div(nfft, 2)
@@ -195,14 +194,11 @@ function wavpol(ct, X; nfft=256, noverlap=div(nfft, 2), bin_freq=3)
 
     # Define the number of FFT windows and times (center time of each window)
     nsteps = floor(Int, (N - nfft) / noverlap) + 1
-    times = similar(ct, nsteps)
+    times_indices = 1 .+ (0:nsteps-1) * noverlap .+ div(nfft, 2)
+    times = ct[times_indices]
 
-    # Define the FFT window (here a smooth window similar to Hanning)
-    window = 0.08 .+ 0.46 .* (1 .- cos.(2π .* (0:(nfft-1)) ./ nfft))
-    half = div(nfft, 2)
-    # Use a Hamming window for frequency smoothing.
-    smooth_win = 0.54 .- 0.46 * cos.(2π .* (0:(bin_freq-1)) ./ (bin_freq - 1))
-    smooth_win = smooth_win / sum(smooth_win)
+    # normalize the smooth window for frequency smoothing
+    smooth_f = smooth_f / sum(smooth_f)
 
     # Preallocate arrays for the results.
     power = zeros(Float64, nsteps, Nfreq)
@@ -218,19 +214,26 @@ function wavpol(ct, X; nfft=256, noverlap=div(nfft, 2), bin_freq=3)
         if end_idx > N
             continue
         end
-        S = spectral_matrix(@view(X[start_idx:end_idx, :]), window)
-        S_smooth = smooth_spectral_matrix(S, smooth_win)
+        Xw = @view(X[start_idx:end_idx, :]) .* smooth_t
+        S = spectral_matrix(Xw)
+        S_smooth = smooth_spectral_matrix(S, smooth_f)
 
         # Compute the following polarization parameters from the spectral matrix ``S``:
         for f in 1:Nfreq
             Sf = S_smooth[f, :, :]
             power[j, f] = real(tr(Sf))
-            degpol[j, f] = polarization(Sf)
+            degpol[j, f] = real(polarization(Sf))
             waveangle[j, f] = wave_normal_angle(Sf)
             helicity[j, f], ellipticity[j, f] = wpol_helicity(Sf, waveangle[j, f])
         end
-        times[j] = ct[start_idx+half] # Set the times at the center of the FFT window.
     end
+
+    # Scaling power results to units with meaning
+    binwidth = samp_freq / nfft
+    W = sum(smooth_t .^ 2) / nfft
+    power_scale = 2 / (binwidth * W)
+    power = power * power_scale
+
     return (; times, fs, power, degpol, waveangle, ellipticity, helicity)
 end
 

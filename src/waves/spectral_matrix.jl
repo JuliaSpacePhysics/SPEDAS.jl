@@ -1,13 +1,22 @@
 """
-    spectral_matrix(X, window)
+    spectral_matrix(Xf)
 
-Compute the spectral matrix ``S(f)`` defined by
+Compute the spectral matrix ``S`` defined by
 
 ```math
 S_{ij}(f) = X_i(f) X_j^*(f),
 ```
 
-where ``X_i(f)`` is the FFT of the i-th component and * denotes complex conjugation.
+where ``X_i(f)``=`Xf[f, i]` is the FFT of the i-th component and * denotes complex conjugation.
+"""
+function spectral_matrix(Xf::AbstractMatrix{<:Complex})
+    @tullio S[f, i, j] := Xf[f, i] * conj(Xf[f, j])
+end
+
+"""
+    spectral_matrix(X, window)
+
+Compute the spectral matrix ``S(f)`` given the time series data `X`.
 
 Returns a 3-D array of size ``N_{freq}, n, n``, where ``N_{freq} = \\lfloor N/2 \\rfloor`` 
     and `n` is the dimensionality (number of components).
@@ -16,25 +25,13 @@ Returns a 3-D array of size ``N_{freq}, n, n``, where ``N_{freq} = \\lfloor N/2 
 - `X`: Matrix where each column is a component of the multivariate time series, or a vector of vectors.
 - `window`: A window function (optional). If not provided, a rectangular window (no windowing) is used.
 """
-function spectral_matrix(X::AbstractMatrix, window::AbstractVector=ones(size(X, 1)))
-    n_samples, n = size(X)
-
-    # Apply the window to each component
-    Xw = X .* window
-
+function spectral_matrix(X::AbstractMatrix{<:Real})
+    nfft = size(X, 1)
     # Compute FFTs and normalize
-    Xf = fft(Xw, 1) ./ sqrt(n_samples)
-
+    Xf = fft(X, 1) ./ sqrt(nfft)
     # Only keep the positive frequencies
-    Nfreq = div(n_samples, 2)
-    Xf = Xf[1:Nfreq, :]
-
-    S = Array{ComplexF64,3}(undef, Nfreq, n, n)
-    for i in 1:n, j in 1:n
-        @. S[:, i, j] = Xf[:, i] * conj(Xf[:, j])
-    end
-
-    return S
+    Nfreq = div(nfft, 2)
+    @views spectral_matrix(Xf[1:Nfreq, :])
 end
 
 function spectral_matrix(components::AbstractVector{<:AbstractVector}, args...; kwargs...)
@@ -59,8 +56,8 @@ function smooth_spectral_matrix(S, aa::Vector{Float64})
     S_smooth = similar(S)
 
     # For frequencies where the full smoothing window fits
-    for f in (halfM+1):(Nfreq-halfM)
-        for i in 1:n, j in 1:n
+    for i in 1:n, j in 1:n
+        for f in (halfM+1):(Nfreq-halfM)
             S_smooth[f, i, j] = sum(aa .* S[(f-halfM):(f+halfM), i, j])
         end
     end
