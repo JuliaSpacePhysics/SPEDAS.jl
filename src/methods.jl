@@ -31,7 +31,7 @@ function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta)
         if check
             all(allequal, eachcol(centers)) || @warn "Spectrogram y-axis values are not constant along time"
         end
-        vec(mean(centers; dims=1))
+        centers = vec(mean(centers; dims=1))
     end
 
     if center && transform == log10
