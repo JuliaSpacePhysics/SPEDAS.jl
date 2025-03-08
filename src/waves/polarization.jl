@@ -102,28 +102,26 @@ function wpol_helicity(S::AbstractMatrix{ComplexF64}, waveangle::Number)
     helicity_comps = zeros(Float64, 3)
     ellip_comps = zeros(Float64, 3)
 
+    lam_u = zeros(ComplexF64, 3)
+
     for comp in 1:3
         # Build state vector λ_u for this polarization component
         alph = sqrt(real(S[comp, comp]))
         alph == 0.0 && continue
+
+        # Reset vectors to avoid carrying over values
+        fill!(lam_u, 0.0)
+        lam_u[comp] = alph
+
         if comp == 1
-            lam_u = [
-                alph,
-                (real(S[1, 2]) / alph) + im * (-imag(S[1, 2]) / alph),
-                (real(S[1, 3]) / alph) + im * (-imag(S[1, 3]) / alph)
-            ]
+            lam_u[2] = (real(S[1, 2]) / alph) + im * (-imag(S[1, 2]) / alph)
+            lam_u[3] = (real(S[1, 3]) / alph) + im * (-imag(S[1, 3]) / alph)
         elseif comp == 2
-            lam_u = [
-                (real(S[2, 1]) / alph) + im * (-imag(S[2, 1]) / alph),
-                alph,
-                (real(S[2, 3]) / alph) + im * (-imag(S[2, 3]) / alph)
-            ]
+            lam_u[1] = (real(S[2, 1]) / alph) + im * (-imag(S[2, 1]) / alph)
+            lam_u[3] = (real(S[2, 3]) / alph) + im * (-imag(S[2, 3]) / alph)
         else
-            lam_u = [
-                (real(S[3, 1]) / alph) + im * (-imag(S[3, 1]) / alph),
-                (real(S[3, 2]) / alph) + im * (-imag(S[3, 2]) / alph),
-                alph
-            ]
+            lam_u[1] = (real(S[3, 1]) / alph) + im * (-imag(S[3, 1]) / alph)
+            lam_u[2] = (real(S[3, 2]) / alph) + im * (-imag(S[3, 2]) / alph)
         end
 
         # Compute the phase rotation (gammay) for this state vector
@@ -160,37 +158,6 @@ function wpol_helicity(S::AbstractMatrix{ComplexF64}, waveangle::Number)
 end
 
 """
-    compute_polarization_parameters(S)
-
-Compute the following polarization parameters from the spectral matrix ``S``:
-
-1. **Wave Power**: ``\\text{power} = \\mathrm{tr}(S)``.
-2. **Degree of Polarization**: see [`polarization`](@ref).
-3. **Wave Normal Angle**: see [`wave_normal_angle`](@ref).
-4. **Ellipticity** and **Helicity**: see [`wpol_helicity`](@ref).
-"""
-function compute_polarization_parameters(Ss)
-    Nfreq = size(Ss, 1)
-    power = zeros(Float64, Nfreq)
-    degpol = zeros(Float64, Nfreq)
-    waveangle = zeros(Float64, Nfreq)
-    ellipticity = zeros(Float64, Nfreq)
-    helicity = zeros(Float64, Nfreq)
-
-    for f in 1:Nfreq
-        S = Ss[f, :, :]
-        # Wave power is the trace of S.
-        power[f] = real(tr(S))
-        # Degree of polarization:
-        degpol[f] = polarization(S)
-        waveangle[f] = wave_normal_angle(S)
-        helicity[f], ellipticity[f] = wpol_helicity(S, waveangle[f])
-    end
-
-    return (; power, degpol, waveangle, ellipticity, helicity)
-end
-
-"""
     wavpol(ct, X; nfft=256, noverlap=nfft÷2, bin_freq=3)
 
 Perform polarization analysis of `n`-component time series data.
@@ -214,6 +181,8 @@ For each FFT window (with specified overlap), the routine:
 
 # Returns
 A tuple: where each parameter (except `freqline`) is an array with one row per FFT window.
+
+See [`polarization`](@ref), [`wave_normal_angle`](@ref), [`wpol_helicity`](@ref).
 """
 function wavpol(ct, X; nfft=256, noverlap=div(nfft, 2), bin_freq=3)
     # Ensure the smoothing window length is odd.
@@ -251,14 +220,15 @@ function wavpol(ct, X; nfft=256, noverlap=div(nfft, 2), bin_freq=3)
         end
         S = spectral_matrix(@view(X[start_idx:end_idx, :]), window)
         S_smooth = smooth_spectral_matrix(S, smooth_win)
-        params = compute_polarization_parameters(S_smooth)
 
-        # Store the results.
-        power[j, :] = params.power
-        degpol[j, :] = params.degpol
-        waveangle[j, :] = params.waveangle
-        ellipticity[j, :] = params.ellipticity
-        helicity[j, :] = params.helicity
+        # Compute the following polarization parameters from the spectral matrix ``S``:
+        for f in 1:Nfreq
+            Sf = S_smooth[f, :, :]
+            power[j, f] = real(tr(Sf))
+            degpol[j, f] = polarization(Sf)
+            waveangle[j, f] = wave_normal_angle(Sf)
+            helicity[j, f], ellipticity[j, f] = wpol_helicity(Sf, waveangle[j, f])
+        end
         times[j] = ct[start_idx+half] # Set the times at the center of the FFT window.
     end
     return (; times, fs, power, degpol, waveangle, ellipticity, helicity)
@@ -275,7 +245,7 @@ function twavpol(x; kwargs...)
     res = wavpol(times(x), parent(x); kwargs...)
     dims = (Ti(res.times), 𝑓(res.fs))
     DimStack((
-        power=DimArray(res.power, dims; name="Power", metadata=Dict("scale" => log10)),
+        power=DimArray(res.power, dims; name="Power", metadata=Dict{Any,Any}("scale" => log10)),
         degpol=DimArray(res.degpol, dims; name="Degree of polarization"),
         waveangle=DimArray(res.waveangle, dims; name="Wave normal angle"),
         ellipticity=DimArray(res.ellipticity, dims; name="Ellipticity"),
