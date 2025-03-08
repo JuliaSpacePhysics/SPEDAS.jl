@@ -40,9 +40,8 @@ f
 
 ### Benchmark
 
-```julia
-@b twavpol(thc_scf_fac)
-@b pyspedas.twavpol("thc_scf_fac")
+```@example pyspedas
+@b twavpol(thc_scf_fac), pyspedas.twavpol("thc_scf_fac")
 ```
 
 Julia is about 100 times faster than Python.
