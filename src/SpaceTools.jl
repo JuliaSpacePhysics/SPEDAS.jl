@@ -10,6 +10,8 @@ using Makie
 using TimeseriesTools
 using Intervals: Interval
 using StructArrays
+using StaticArrays
+using OhMyThreads
 using Statistics
 using Unitful, DimensionfulAngles
 using Latexify, UnitfulLatexify
@@ -76,6 +78,7 @@ include("multispacecraft/tetrahedron.jl")
 include("multispacecraft/lingradest.jl")
 include("multispacecraft/timing.jl")
 include("waves/polarization.jl")
+include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
 
 end

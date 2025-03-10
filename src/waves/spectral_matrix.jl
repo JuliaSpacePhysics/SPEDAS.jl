@@ -13,6 +13,8 @@ function spectral_matrix(Xf::AbstractMatrix{<:Complex})
     @tullio S[f, i, j] := Xf[f, i] * conj(Xf[f, j])
 end
 
+spectral_matrix!(S, Xf) = (@tullio S[f, i, j] = Xf[f, i] * conj(Xf[f, j]))
+
 """
     spectral_matrix(X, window)
 
@@ -28,15 +30,8 @@ Returns a 3-D array of size ``N_{freq}, n, n``, where ``N_{freq} = \\lfloor N/2 
 function spectral_matrix(X::AbstractMatrix{<:Real})
     nfft = size(X, 1)
     # Compute FFTs and normalize
-    Xf = fft(X, 1) ./ sqrt(nfft)
-    # Only keep the positive frequencies
-    Nfreq = div(nfft, 2)
-    @views spectral_matrix(Xf[1:Nfreq, :])
-end
-
-function spectral_matrix(components::AbstractVector{<:AbstractVector}, args...; kwargs...)
-    X = reduce(hcat, components)
-    spectral_matrix(X, args...; kwargs...)
+    Xf = rfft(X, 1) ./ sqrt(nfft)
+    spectral_matrix(Xf)
 end
 
 """
@@ -49,25 +44,36 @@ The smoothing uses a symmetric window `aa` (for example, a Hamming window) of le
 - `S`: Spectral matrix array of size ``N_{freq}, n, n`` where n is the number of components.
 - `aa`: Weighting vector of length M.
 """
-function smooth_spectral_matrix(S, aa::Vector{Float64})
+function smooth_spectral_matrix(S, aa)
+    S_smooth = similar(S)
+    return smooth_spectral_matrix!(S_smooth, S, aa)
+end
+
+"""
+    smooth_spectral_matrix!(S_smooth, S, aa)
+
+In-place version of `smooth_spectral_matrix` that writes results to a pre-allocated array.
+"""
+function smooth_spectral_matrix!(S_smooth, S, aa)
     Nfreq, n, _ = size(S)
     M = length(aa)
     halfM = div(M, 2)
-    S_smooth = similar(S)
 
-    # For frequencies where the full smoothing window fits
+    # For boundary frequencies, copy original S
     for i in 1:n, j in 1:n
-        for f in (halfM+1):(Nfreq-halfM)
-            S_smooth[f, i, j] = sum(aa .* S[(f-halfM):(f+halfM), i, j])
+        for f in 1:halfM
+            S_smooth[f, i, j] = S[f, i, j]
         end
-    end
-
-    # For boundary frequencies, copy original S (or you might handle edges separately)
-    for f in 1:halfM
-        S_smooth[f, :, :] = S[f, :, :]
-    end
-    for f in (Nfreq-halfM+1):Nfreq
-        S_smooth[f, :, :] = S[f, :, :]
+        for f in (halfM+1):(Nfreq-halfM)
+            sum_val = zero(eltype(S_smooth))
+            for k in 0:(M-1)
+                sum_val += aa[k+1] * S[f-halfM+k, i, j]
+            end
+            S_smooth[f, i, j] = sum_val
+        end
+        for f in (Nfreq-halfM+1):Nfreq
+            S_smooth[f, i, j] = S[f, i, j]
+        end
     end
 
     return S_smooth

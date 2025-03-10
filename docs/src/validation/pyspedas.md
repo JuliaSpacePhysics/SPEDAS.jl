@@ -8,7 +8,6 @@ using DimensionalData
 using PySPEDAS: get_data
 using CairoMakie
 using SpaceTools: tplot
-using NaNMath
 using Chairmarks
 ```
 
@@ -31,6 +30,7 @@ py_tvars = [
 ]
 py_result = get_data(DimStack, py_tvars)
 res = twavpol(thc_scf_fac)
+res.power.metadata["scale"] = identity
 
 f = Figure(;size=(1200, 800))
 tplot(f[1,1], py_result)

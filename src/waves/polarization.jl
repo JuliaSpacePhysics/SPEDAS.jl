@@ -46,22 +46,6 @@ function polarization(S)
     (n * trS2 - trS^2) / ((n - 1) * trS^2)
 end
 
-"""
-Phase factor `exp (i φ)` satisfies the following equation
-
-``\\exp (4 i φ) = \\exp (-2 i γ)``
-
-where
-
-``γ = \\arctan (2 Re(𝐮)^𝐓 Im(𝐮) /(Re(𝐮)^2-Im(𝐮)^2))``
-"""
-function phase_factor(u)
-    Re, Im = reim(u)
-    upper = 2Re'Im
-    lower = Re'Re - Im'Im
-    γ = atan(upper, lower)
-    exp(-im * γ / 2)
-end
 
 """
 Wave normal angle is the angle between (wnx, wny) and the vertical |wnz|
@@ -84,158 +68,113 @@ function wave_normal_angle(S)
     end
 end
 
-"""
-    wpol_helicity(S, waveangle)
-
-Compute helicity and ellipticity for a single frequency.
-
-# Arguments
-- `S`: Spectral matrix for a single frequency, size (3,3)
-- `waveangle`: Wave normal angle for this frequency
-
-# Returns
-- `helicity`: Average helicity across the three components
-- `ellipticity`: Average ellipticity across the three components
-"""
-function wpol_helicity(S::AbstractMatrix{ComplexF64}, waveangle::Number)
-    # Preallocate arrays for 3 polarization components
-    helicity_comps = zeros(Float64, 3)
-    ellip_comps = zeros(Float64, 3)
-
-    lam_u = zeros(ComplexF64, 3)
-
-    for comp in 1:3
-        # Build state vector λ_u for this polarization component
-        alph = sqrt(real(S[comp, comp]))
-        alph == 0.0 && continue
-
-        # Reset vectors to avoid carrying over values
-        fill!(lam_u, 0.0)
-        lam_u[comp] = alph
-
-        if comp == 1
-            lam_u[2] = (real(S[1, 2]) / alph) + im * (-imag(S[1, 2]) / alph)
-            lam_u[3] = (real(S[1, 3]) / alph) + im * (-imag(S[1, 3]) / alph)
-        elseif comp == 2
-            lam_u[1] = (real(S[2, 1]) / alph) + im * (-imag(S[2, 1]) / alph)
-            lam_u[3] = (real(S[2, 3]) / alph) + im * (-imag(S[2, 3]) / alph)
-        else
-            lam_u[1] = (real(S[3, 1]) / alph) + im * (-imag(S[3, 1]) / alph)
-            lam_u[2] = (real(S[3, 2]) / alph) + im * (-imag(S[3, 2]) / alph)
-        end
-
-        # Compute the phase rotation (gammay) for this state vector
-        lam_y = phase_factor(lam_u) * lam_u
-
-        # Helicity: ratio of the norm of the imaginary part to the real part
-        norm_real = norm(real(lam_y))
-        norm_imag = norm(imag(lam_y))
-        helicity_comps[comp] = (norm_imag != 0) ? norm_imag / norm_real : NaN
-
-        # For ellipticity, use only the first two components
-        u1 = lam_y[1]
-        u2 = lam_y[2]
-
-        # TODO: why there is no 2 in front of uppere?
-        uppere = imag(u1) * real(u1) + imag(u2) * real(u2)
-        lowere = (-imag(u1)^2 + real(u1)^2 - imag(u2)^2 + real(u2)^2)
-        gammarot = atan(uppere, lowere)
-        lam_urot = exp(-1im * 0.5 * gammarot) * [u1, u2]
-
-        num = norm(imag(lam_urot))
-        den = norm(real(lam_urot))
-        ellip_val = (den != 0) ? num / den : NaN
-        # Adjust sign using the off-diagonal of ematspec and the wave normal angle
-        sign_factor = sign(imag(S[1, 2]) * sin(waveangle))
-        ellip_comps[comp] = ellip_val * sign_factor
-    end
-
-    # Average the three computed values
-    helicity = mean(helicity_comps)
-    ellipticity = mean(ellip_comps)
-
-    return helicity, ellipticity
-end
 
 _smooth_t(nfft) = 0.08 .+ 0.46 .* (1 .- cos.(2π .* (0:(nfft-1)) ./ nfft))
 
 """
-    wavpol(ct, X; nfft=256, noverlap=nfft÷2, bin_freq=3)
+    wavpol(X, fs=1; nfft=256, noverlap=div(nfft, 2), smooth_t=_smooth_t(nfft), smooth_f=hamming(3), nbuffers=Threads.nthreads())
 
 Perform polarization analysis of `n`-component time series data.
 
-Assumes the data are in a right-handed, field-aligned coordinate system 
+For each FFT window (with specified overlap), the routine:
+1. Applies a time-domain window function and computes the FFT to construct the spectral matrix ``S(f)``
+2. Applies frequency smoothing using a window function
+3. Computes wave parameters: power, degree of polarization, wave normal angle, ellipticity, and helicity
+
+The analysis assumes the data are in a right-handed, field-aligned coordinate system 
 (with Z along the ambient magnetic field).
 
-For each FFT window (with specified overlap), the routine:
-  1. Computes the FFT and constructs the spectral matrix ``S(f)``.
-  2. Applies frequency smoothing using a window (of length `bin_freq`).
-  3. Computes the wave power, degree of polarization, wave normal angle,
-     ellipticity, and helicity.
-
 # Arguments
-- `ct`: Time vector.
-- `X`: Field components (where each column is a component).
-- Keyword arguments:
-  - `nfft`: Number of FFT points (default 256).
-  - `noverlap`: Step between successive FFT windows (default `nfft÷2`).
-  - `bin_freq`: Number of frequency bins for smoothing (default 3; will be made odd if needed).
+- `X`: Matrix where each column is a component of the multivariate time series
+- `fs`: Sampling frequency (default: 1)
+
+# Keywords
+- `nfft`: Number of points for FFT (default: 256)
+- `noverlap`: Number of overlapping points between windows (default: nfft÷2)
+- `smooth_t`: Time domain window function (default: Hann window)
+- `smooth_f`: Frequency domain smoothing window (default: 3-point Hamming window)
+- `nbuffers`: Number of pre-allocated buffers for parallel processing (default: number of threads)
 
 # Returns
-A tuple: where each parameter (except `freqline`) is an array with one row per FFT window.
+A named tuple containing:
+- `indices`: Time indices for each FFT window
+- `freqs`: Frequency array
+- `power`: Power spectral density, normalized by frequency bin width and window function
+- `degpol`: Degree of polarization [0,1]
+- `waveangle`: Wave normal angle [0,π/2]
+- `ellipticity`: Wave ellipticity [-1,1], negative for left-hand polarized
+- `helicity`: Wave helicity
 
-See [`polarization`](@ref), [`wave_normal_angle`](@ref), [`wpol_helicity`](@ref).
+See also: [`polarization`](@ref), [`wave_normal_angle`](@ref), [`wpol_helicity`](@ref)
 """
-function wavpol(ct::AbstractArray, X; nfft=256, noverlap=div(nfft, 2), smooth_t=_smooth_t(nfft), smooth_f=hamming(3))
+function wavpol(X::AbstractMatrix{T}, ::Val{n}, fs=1; nfft=256, noverlap=div(nfft, 2), smooth_t=_smooth_t(nfft), smooth_f=hamming(3), nbuffers=Threads.nthreads()) where {T<:Number,n}
     N = size(X, 1)
-    samp_freq = samplingrate(ct)
-    Nfreq = div(nfft, 2)
-    fs = (samp_freq / nfft) * (0:(Nfreq-1))
+    Nfreq = div(nfft, 2) + 1
+    freqs = (fs / nfft) * (0:(Nfreq-1))
 
-    # Define the number of FFT windows and times (center time of each window)
+    # Define the number of FFT windows
     nsteps = floor(Int, (N - nfft) / noverlap) + 1
-    times_indices = 1 .+ (0:nsteps-1) * noverlap .+ div(nfft, 2)
-    times = ct[times_indices]
-
+    indices = 1 .+ (0:nsteps-1) * noverlap .+ div(nfft, 2)
     # normalize the smooth window for frequency smoothing
     smooth_f = smooth_f / sum(smooth_f)
 
     # Preallocate arrays for the results.
-    power = zeros(Float64, nsteps, Nfreq)
-    degpol = zeros(Float64, nsteps, Nfreq)
-    waveangle = zeros(Float64, nsteps, Nfreq)
-    ellipticity = zeros(Float64, nsteps, Nfreq)
-    helicity = zeros(Float64, nsteps, Nfreq)
+    power = zeros(T, nsteps, Nfreq)
+    degpol = zeros(T, nsteps, Nfreq)
+    waveangle = zeros(T, nsteps, Nfreq)
+    ellipticity = zeros(T, nsteps, Nfreq)
+    helicity = zeros(T, nsteps, Nfreq)
 
-    # Process each FFT window.
-    Threads.@threads for j in 1:nsteps
+    # Channels for parallel processing
+    Xwchnl = Channel{Matrix{T}}(nbuffers)
+    Xfchnl = Channel{Matrix{Complex{T}}}(nbuffers)
+    SType = Array{Complex{T},3}
+    Schnl = Channel{SType}(nbuffers)
+    Smchnl = Channel{SType}(nbuffers)
+    foreach(1:nbuffers) do _
+        put!(Xwchnl, Matrix{T}(undef, nfft, n))
+        put!(Xfchnl, Matrix{Complex{T}}(undef, Nfreq, n))
+        put!(Schnl, SType(undef, Nfreq, n, n))
+        put!(Smchnl, SType(undef, Nfreq, n, n))
+    end
+    chnls = (Xwchnl, Xfchnl, Schnl, Smchnl)
+    plan = plan_rfft(zeros(T, nfft, n), 1)
+
+    tforeach(1:nsteps) do j
+        Xw, Xf, S, Sm = map(take!, chnls)
+
         start_idx = 1 + (j - 1) * noverlap
         end_idx = start_idx + nfft - 1
-        if end_idx > N
-            continue
-        end
-        Xw = @view(X[start_idx:end_idx, :]) .* smooth_t
-        S = spectral_matrix(Xw)
-        S_smooth = smooth_spectral_matrix(S, smooth_f)
-
+        copyto!(Xw, @view(X[start_idx:end_idx, :]))
+        Xw .*= smooth_t
+        mul!(Xf, plan, Xw)
+        Xf ./= sqrt(nfft) # Compute FFTs and normalize
+        spectral_matrix!(S, Xf)
+        smooth_spectral_matrix!(Sm, S, smooth_f)
         # Compute the following polarization parameters from the spectral matrix ``S``:
         for f in 1:Nfreq
-            Sf = S_smooth[f, :, :]
+            Sf = @views SMatrix{n,n}(Sm[f, :, :])
             power[j, f] = real(tr(Sf))
             degpol[j, f] = real(polarization(Sf))
             waveangle[j, f] = wave_normal_angle(Sf)
             helicity[j, f], ellipticity[j, f] = wpol_helicity(Sf, waveangle[j, f])
         end
+
+        put!(Schnl, S)
+        put!(Smchnl, Sm)
+        put!(Xwchnl, Xw)
+        put!(Xfchnl, Xf)
     end
 
     # Scaling power results to units with meaning
-    binwidth = samp_freq / nfft
+    binwidth = fs / nfft
     W = sum(smooth_t .^ 2) / nfft
-    power_scale = 2 / (binwidth * W)
-    power = power * power_scale
+    power_s = power * 2 / (binwidth * W)
 
-    return (; times, fs, power, degpol, waveangle, ellipticity, helicity)
+    return (; indices, freqs, power=power_s, degpol, waveangle, ellipticity, helicity)
 end
+
+wavpol(X, args...; kwargs...) = wavpol(X, Val(size(X, 2)), args...; kwargs...)
 
 """
     twavpol(x)
@@ -244,9 +183,11 @@ A convenience wrapper around [`wavpol`](@ref) that works with DimensionalData ar
 
 It automatically extracts the time dimension and returns the results as a DimStack with properly labeled dimensions.
 """
-function twavpol(x; kwargs...)
-    res = wavpol(times(x), parent(x); kwargs...)
-    dims = (Ti(res.times), 𝑓(res.fs))
+function twavpol(x; nfft=256, noverlap=div(nfft, 2), kwargs...)
+    t = times(x)
+    fs = samplingrate(t)
+    res = wavpol(parent(x), fs; nfft, noverlap, kwargs...)
+    dims = (Ti(t[res.indices]), 𝑓(res.freqs))
     DimStack((
         power=DimArray(res.power, dims; name="Power", metadata=Dict{Any,Any}("scale" => log10)),
         degpol=DimArray(res.degpol, dims; name="Degree of polarization"),
