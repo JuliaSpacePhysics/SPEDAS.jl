@@ -7,6 +7,27 @@ function tnorm(x; dims=Ti)
 end
 
 """
+    proj(a, b)
+
+Vector projection of a vector `a` on (or onto) a nonzero vector `b`.
+
+# References: [Wikipedia](https://en.wikipedia.org/wiki/Vector_projection)
+"""
+function proj(a, b)
+    b̂ = normalize(ustrip(b))
+    return dot(a, b̂) * b̂
+end
+
+
+"""Vector rejection"""
+oproj(a, b) = a - proj(a, b)
+
+function toproj(v, B; dims=Ti)
+    res = oproj.(eachslice(v; dims), eachslice(B; dims))
+    tstack(res)
+end
+
+"""
 
 References:
 - https://docs.xarray.dev/en/stable/generated/xarray.cross.html

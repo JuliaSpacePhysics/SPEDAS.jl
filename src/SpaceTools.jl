@@ -26,6 +26,7 @@ export AbstractProduct, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange
 export tclip, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
+export proj, oproj, toproj
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers
 export fill_gaps
