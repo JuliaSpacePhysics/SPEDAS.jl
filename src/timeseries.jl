@@ -4,6 +4,13 @@ function tclip(da, trange)
     da[Ti=tmin .. tmax]
 end
 
+"""
+    tclip(da1, da2::AbstractDimArray)
+
+Clip the time dimension of `da1` to match the time range of `da2`.
+"""
+tclip(da1, da2::AbstractDimArray) = tclip(da1, timerange(da2))
+
 function timeshift(ta; dim=1, t0=nothing)
     td = dims(ta, dim)
     times = td.val.data

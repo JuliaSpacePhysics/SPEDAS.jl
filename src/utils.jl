@@ -28,6 +28,10 @@ function times(x::AbstractDimArray; query=timeDimType)
     lookup(timedim(x; query))
 end
 
+function timerange(x::AbstractDimArray; query=timeDimType)
+    times(x; query) |> extrema
+end
+
 # hack as `Makie` does not support `NanoDate` directly
 function xs(da::AbstractDimArray)
     x = times(da) |> parent
@@ -76,7 +80,7 @@ end
 
 function tstack(vectors::DD.AbstractDimVector{<:AbstractVector}; dims=1)
     n = length(first(vectors))
-    data = stack(vectors; dims)
+    data = stack(parent(vectors); dims)
     new_dims = (vectors.dims..., Y(1:n))
     return DimArray(data, new_dims; name=vectors.name, metadata=vectors.metadata)
 end
