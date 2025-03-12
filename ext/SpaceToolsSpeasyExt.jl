@@ -1,8 +1,9 @@
 module SpaceToolsSpeasyExt
 
 using SpaceTools
-using SpaceTools: SpeasyProduct
+using SpaceTools: AbstractDataSet, SpeasyProduct
 using Speasy
+using Speasy: TimeRangeType
 using DimensionalData
 import SpaceTools: transform, get_data, axis_attributes
 
@@ -15,6 +16,11 @@ end
 
 function Speasy.get_data(p, tr::TimeRange; kwargs...)
     Speasy.get_data(p, tr.first, tr.last; kwargs...)
+end
+
+function Speasy.get_data(ds::AbstractDataSet, tr::TimeRangeType; provider="cda", kwargs...)
+    products = Speasy.products(ds; provider)
+    Speasy.get_data(products, tr; kwargs...)
 end
 
 function SpaceTools.axis_attributes(sps::AbstractVector{SpeasyProduct}, tmin, tmax; kwargs...)

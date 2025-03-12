@@ -9,5 +9,10 @@ SpaceTools.DEFAULTS
 
 ```@autodocs
 Modules = [SpaceTools]
+Order   = [:Module]
+```
+
+```@autodocs
+Modules = [SpaceTools]
 Order   = [:function, :type]
 ```
