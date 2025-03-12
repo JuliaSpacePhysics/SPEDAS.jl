@@ -25,6 +25,7 @@ makedocs(
         ],
         "Explanation" => [
             "explanations/data.md",
+            "explanations/data_model.md",
             "explanations/tplot.md",
             "explanations/coords.md",
             "explanations/multispacecraft.md",
@@ -38,6 +39,7 @@ makedocs(
     ],
     format=Documenter.HTML(size_threshold=nothing),
     modules=[SpaceTools],
+    warnonly=Documenter.except(:missing_docs),
     plugins=[bib],
     doctest=true
 )

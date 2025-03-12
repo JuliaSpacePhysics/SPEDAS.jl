@@ -1,0 +1,44 @@
+# Magnetospheric Multiscale (MMS) Project Configuration
+name = "Magnetospheric Multiscale"
+
+[metadata]
+abbreviation = "mms"
+
+# Instruments
+[instruments.fpi]
+name = "Fast Plasma Investigation"
+
+[instruments.fgm]
+name = "Fluxgate Magnetometer"
+
+[instruments.scm]
+name = "Search-coil Magnetometer"
+
+[instruments.edp]
+name = "Electric Field Double Probe"
+
+[instruments.edi]
+name = "Electron Drift Instrument"
+
+[instruments.feeps]
+name = "Fly's Eye Energetic Particle Sensor"
+
+[instruments.eis]
+name = "Energetic Ion Spectrometer"
+
+[instruments.hpca]
+name = "Hot Plasma Composition Analyzer"
+
+# FPI Dataset Configuration
+[datasets.fpi_moms]
+format = "MMS{probe}_FPI_{data_rate}_L2_{data_type}-MOMS"
+
+[datasets.fpi_moms.metadata]
+probes = [1, 2, 3, 4]
+data_rates = ["fast", "brst"]
+data_types = ["des", "dis"]
+
+[datasets.fpi_moms.variables]
+energyspectr_omni = "mms{probe}_{data_type}_energyspectr_omni_{data_rate}"
+numberdensity = "mms{probe}_{data_type}_numberdensity_{data_rate}"
+bulkv_gse = "mms{probe}_{data_type}_bulkv_gse_{data_rate}"
