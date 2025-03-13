@@ -5,7 +5,7 @@
 
 ```@example interactive_speasy
 using Speasy
-using SpaceTools
+using SPEDAS
 using Dates
 using CairoMakie
 

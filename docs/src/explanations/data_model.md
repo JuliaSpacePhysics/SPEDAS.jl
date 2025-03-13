@@ -4,7 +4,7 @@ We adopt a data model inspired by the [SPASE Model](https://spase-group.org/data
 
 ## Data Model Overview
 
-The SpaceTools data model organizes space science data in a hierarchical structure:
+The SPEDAS data model organizes space science data in a hierarchical structure:
 
 - **Project**: Represents a mission or project (e.g., MMS, THEMIS)
   - Contains multiple instruments
@@ -30,11 +30,11 @@ LDataSet
 
 ## Usage Examples
 
-Project-specific instruments and datasets are exported as global variables when importing a project module `using SpaceTools.{project}`, for example:
+Project-specific instruments and datasets are exported as global variables when importing a project module `using SPEDAS.{project}`, for example:
 
 ```@example project
-using SpaceTools
-using SpaceTools.MMS
+using SPEDAS
+using SPEDAS.MMS
 
 mms
 ```

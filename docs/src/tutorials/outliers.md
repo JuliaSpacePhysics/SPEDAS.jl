@@ -39,7 +39,7 @@ y_spikey, n_spikes = create_sample_data()
 By default, `replace_outliers` uses a threshold-detection approach based on the median absolute deviation (MAD) to detect spikes. It is also possible to use a filter-based approach (i.e. low-pass filtering).
 
 ```@example spikes
-using SpaceTools
+using SPEDAS
 using CairoMakie
 using Test
 

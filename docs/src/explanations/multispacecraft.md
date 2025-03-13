@@ -6,7 +6,7 @@
 [paschmannMultispacecraftAnalysisMethods2008; Chapter 4](@citet), [paschmannAnalysisMethodsMultispacecraft2000; Chapter 14](@citet), 
 
 ```@docs
-SpaceTools.position_tensor
+SPEDAS.position_tensor
 reciprocal_vector
 reciprocal_vectors
 ```

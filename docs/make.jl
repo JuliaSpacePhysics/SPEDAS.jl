@@ -1,4 +1,4 @@
-using SpaceTools
+using SPEDAS
 using Documenter
 using DocumenterCitations
 # using DemoCards
@@ -8,7 +8,7 @@ bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
 # demopage, postprocess_cb, gallery_assets = makedemos("gallery")
 
 makedocs(
-    sitename="SpaceTools",
+    sitename="SPEDAS.jl",
     pages=[
         "Home" => "index.md",
         "Tutorials" => [
@@ -38,7 +38,7 @@ makedocs(
         "API" => "api.md",
     ],
     format=Documenter.HTML(size_threshold=nothing),
-    modules=[SpaceTools],
+    modules=[SPEDAS],
     warnonly=Documenter.except(:missing_docs),
     plugins=[bib],
     doctest=true
@@ -50,5 +50,5 @@ makedocs(
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
 deploydocs(
-    repo="github.com/Beforerr/SpaceTools.jl",
+    repo="github.com/Beforerr/SPEDAS.jl",
 )

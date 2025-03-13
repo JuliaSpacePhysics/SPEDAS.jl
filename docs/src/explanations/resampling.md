@@ -22,7 +22,7 @@ tresample
 ### Basic Usage
 
 ```julia
-using SpaceTools
+using SPEDAS
 using Dates
 using DataInterpolations
 

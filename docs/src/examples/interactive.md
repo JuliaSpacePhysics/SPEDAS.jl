@@ -5,7 +5,7 @@
 ```@example interactive
 using Dates
 using DimensionalData
-using SpaceTools
+using SPEDAS
 using CairoMakie
 
 t0 = DateTime(2001, 1, 1)

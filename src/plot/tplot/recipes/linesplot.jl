@@ -38,7 +38,7 @@ end
 function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix)
     da = resample(da; verbose=true)
     x = xs(da)
-    labels = SpaceTools.labels(da)
+    labels = SPEDAS.labels(da)
     map(eachcol(parent(da)), labels) do y, label
         S.Lines(x, y; label)
     end

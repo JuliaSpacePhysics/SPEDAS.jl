@@ -1,6 +1,6 @@
-# SpaceTools.jl
+# SPEDAS.jl
 
-[![Build Status](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Build Status](https://github.com/Beforerr/SPEDAS.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SPEDAS.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 A collection of tools for space physics / heliophysics: from data loading and processing to plotting and analysis.
 
@@ -8,7 +8,7 @@ A collection of tools for space physics / heliophysics: from data loading and pr
 
 ```julia
 using Pkg
-Pkg.add(PackageSpec(url="https://github.com/Beforerr/SpaceTools.jl"))
+Pkg.add(PackageSpec(url="https://github.com/Beforerr/SPEDAS.jl"))
 ```
 
 ## Related packages
@@ -25,7 +25,7 @@ Pkg.add(PackageSpec(url="https://github.com/Beforerr/SpaceTools.jl"))
 
 ⚠️ **Development Status**: This package is in active development. While functional, the API may undergo changes in future releases. Please review the documentation and test thoroughly before using in scientific work.
 
-📫 **Contributing**: We welcome contributions! If you're interested in collaborating or need assistance, please open an issue or reach out through our [GitHub repository](https://github.com/Beforerr/SpaceTools.jl).
+📫 **Contributing**: We welcome contributions! If you're interested in collaborating or need assistance, please open an issue or reach out through our [GitHub repository](https://github.com/Beforerr/SPEDAS.jl).
 
 ## Explanations
 

@@ -15,7 +15,7 @@ A representation of a project or mission containing instruments and datasets.
 
 # Examples
 ```julia
-using SpaceTools.MMS # Export project related variables
+using SPEDAS.MMS # Export project related variables
 mms  # Project instance for Magnetospheric Multiscale mission
 
 # Access instruments
@@ -44,7 +44,7 @@ Project(; name="", instruments=(;), datasets=(;), metadata=Dict(), kwargs...) = 
 
 # Examples
 ```julia
-using SpaceTools.MMS
+using SPEDAS.MMS
 fpi  # Fast Plasma Investigation instrument
 ```
 """
@@ -68,7 +68,7 @@ A template for generating datasets with parameterized naming patterns.
 
 # Examples
 ```julia
-using SpaceTools.MMS
+using SPEDAS.MMS
 
 # Access FPI dataset specification
 lds = mms.datasets.fpi_moms

@@ -1,9 +1,9 @@
 module MMS
-using ..SpaceTools
+using ..SPEDAS
 export FPIDataSet
 
-const file = joinpath(pkgdir(SpaceTools), "config", "mms.toml")
-config = SpaceTools.load_project_config(file)
+const file = joinpath(pkgdir(SPEDAS), "config", "mms.toml")
+config = SPEDAS.load_project_config(file)
 
 for (sym, value) in config
     @eval begin

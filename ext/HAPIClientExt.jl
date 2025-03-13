@@ -1,11 +1,11 @@
 module HAPIClientExt
 
-using SpaceTools
+using SPEDAS
 using HAPIClient
 using DimensionalData
-import SpaceTools: xlabel
+import SPEDAS: xlabel
 
-SpaceTools.get_data(x::HAPIVariable; kwargs...) = DimArray(x; kwargs...)
-SpaceTools.meta(x::HAPIVariable) = x.meta
+SPEDAS.get_data(x::HAPIVariable; kwargs...) = DimArray(x; kwargs...)
+SPEDAS.meta(x::HAPIVariable) = x.meta
 
 end

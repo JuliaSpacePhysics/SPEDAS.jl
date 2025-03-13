@@ -1,7 +1,7 @@
-# SpaceTools.jl
+# SPEDAS.jl
 
-[![Build Status](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SpaceTools.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Beforerr.github.io/SpaceTools.jl/dev/)
+[![Build Status](https://github.com/Beforerr/SPEDAS.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SPEDAS.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Beforerr.github.io/SPEDAS.jl/dev/)
 
 A collection of tools for space physics / heliophysics.
 
@@ -9,7 +9,7 @@ A collection of tools for space physics / heliophysics.
 
 ```julia
 using Pkg
-Pkg.add(PackageSpec(url="https://github.com/Beforerr/SpaceTools.jl"))
+Pkg.add(PackageSpec(url="https://github.com/Beforerr/SPEDAS.jl"))
 ```
 
 ## Related packages

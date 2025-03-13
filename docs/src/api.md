@@ -4,15 +4,15 @@
 Pages = ["api.md]
 ```
 ```@docs
-SpaceTools.DEFAULTS
+SPEDAS.DEFAULTS
 ```
 
 ```@autodocs
-Modules = [SpaceTools]
+Modules = [SPEDAS]
 Order   = [:Module]
 ```
 
 ```@autodocs
-Modules = [SpaceTools]
+Modules = [SPEDAS]
 Order   = [:function, :type]
 ```
