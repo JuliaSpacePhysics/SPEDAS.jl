@@ -9,7 +9,7 @@ Both functions are built on Makie's recipe system, allowing customization throug
 
 ```@example tplot
 using CairoMakie
-using SpaceTools
+using SPEDAS
 using Unitful
 ```
 

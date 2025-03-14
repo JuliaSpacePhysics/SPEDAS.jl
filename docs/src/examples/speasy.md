@@ -10,7 +10,7 @@ spz = speasy
 
 using CairoMakie
 using DimensionalData
-using SpaceTools
+using SPEDAS
 using Dates
 ```
 

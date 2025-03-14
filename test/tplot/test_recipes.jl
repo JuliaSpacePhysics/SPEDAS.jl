@@ -22,7 +22,7 @@ end
 
     @test_nowarn let
         f = Figure()
-        ax = Axis(f[1, 1]; SpaceTools.axis_attributes(Au)...)
+        ax = Axis(f[1, 1]; SPEDAS.axis_attributes(Au)...)
         linesplot!(ax, t.val, Au)
         f
     end

@@ -1,4 +1,4 @@
-module SpaceTools
+module SPEDAS
 
 using Dates
 using NanoDates

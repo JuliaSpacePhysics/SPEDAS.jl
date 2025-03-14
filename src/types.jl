@@ -9,7 +9,7 @@ import Base: ∘
 end
 
 """
-    SpaceTools.DEFAULTS
+    SPEDAS.DEFAULTS
 
 A global constant that holds default parameters:
 

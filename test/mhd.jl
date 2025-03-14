@@ -1,4 +1,4 @@
-using SpaceTools
+using SPEDAS
 
 u = [1, 0, 0]
 B = [0, 1, 0]

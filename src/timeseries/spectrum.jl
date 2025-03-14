@@ -30,7 +30,7 @@ function pspectrum(x::AbstractDimVector, spec::Spectrogram; kwargs...)
 end
 
 function pspectrum(x::AbstractDimArray, spec::Spectrogram; query=Ti, kwargs...)
-    times = SpaceTools.times(x)
+    times = SPEDAS.times(x)
     dims = otherdims(x, query)
     specs = map(eachslice(x; dims)) do slice
         pspectrum(slice, times, spec; kwargs...)

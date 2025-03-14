@@ -2,12 +2,12 @@
 
 ```@example pyspedas
 using PySPEDAS
-using SpaceTools
+using SPEDAS
 using PythonCall
 using DimensionalData
 using PySPEDAS: get_data
 using CairoMakie
-using SpaceTools: tplot
+using SPEDAS: tplot
 using Chairmarks
 ```
 
