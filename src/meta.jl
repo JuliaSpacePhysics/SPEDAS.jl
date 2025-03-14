@@ -1,6 +1,6 @@
 const xlabel_sources = (:xlabel, "xlabel")
 const ylabel_sources = (:ylabel, :long_name, "long_name", :label, "LABLAXIS")
-const labels_sources = (:labels, "labels")
+const labels_sources = (:labels, "labels", "LABL_PTR_1", "LABLAXIS")
 const scale_sources = (:scale, "scale", "SCALETYP")
 const unit_sources = (:unit, :units, "UNITS")
 const yunit_sources = (:yunit, :units)
@@ -23,7 +23,10 @@ function clabel(ta::AbstractDimArray)
 end
 
 label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
-labels(ta::AbstractDimMatrix) = prioritized_get(ta, labels_sources, string.(dims(ta, 2).val))
+function labels(ta::AbstractDimMatrix)
+    lbls = prioritized_get(ta, labels_sources, string.(dims(ta, 2).val))
+    vectorize(lbls)
+end
 
 set_colorrange(x, range) = modify_meta(x; colorrange=range)
 set_colorrange(x; kwargs...) = set_colorrange(x, colorrange(x; kwargs...))

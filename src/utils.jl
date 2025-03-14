@@ -1,5 +1,8 @@
 function donothing(args...; kwargs...) end
 
+vectorize(x) = [x]
+vectorize(x::AbstractArray) = vec(x)
+
 function stat_relerr(itr, f)
     m = f(itr)
     relerrs = abs.(extrema(itr) .- m) ./ m
