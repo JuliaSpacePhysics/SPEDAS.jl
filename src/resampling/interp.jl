@@ -20,10 +20,10 @@ Interpolate `A` to times in `B`
 tinterp(A, B::AbstractDimArray; kwargs...) = _tinterp(A, dims(B, Ti); kwargs...)
 
 function _tinterp(A::T, t; interp=LinearInterpolation) where {T<:AbstractDimVector}
-    u = stack(A.data) # necessary as no method matching zero(::Type{Vector{}})
+    u = stack(parent(A)) # necessary as no method matching zero(::Type{Vector{}})
     out = interp(u, t2x.(dims(A, Ti)))(t2x.(t))
     t isa DateTime && return out
-    data = eachcol(out)
+    data = ndims(out) == 1 ? out : eachcol(out)
     return DimArray(data, tdim(t); name=A.name, metadata=A.metadata)
 end
 
