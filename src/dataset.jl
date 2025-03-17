@@ -7,7 +7,7 @@ A concrete dataset with a name, parameters, and metadata.
 """
 struct DataSet <: AbstractDataSet
     name::String
-    parameters::Vector
+    parameters::Union{Vector,Dict,NamedTuple}
     metadata::Dict
 end
 

@@ -38,7 +38,13 @@ probes = [1, 2, 3, 4]
 data_rates = ["fast", "brst"]
 data_types = ["des", "dis"]
 
-[datasets.fpi_moms.variables]
-energyspectr_omni = "mms{probe}_{data_type}_energyspectr_omni_{data_rate}"
+[datasets.fpi_moms.parameters]
 numberdensity = "mms{probe}_{data_type}_numberdensity_{data_rate}"
 bulkv_gse = "mms{probe}_{data_type}_bulkv_gse_{data_rate}"
+temppara = "mms{probe}_{data_type}_temppara_{data_rate}"
+tempperp = "mms{probe}_{data_type}_tempperp_{data_rate}"
+energyspectr_omni = "mms{probe}_{data_type}_energyspectr_omni_{data_rate}"
+# energyspectr_perp = "mms{probe}_{data_type}_energyspectr_perp_{data_rate}"
+# energyspectr_par = "mms{probe}_{data_type}_energyspectr_par_{data_rate}"
+# energyspectr_anti = "mms{probe}_{data_type}_energyspectr_anti_{data_rate}"
+# mms2_des_energyspectr_perp_brst

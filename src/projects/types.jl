@@ -83,7 +83,7 @@ which are replaced with actual values when creating a concrete `DataSet`.
 @kwdef struct LDataSet <: AbstractDataSet
     name::String = ""
     format::String = ""
-    variables::Dict = Dict()
+    parameters::Dict = Dict()
     metadata::Dict = Dict()
 end
 
