@@ -12,12 +12,26 @@ end
 Vector projection of a vector `a` on (or onto) a nonzero vector `b`.
 
 # References: [Wikipedia](https://en.wikipedia.org/wiki/Vector_projection)
+
+See also: [`sproj`](@ref), [`oproj`](@ref)
 """
 function proj(a, b)
     b̂ = normalize(ustrip(b))
     return dot(a, b̂) * b̂
 end
 
+"""Scalar projection"""
+function sproj(a, b)
+    return dot(a, b) / norm(b)
+end
+
+function tsproj(a, b; dims=Ti)
+    sproj.(eachslice(a; dims), eachslice(b; dims))
+end
+
+function tproj(a, b; dims=Ti)
+    proj.(eachslice(a; dims), eachslice(b; dims))
+end
 
 """Vector rejection"""
 oproj(a, b) = a - proj(a, b)
