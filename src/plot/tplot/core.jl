@@ -35,6 +35,18 @@ function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxe
 end
 
 tplot(f::Drawable, ta::SupportTypes, args...; kwargs...) = tplot(f, (ta,), args...; kwargs...)
-tplot(tas, args...; figure=(;), kwargs...) = tplot(Figure(; figure...), tas, args...; kwargs...)
+tplot(tas, args...; figure=(;), kwargs...) = tplot(Figure(; size=auto_figure_size(tas), figure...), tas, args...; kwargs...)
+
+"""
+    auto_figure_size(tas)
+
+Calculate an appropriate figure size based on the number of plots in the list.
+Returns a tuple of (width, height) in pixels.
+"""
+function auto_figure_size(tas; base_height=200, min_height=600, width=800)
+    n_plots = length(tas)
+    height = max(min_height, n_plots * base_height)
+    return (width, height)
+end
 
 function tplot! end
