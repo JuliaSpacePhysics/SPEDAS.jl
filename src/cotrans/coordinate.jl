@@ -26,11 +26,9 @@ Also updates the dimension name if it contains the coordinate system.
 Reference: 
 - https://pyspedas.readthedocs.io/en/latest/_modules/pytplot/data_att_getters_setters.html#set_coords
 """
-function set_coord(da, coord)
+function set_coord(da, coord; old_coords=get_coords(da))
     # Update the coordinate system metadata
     new_da = modify_meta(da, "COORDINATE_SYSTEM" => coord)
-
-    old_coords = get_coords(da)
     old_new_pairs = [old_coord => coord for old_coord in old_coords]
     push!(old_coords, lowercase.(old_coords)...)
     push!(old_new_pairs, _lowercase.(old_new_pairs)...)
@@ -38,8 +36,7 @@ function set_coord(da, coord)
     # Get the current metadata
     m = meta(new_da)
 
-    # Update legend names and axis labels if they include the coordinate system
-    # Check if there are existing labels that might need updating
+    # Update legend names and axis label if they include the coordinate system
     if haskey(m, "LABLAXIS")
         if !isnothing(old_coords)
             # Replace old coordinate system with new one in the label
@@ -57,6 +54,14 @@ function set_coord(da, coord)
         # Replace old coordinate system with new one in the field
         if any(occursin.(old_coords, Ref(value)))
             new_value = replace(value, old_new_pairs...)
+            new_da = modify_meta(new_da, field => new_value)
+        end
+    end
+
+    for field in ["LABL_PTR_1"] ∩ keys(m)
+        value = m[field]
+        if any(occursin.(old_coords, first(value)))
+            new_value = replace.(value, old_new_pairs...)
             new_da = modify_meta(new_da, field => new_value)
         end
     end
@@ -80,4 +85,4 @@ function set_coord(da, coord)
     return new_da
 end
 
-set_coord(coord) = da -> set_coord(da, coord)
+set_coord(coord; kwargs...) = da -> set_coord(da, coord; kwargs...)
