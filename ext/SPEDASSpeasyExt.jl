@@ -23,6 +23,12 @@ function Speasy.get_data(ds::AbstractDataSet, tr::TimeRangeType; provider="cda",
     Speasy.get_data(products, tr; kwargs...)
 end
 
+function Speasy.get_data(::Type{NamedTuple}, ds::AbstractDataSet, tr::TimeRangeType; provider="cda", kwargs...)
+    products = Speasy.products(ds; provider)
+    keys = ds.parameters isa Union{Dict,NamedTuple} ? Base.keys(ds.parameters) : nothing
+    Speasy.get_data(NamedTuple, products, tr; keys, kwargs...)
+end
+
 function SPEDAS.axis_attributes(sps::AbstractVector{SpeasyProduct}, tmin, tmax; kwargs...)
     tas = SPEDAS.get_data.(sps, tmin, tmax)
     SPEDAS.axis_attributes(tas; kwargs...)

@@ -13,7 +13,7 @@ end
 stat_relerr(f) = (x -> stat_relerr(x, f))
 mean_relerr(itr) = stat_relerr(itr, mean)
 
-function prioritized_get(c, keys, default)
+function prioritized_get(c, keys, default=nothing)
     values = get.(Ref(c), keys, nothing)
     all(isnothing, values) ? default : something(values...)
 end
