@@ -56,40 +56,6 @@ end
 "Construct an `Instrument` from a dictionary."
 Instrument(d::Dict) = Instrument(; symbolify(d)...)
 
-"""
-    LDataSet <: AbstractDataSet
-
-A template for generating datasets with parameterized naming patterns.
-
-# Fields
-- `format`: Format string pattern for the dataset name
-- `variables`: Dictionary of variable patterns
-- `metadata`: Additional metadata
-
-# Examples
-```julia
-using SPEDAS.MMS
-
-# Access FPI dataset specification
-lds = mms.datasets.fpi_moms
-
-# Create a concrete dataset with specific parameters
-ds = DataSet(lds; probe=1, data_rate="fast", data_type="des")
-```
-
-The format string and variable patterns use placeholders like `{probe}`, `{data_rate}`, 
-which are replaced with actual values when creating a concrete `DataSet`.
-"""
-@kwdef struct LDataSet <: AbstractDataSet
-    name::String = ""
-    format::String = ""
-    parameters::Dict = Dict()
-    metadata::Dict = Dict()
-end
-
-"Construct a `LDataSet` from a dictionary."
-LDataSet(d::Dict) = LDataSet(; symbolify(d)...)
-
 # Custom display methods for Project type
 Base.show(io::IO, p::T) where {T<:AbstractModel} = print(io, "$(T)(\"$(p.name)\")")
 

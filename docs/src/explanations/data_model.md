@@ -1,10 +1,10 @@
-# Project and Dataset Model
+# Data Model
 
 We adopt a data model inspired by the [SPASE Model](https://spase-group.org/data/model/index.html).
 
 ## Data Model Overview
 
-The SPEDAS data model organizes space science data in a hierarchical structure:
+The data model organizes data in a hierarchical structure:
 
 - **Project**: Represents a mission or project (e.g., MMS, THEMIS)
   - Contains multiple instruments
@@ -26,6 +26,7 @@ The SPEDAS data model organizes space science data in a hierarchical structure:
 Project
 Instrument
 LDataSet
+DataSet
 ```
 
 ## Usage Examples
