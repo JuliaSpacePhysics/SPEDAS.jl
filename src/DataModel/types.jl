@@ -12,18 +12,6 @@ A representation of a project or mission containing instruments and datasets.
 - `metadata`: Additional metadata
 - `instruments::NamedTuple`: Named collection of instruments
 - `datasets::NamedTuple`: Named collection of datasets
-
-# Examples
-```julia
-using SPEDAS.MMS # Export project related variables
-mms  # Project instance for Magnetospheric Multiscale mission
-
-# Access instruments
-mms.instruments.fpi  # Fast Plasma Investigation instrument
-
-# Access datasets
-mms.datasets.fpi  # FPI dataset specification
-```
 """
 mutable struct Project <: AbstractProject
     name::String
@@ -41,12 +29,6 @@ Project(; name="", instruments=(;), datasets=(;), metadata=Dict(), kwargs...) = 
 # Fields
 - `name`: The name of the instrument
 - `metadata`: Additional metadata
-
-# Examples
-```julia
-using SPEDAS.MMS
-fpi  # Fast Plasma Investigation instrument
-```
 """
 @kwdef struct Instrument <: AbstractInstrument
     name::String
