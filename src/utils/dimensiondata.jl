@@ -33,22 +33,32 @@ function nt2ds(nt_arr; sym=:time)
     nt2ds(nt_arr, dim; fields)
 end
 
+"""
+    dimarrayify(x)
+
+Convert `x` or values of `x` to `DimArray(s)`.
+"""
+dimarrayify(x::AbstractDimArray) = x
+dimarrayify(x) = DimArray(x)
+dimarrayify(nt::NamedTuple{keys}) where {keys} = NamedTuple{keys}(DimArray.(values(nt)))
+dimarrayify(d::Dict) = Dict(k => DimArray(v) for (k, v) in d)
+
+
 function rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
 end
 
-modify_meta!(da; kwargs...) = (da.metadata = merge(da.metadata, kwargs))
-
-function modify_meta(da, args...; kwargs...)
+function _new_metadata(da, args...; kwargs...)
     meta = da.metadata
-
     # Create a dictionary from both positional pair arguments and keyword arguments
     pair_args = filter(arg -> arg isa Pair, collect(args))
     added_meta = merge(Dict(pair_args...), kwargs)
-
-    new_meta = meta isa NoMetadata ? added_meta : merge(meta, added_meta)
-    rebuild(da; metadata=new_meta)
+    meta isa NoMetadata ? added_meta : merge(meta, added_meta)
 end
+
+modify_meta!(da; kwargs...) = (da.metadata = _new_metadata(da; kwargs))
+modify_meta(da::AbstractDimArray, args...; kwargs...) = rebuild(da; metadata=_new_metadata(da, args...; kwargs...))
+modify_meta(args...; kwargs...) = da -> modify_meta(da, args...; kwargs...)
 
 """
     amap(f, a, b)
