@@ -49,7 +49,6 @@ const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTool
 const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
 include("DataModel/DataModel.jl")
-include("dataset.jl")
 include("projects/project.jl")
 include("mhd.jl")
 include("methods.jl")

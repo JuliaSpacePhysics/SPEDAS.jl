@@ -5,6 +5,7 @@ function set_if_equal!(attrs, key, values; default=nothing)
 end
 
 meta(ta) = Dict()
+meta(ds::AbstractDataSet) = ds.metadata
 
 uunit(x) = unit(x)
 uunit(::String) = nothing
@@ -15,6 +16,7 @@ format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
 format_unit(ta::AbstractDimArray{Q}) where {Q<:Real} = prioritized_get(ta, unit_sources, "")
 
 title(ta) = prioritized_get(ta, title_sources, "")
+title(ds::AbstractDataSet) = ds.name
 
 """Format datetime ticks with time on top and date on bottom."""
 format_datetime(dt) = Dates.format(dt, "HH:MM:SS\nyyyy-mm-dd")
@@ -72,6 +74,12 @@ function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwarg
     set_if_equal!(attrs, :yscale, scale.(tas))
     add_title && set_if_equal!(attrs, :title, title.(tas))
 
+    attrs
+end
+
+function axis_attributes(ds::DataSet; add_title=false, kwargs...)
+    attrs = Attributes(; kwargs...)
+    add_title && (attrs[:title] = title(ds))
     attrs
 end
 
