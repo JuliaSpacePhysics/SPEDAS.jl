@@ -49,7 +49,7 @@ function Makie.convert_arguments(t::Type{<:LinesPlot}, da::DimensionalData.Abstr
 end
 
 function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector)
-    S.Lines(xs(da), parent(da))
+    S.Lines(xs(da), parent(da); label=label(da))
 end
 
 function Makie.plot!(plot::LinesPlot)
