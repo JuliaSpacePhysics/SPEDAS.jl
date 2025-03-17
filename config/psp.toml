@@ -1,0 +1,28 @@
+# Parker Solar Probe (PSP) Project Configuration
+name = "Parker Solar Probe"
+
+[metadata]
+abbreviation = "psp"
+spase_id = "spase://SMWG/Observatory/ParkerSolarProbe"
+links = ["https://hpde.io/SMWG/Observatory/ParkerSolarProbe.html"]
+
+# Instruments
+[instruments.fields]
+name = "FIELDS"
+spase_id = "spase://SMWG/Instrument/ParkerSolarProbe/FIELDS"
+
+[instruments.fields.scm]
+name = "Search Coil Magnetometer"
+spase_id = "spase://SMWG/Instrument/ParkerSolarProbe/FIELDS/SCM"
+
+[instruments.sweap]
+name = "Solar Wind Electrons Alphas and Protons"
+
+[instruments.wispr]
+name = "Wide-field Imager for Solar Probe"
+
+[instruments.isois]
+name = "Integrated Science Investigation of the Sun"
+
+[instruments.eis]
+name = "Ephemeris"
