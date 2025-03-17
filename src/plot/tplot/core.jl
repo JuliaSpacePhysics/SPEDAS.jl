@@ -35,7 +35,11 @@ function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxe
 end
 
 tplot(f::Drawable, ta::SupportTypes, args...; kwargs...) = tplot(f, (ta,), args...; kwargs...)
-tplot(tas, args...; figure=(;), kwargs...) = tplot(Figure(; size=auto_figure_size(tas), figure...), tas, args...; kwargs...)
+function tplot(ta, args...; figure=(;), kwargs...)
+    tas = ta isa SupportTypes ? (ta,) : ta
+    f = Figure(; size=auto_figure_size(tas), figure...)
+    tplot(f, tas, args...; kwargs...)
+end
 
 """
     auto_figure_size(tas)

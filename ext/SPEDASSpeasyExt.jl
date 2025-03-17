@@ -8,7 +8,7 @@ using DimensionalData
 import SPEDAS: transform, get_data, axis_attributes
 
 SPEDAS.transform(p::SpeasyVariable; kwargs...) = DimArray(p; kwargs...)
-SPEDAS.transform(p::AbstractArray{SpeasyVariable}; kwargs...) = DimArray.(p; kwargs...)
+SPEDAS.transform(p::AbstractArray{<:SpeasyVariable}; kwargs...) = DimArray.(p; kwargs...)
 
 function SPEDAS.get_data(p::SpeasyProduct, args...; kwargs...)
     DimArray(Speasy.get_data(p.id, args...; kwargs...))
@@ -29,7 +29,7 @@ function Speasy.get_data(::Type{NamedTuple}, ds::AbstractDataSet, tr::TimeRangeT
     Speasy.get_data(NamedTuple, products, tr; keys, kwargs...)
 end
 
-function SPEDAS.axis_attributes(sps::AbstractVector{SpeasyProduct}, tmin, tmax; kwargs...)
+function SPEDAS.axis_attributes(sps::AbstractVector{<:SpeasyProduct}, tmin, tmax; kwargs...)
     tas = SPEDAS.get_data.(sps, tmin, tmax)
     SPEDAS.axis_attributes(tas; kwargs...)
 end
