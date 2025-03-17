@@ -18,8 +18,12 @@ tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
 tlims!(trange) = tlims!(trange...)
 
 """Add vertical lines to a plot"""
-tlines!(ax, time; kwargs...) = vlines!(ax, t2x.(time); kwargs...)
+tlines!(ax, time; kwargs...) = vlines!(ax, t2x.(DateTime.(time)); kwargs...)
 tlines!(time; kwargs...) = tlines!(current_axis(), time; kwargs...)
+tlines!(faxes::FigureAxes, time; kwargs...) =
+    foreach(faxes.axes) do ax
+        tlines!(ax, time; kwargs...)
+    end
 
 """
 Only add legend when the axis contains multiple labels
