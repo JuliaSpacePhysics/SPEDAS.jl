@@ -4,6 +4,8 @@ const labels_sources = (:labels, "labels", "LABL_PTR_1", "LABLAXIS")
 const scale_sources = (:scale, "scale", "SCALETYP")
 const unit_sources = (:unit, :units, "UNITS")
 const yunit_sources = (:yunit, :units)
+const colorrange_sources = (:colorrange, :z_range, "z_range")
+const title_sources = (:title, "CATDESC")
 
 xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
@@ -16,10 +18,10 @@ function ylabel(da::AbstractDimArray; multiline=true)
     units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
 end
 
-function clabel(ta::AbstractDimArray)
+function clabel(ta::AbstractDimArray; multiline=true)
     name = get(ta.metadata, "LABLAXIS", DD.label(ta))
     units = format_unit(ta)
-    units == "" ? name : "$name ($units)"
+    units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
 end
 
 label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))

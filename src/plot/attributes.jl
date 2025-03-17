@@ -14,7 +14,7 @@ format_unit(ta) = ""
 format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
 format_unit(ta::AbstractDimArray{Q}) where {Q<:Real} = prioritized_get(ta, unit_sources, "")
 
-title(ta) = get(meta(ta), "CATDESC", "")
+title(ta) = prioritized_get(ta, title_sources, "")
 
 """Format datetime ticks with time on top and date on bottom."""
 format_datetime(dt) = Dates.format(dt, "HH:MM:SS\nyyyy-mm-dd")
@@ -86,7 +86,7 @@ function heatmap_attributes(ta; kwargs...)
     attrs = Attributes(; kwargs...)
     s = scale(ta)
     m = meta(ta)
-    cr = get(m, :colorrange, nothing)
+    cr = prioritized_get(m, colorrange_sources)
     isnothing(s) || (attrs[:colorscale] = s)
     isnothing(cr) || (attrs[:colorrange] = cr)
     attrs
