@@ -22,3 +22,4 @@ transform_speasy(x::Union{String,AbstractArray{String},NTuple{N,String}}) where 
 transform_speasy(x) = x
 
 transform(x::AbstractDimStack) = layers(x)
+transform(ds::AbstractDataSet) = ds.parameters

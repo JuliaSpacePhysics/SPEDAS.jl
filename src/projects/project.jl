@@ -1,8 +1,5 @@
 using TOML
 
-export AbstractProject, AbstractInstrument
-export Project, Instrument, LDataSet
-
 symbolify(d::Dict) = Dict{Symbol,Any}(Symbol(k) => v for (k, v) in d)
 
 function format_pattern(pattern; kwargs...)
@@ -34,14 +31,5 @@ function _load_project_config(file; mod=Main, directory=joinpath(pkgdir(@__MODUL
     end
 end
 
-include("types.jl")
 include("toml.jl")
 include("mms.jl")
-
-function DataSet(ld::LDataSet; kwargs...)
-    DataSet(
-        uppercase(format_pattern(ld.format; kwargs...)),
-        Dict(k => format_pattern(v; kwargs...) for (k, v) in ld.parameters),
-        ld.metadata
-    )
-end

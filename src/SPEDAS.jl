@@ -21,7 +21,6 @@ using FFTW, DSP, SignalAnalysis
 using Tullio
 using InverseFunctions
 
-export AbstractDataSet, DataSet
 export AbstractProduct, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange
@@ -49,7 +48,7 @@ const AbstractDimMatrix = Union{DimensionalData.AbstractDimMatrix,TimeseriesTool
 const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTools.AbstractDimVector}
 const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
-include("dataset.jl")
+include("DataModel/DataModel.jl")
 include("projects/project.jl")
 include("mhd.jl")
 include("methods.jl")
