@@ -41,7 +41,7 @@ which are replaced with actual values when creating a concrete `DataSet`.
 @kwdef struct LDataSet <: AbstractDataSet
     name::String = ""
     format::String = ""
-    parameters::Dict = Dict()
+    parameters::Dict{String,String} = Dict()
     metadata::Dict = Dict()
 end
 
@@ -67,29 +67,4 @@ Base.length(ds::AbstractDataSet) = length(ds.parameters)
 Base.getindex(ds::AbstractDataSet, i) = ds.parameters[i]
 Base.map(f, ds::AbstractDataSet) = map(f, ds.parameters)
 
-# Custom display methods for DataSet type
-function Base.show(io::IO, ::MIME"text/plain", ds::T) where {T<:AbstractDataSet}
-    println(io, "$(T): \"$(ds.name)\"")
-
-    # Display metadata if present
-    if !isempty(ds.metadata)
-        println(io, "  Metadata:")
-        for (key, value) in ds.metadata
-            println(io, "    $key: $value")
-        end
-    end
-
-    if !isempty(ds.parameters)
-        println(io, "  Parameters ($(length(ds.parameters))):")
-        for (i, param) in enumerate(ds.parameters)
-            if i <= 5
-                println(io, "    $param")
-            else
-                println(io, "    ⋮")
-                break
-            end
-        end
-    end
-end
-
-Base.show(io::IO, p::T) where {T<:AbstractDataSet} = print(io, "$(T)(\"$(p.name)\")")
+_repr(ld::LDataSet) = isempty(ld.name) ? ld.format : ld.name

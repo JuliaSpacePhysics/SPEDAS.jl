@@ -10,18 +10,18 @@ A representation of a project or mission containing instruments and datasets.
 # Fields
 - `name`: The name of the project
 - `metadata`: Additional metadata
-- `instruments::NamedTuple`: Named collection of instruments
-- `datasets::NamedTuple`: Named collection of datasets
+- `instruments`: Collection of instruments
+- `datasets`: Collection of datasets
 """
 mutable struct Project <: AbstractProject
     name::String
     metadata::Dict
-    instruments::NamedTuple
-    datasets::NamedTuple
+    instruments::Dict
+    datasets::Dict
 end
 
 "keyword-based constructor"
-Project(; name="", instruments=(;), datasets=(;), metadata=Dict(), kwargs...) = Project(name, merge(metadata, Dict(kwargs)), instruments, datasets)
+Project(; name="", instruments=Dict(), datasets=Dict(), metadata=Dict(), kwargs...) = Project(name, merge(metadata, Dict(kwargs)), instruments, datasets)
 
 """
     Instrument <: AbstractInstrument
@@ -29,45 +29,39 @@ Project(; name="", instruments=(;), datasets=(;), metadata=Dict(), kwargs...) = 
 # Fields
 - `name`: The name of the instrument
 - `metadata`: Additional metadata
+- `datasets`: Collection of datasets
 """
 struct Instrument <: AbstractInstrument
     name::String
     metadata::Dict
+    datasets::Dict
 end
 
 "keyword-based constructor"
-Instrument(; name="", metadata=Dict(), kwargs...) = Instrument(name, merge(metadata, Dict(kwargs)))
+Instrument(; name="", metadata=Dict(), datasets=Dict(), kwargs...) = Instrument(name, merge(metadata, Dict(kwargs)), datasets)
 
 "Construct an `Instrument` from a dictionary."
 Instrument(d::Dict) = Instrument(; symbolify(d)...)
 
+name(m::AbstractModel) = m.name
+_repr(m::AbstractModel) = name(m)
+_repr(m) = m
+
 # Custom display methods for Project type
-Base.show(io::IO, p::T) where {T<:AbstractModel} = print(io, "$(T)(\"$(p.name)\")")
+Base.show(io::IO, p::T) where {T<:AbstractModel} = print(io, "$(T)(\"$(_repr(p))\")")
 
-function Base.show(io::IO, ::MIME"text/plain", p::Project)
-    println(io, "Project: $(p.name)")
+function Base.show(io::IO, ::MIME"text/plain", p::T) where {T<:AbstractModel}
+    print(io, "$T: ")
+    printstyled(io, _repr(p), color=:yellow)
+    println(io)
 
-    # Display metadata if present
-    if !isempty(p.metadata)
-        println(io, "  Metadata:")
-        for (key, value) in p.metadata
-            println(io, "    $key: $value")
-        end
-    end
-
-    # Display instruments if present
-    if !isempty(p.instruments)
-        println(io, "  Instruments:")
-        for (key, instr) in pairs(p.instruments)
-            println(io, "    $key: $(instr.name)")
-        end
-    end
-
-    # Display datasets if present
-    if !isempty(p.datasets)
-        println(io, "  Datasets:")
-        for (key, _) in pairs(p.datasets)
-            println(io, "    $key")
+    for field in setdiff(fieldnames(T), (:name, :format))
+        ff = getfield(p, field)
+        if !isempty(ff)
+            println(io, titlecase("  $field ($(length(ff))):"))
+            for (k, v) in ff
+                println(io, "    $k: $(_repr(v))")
+            end
         end
     end
 end
