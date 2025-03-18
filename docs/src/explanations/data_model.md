@@ -56,19 +56,21 @@ mms
 You can access instruments/datasets directly through the project or via exported variables:
 
 ```@example project
-mms.instruments.feeps === feeps
+@assert mms.instruments["feeps"] === feeps
+feeps
 ```
 
 Dataset templates can be used to create concrete datasets by providing specific parameter values:
 
 ```@example project
-# Access a dataset template
-fpi_dataset = mms.datasets.fpi_moms
+# Multiple ways to access a dataset
+@assert fpi_moms === mms.datasets["fpi_moms"] === mms.instruments["fpi"].datasets["fpi_moms"]
+fpi_moms
 ```
 
 ```@example project
 # Create a concrete dataset with specific parameters
-dataset = DataSet(fpi_dataset; probe=1, data_rate="fast", data_type="des")
+dataset = DataSet(fpi_moms; probe=1, data_rate="fast", data_type="des")
 ```
 
 ### How Configuration Files Are Used

@@ -32,13 +32,16 @@ makedocs(
             "explanations/resampling.md",
             "explanations/waves.md",
         ],
+        "Observatories" => [
+            "observatory/index.md",
+            "observatory/mms.md",
+            "observatory/psp.md",
+            "observatory/themis.md",
+        ],
         "Validation" => [
             "validation/pyspedas.md",
         ],
-        "API" => [
-            "projects.md",
-            "api.md",
-        ]
+        "API" => "api.md",
     ],
     format=Documenter.HTML(size_threshold=nothing),
     modules=[SPEDAS],
