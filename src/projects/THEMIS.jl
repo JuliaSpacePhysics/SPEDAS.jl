@@ -2,7 +2,6 @@
 module THEMIS
 using ..SPEDAS
 
-load_config() = SPEDAS.@load_project_config "THEMIS.toml"
-load_config()
+SPEDAS.@load_project_config "THEMIS.toml"
 
 end
