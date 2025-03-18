@@ -6,7 +6,7 @@ We adopt a data model inspired by the [SPASE Model](https://spase-group.org/data
 
 The data model organizes data in a hierarchical type structure:
 
-- **Project**: Represents a mission or project (e.g., MMS, THEMIS)
+- **Project/Observatory**: Represents a mission or project (e.g., MMS, THEMIS)
   - Contains multiple instruments
   - Contains multiple datasets
 - **Instrument**: Represents a scientific instrument on a spacecraft
@@ -78,11 +78,11 @@ dataset = DataSet(fpi_moms; probe=1, data_rate="fast", data_type="des")
 When you import a project module (e.g., `using SPEDAS.MMS`), the system:
 
 1. Reads the corresponding TOML configuration file
-2. Creates a `Project` object with the defined metadata
-3. Instantiates `Instrument` objects for each instrument definition
-4. Creates `LDataSet` (dataset template) objects for each dataset definition
+2. Creates a [`Project`](@ref) object with the defined metadata
+3. Instantiates [`Instrument`](@ref) objects for each instrument definition
+4. Creates [`LDataSet`](@ref) (dataset template) objects for each dataset definition
 
-These objects are then accessible through the project namespace (e.g., `mms.instruments.fpi` or `mms.datasets.fpi_moms`).
+These objects are then accessible through the project namespace (e.g., `mms.instruments["fpi"]` or `mms.datasets["fpi_moms"]`).
 
 ### Adding a New Project
 
@@ -90,6 +90,6 @@ To add support for a new space physics mission:
 
 1. Create a new TOML file in the `config/` directory (e.g., `config/cluster.toml`)
 2. Define the project metadata, instruments, and dataset templates
-3. Create a corresponding module in the `src/projects/` directory (for example, `MMS` module is defined in [`src/projects/mms.jl`](https://github.com/Beforerr/SPEDAS.jl/blob/main/src/projects/mms.jl))
+3. Create a corresponding module in the `src/projects/` directory (for example, [`MMS`](@ref SPEDAS.MMS) module is defined in [`src/projects/mms.jl`](https://github.com/Beforerr/SPEDAS.jl/blob/main/src/projects/mms.jl))
 
 The configuration file will be automatically loaded when the project module is imported.
