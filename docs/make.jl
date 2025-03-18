@@ -35,7 +35,10 @@ makedocs(
         "Validation" => [
             "validation/pyspedas.md",
         ],
-        "API" => "api.md",
+        "API" => [
+            "projects.md",
+            "api.md",
+        ]
     ],
     format=Documenter.HTML(size_threshold=nothing),
     modules=[SPEDAS],

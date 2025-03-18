@@ -1,14 +1,5 @@
 using TOML
 
-symbolify(d::Dict) = Dict{Symbol,Any}(Symbol(k) => v for (k, v) in d)
-
-function format_pattern(pattern; kwargs...)
-    pairs = ("{$k}" => v for (k, v) in kwargs)
-    return replace(pattern, pairs...)
-end
-
-_dict2nt(d::Dict; f=identity) = NamedTuple((Symbol(key), f(value)) for (key, value) in d)
-
 """
     @load_project_config(file)
 
@@ -19,6 +10,14 @@ macro load_project_config(file)
     _load_project_config(file; mod=__module__)
 end
 
+function repr2doc(x; mime="text/plain")
+    """
+    ```julia
+    $(repr(mime, x))
+    ```
+    """
+end
+
 function _load_project_config(file; mod=Main, directory=joinpath(pkgdir(@__MODULE__), "config"), export_symbol=true)
     file_path = joinpath(directory, file)
     config = load_project_config(file_path)
@@ -26,10 +25,14 @@ function _load_project_config(file; mod=Main, directory=joinpath(pkgdir(@__MODUL
     @eval mod CONFIG = $config
     for (sym, value) in config
         # @eval mod const $sym = $value
-        @eval mod $sym = $value
+        doc = repr2doc(value)
+        @eval mod @doc $doc $sym = $value
         export_symbol && @eval mod export $sym
     end
 end
 
+include("utils.jl")
 include("toml.jl")
-include("mms.jl")
+include("MMS.jl")
+include("THEMIS.jl")
+include("PSP.jl")

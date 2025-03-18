@@ -2,7 +2,7 @@
 name = "Parker Solar Probe"
 
 [metadata]
-abbreviation = "psp"
+abbreviation = "PSP"
 spase_id = "spase://SMWG/Observatory/ParkerSolarProbe"
 links = ["https://hpde.io/SMWG/Observatory/ParkerSolarProbe.html"]
 
@@ -10,10 +10,6 @@ links = ["https://hpde.io/SMWG/Observatory/ParkerSolarProbe.html"]
 [instruments.fields]
 name = "FIELDS"
 spase_id = "spase://SMWG/Instrument/ParkerSolarProbe/FIELDS"
-
-[instruments.fields.scm]
-name = "Search Coil Magnetometer"
-spase_id = "spase://SMWG/Instrument/ParkerSolarProbe/FIELDS/SCM"
 
 [instruments.sweap]
 name = "Solar Wind Electrons Alphas and Protons"

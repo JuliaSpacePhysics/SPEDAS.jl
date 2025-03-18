@@ -1,0 +1,7 @@
+# THEMIS Project Configuration
+name = "Time History of Events and Macroscale Interactions during Substorms"
+
+[metadata]
+abbreviation = "THEMIS"
+links = ["https://en.wikipedia.org/wiki/THEMIS"]
+spase_id = "spase://SMWG/Observatory/THEMIS"

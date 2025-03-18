@@ -2,7 +2,7 @@
 name = "Magnetospheric Multiscale"
 
 [metadata]
-abbreviation = "mms"
+abbreviation = "MMS"
 
 # Instruments
 [instruments.fpi]

@@ -2,19 +2,18 @@
 function load_project_config(toml)
     config = TOML.parsefile(toml)
 
-    instruments = _dict2nt(config["instruments"]; f=Instrument)
-    datasets = _dict2nt(config["datasets"]; f=LDataSet)
+    instruments = _dict2nt(get(config, "instruments", Dict()); f=Instrument)
+    datasets = _dict2nt(get(config, "datasets", Dict()); f=LDataSet)
 
     project = Project(;
         name=config["name"],
-        metadata=config["metadata"],
+        metadata=get(config, "metadata", Dict()),
         instruments,
         datasets
     )
 
     dict = Dict{Symbol,Any}()
-    proj_abbr = config["metadata"]["abbreviation"]
-    dict[Symbol(proj_abbr)] = project
+    dict[Symbol(abbr(project))] = project
     for (key, value) in pairs(datasets) ∪ pairs(instruments)
         dict[key] = value
     end
