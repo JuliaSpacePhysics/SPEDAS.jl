@@ -30,10 +30,13 @@ Project(; name="", instruments=(;), datasets=(;), metadata=Dict(), kwargs...) = 
 - `name`: The name of the instrument
 - `metadata`: Additional metadata
 """
-@kwdef struct Instrument <: AbstractInstrument
+struct Instrument <: AbstractInstrument
     name::String
-    metadata::Dict = Dict()
+    metadata::Dict
 end
+
+"keyword-based constructor"
+Instrument(; name="", metadata=Dict(), kwargs...) = Instrument(name, merge(metadata, Dict(kwargs)))
 
 "Construct an `Instrument` from a dictionary."
 Instrument(d::Dict) = Instrument(; symbolify(d)...)
