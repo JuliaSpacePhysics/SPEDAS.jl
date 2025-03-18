@@ -125,45 +125,32 @@ function wavpol(X::AbstractMatrix{T}, ::Val{n}, fs=1; nfft=256, noverlap=div(nff
     ellipticity = zeros(T, nsteps, Nfreq)
     helicity = zeros(T, nsteps, Nfreq)
 
-    # Channels for parallel processing
-    Xwchnl = Channel{Matrix{T}}(nbuffers)
-    Xfchnl = Channel{Matrix{Complex{T}}}(nbuffers)
-    SType = Array{Complex{T},3}
-    Schnl = Channel{SType}(nbuffers)
-    Smchnl = Channel{SType}(nbuffers)
-    foreach(1:nbuffers) do _
-        put!(Xwchnl, Matrix{T}(undef, nfft, n))
-        put!(Xfchnl, Matrix{Complex{T}}(undef, Nfreq, n))
-        put!(Schnl, SType(undef, Nfreq, n, n))
-        put!(Smchnl, SType(undef, Nfreq, n, n))
-    end
-    chnls = (Xwchnl, Xfchnl, Schnl, Smchnl)
     plan = plan_rfft(zeros(T, nfft, n), 1)
 
     tforeach(1:nsteps) do j
-        Xw, Xf, S, Sm = map(take!, chnls)
+        @no_escape begin
+            Xw = @alloc(T, nfft, n)
+            Xf = @alloc(Complex{T}, Nfreq, n)
+            S = @alloc(Complex{T}, Nfreq, n, n)
+            Sm = @alloc(Complex{T}, Nfreq, n, n)
 
-        start_idx = 1 + (j - 1) * noverlap
-        end_idx = start_idx + nfft - 1
-        copyto!(Xw, @view(X[start_idx:end_idx, :]))
-        Xw .*= smooth_t
-        mul!(Xf, plan, Xw)
-        Xf ./= sqrt(nfft) # Compute FFTs and normalize
-        spectral_matrix!(S, Xf)
-        smooth_spectral_matrix!(Sm, S, smooth_f)
-        # Compute the following polarization parameters from the spectral matrix ``S``:
-        for f in 1:Nfreq
-            Sf = @views SMatrix{n,n}(Sm[f, :, :])
-            power[j, f] = real(tr(Sf))
-            degpol[j, f] = real(polarization(Sf))
-            waveangle[j, f] = wave_normal_angle(Sf)
-            helicity[j, f], ellipticity[j, f] = wpol_helicity(Sf, waveangle[j, f])
+            start_idx = 1 + (j - 1) * noverlap
+            end_idx = start_idx + nfft - 1
+            copyto!(Xw, @view(X[start_idx:end_idx, :]))
+            Xw .*= smooth_t
+            mul!(Xf, plan, Xw)
+            Xf ./= sqrt(nfft) # Compute FFTs and normalize
+            spectral_matrix!(S, Xf)
+            smooth_spectral_matrix!(Sm, S, smooth_f)
+            # Compute the following polarization parameters from the spectral matrix ``S``:
+            for f in 1:Nfreq
+                Sf = @views SMatrix{n,n}(Sm[f, :, :])
+                power[j, f] = real(tr(Sf))
+                degpol[j, f] = real(polarization(Sf))
+                waveangle[j, f] = wave_normal_angle(Sf)
+                helicity[j, f], ellipticity[j, f] = wpol_helicity(Sf, waveangle[j, f])
+            end
         end
-
-        put!(Schnl, S)
-        put!(Smchnl, Sm)
-        put!(Xwchnl, Xw)
-        put!(Xfchnl, Xf)
     end
 
     # Scaling power results to units with meaning

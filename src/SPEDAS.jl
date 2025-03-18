@@ -19,6 +19,7 @@ using RollingWindowArrays
 using InteractiveViz
 using FFTW, DSP, SignalAnalysis
 using Tullio
+using Bumper
 using InverseFunctions
 
 export AbstractProduct, SpeasyProduct
