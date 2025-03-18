@@ -55,3 +55,10 @@ mva_mat
 mva
 check_mva_mat
 ```
+
+Error estimates for MVA:
+
+```@docs; canonical=false
+SPEDAS.Δφij
+SPEDAS.B_x3_error
+```
