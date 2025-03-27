@@ -1,6 +1,11 @@
 using TestItems, TestItemRunner
 @run_package_tests
 
+@testitem "Aqua" begin
+    using Aqua
+    Aqua.test_all(SPEDAS)
+end
+
 @testitem "dropna" begin
     using DimensionalData
     # Test case 1: Matrix with NaN
