@@ -68,7 +68,7 @@ t2x(t) = Dates.value(t)
 t2x(da::AbstractDimArray) = t2x.(dims(da, 1).val.data)
 
 """Return the angle between two vectors."""
-Base.angle(v1::AbstractVector, v2::AbstractVector) = acosd(v1 ⋅ v2 / (norm(v1) * norm(v2)))
+angle(v1::AbstractVector, v2::AbstractVector) = acosd(v1 ⋅ v2 / (norm(v1) * norm(v2)))
 
 """
     tstack(vectors::AbstractVector{<:AbstractVector{T}})
