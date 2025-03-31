@@ -18,7 +18,9 @@ Extend with `transform(x::MyType)` for custom types.
 """
 transform(x) = x
 
-transform_speasy(x::Union{String,AbstractArray{String},NTuple{N,String}}) where {N} = SpeasyProduct.(x)
+transform_speasy(x::String) = SpeasyProduct(x)
+transform_speasy(x::AbstractArray{String}) = map(SpeasyProduct, x)
+transform_speasy(x::NTuple{N,String}) where {N} = map(SpeasyProduct, x)
 transform_speasy(x) = x
 
 transform(x::AbstractDimStack) = layers(x)
