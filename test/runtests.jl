@@ -3,7 +3,10 @@ using TestItems, TestItemRunner
 
 @testitem "Aqua" begin
     using Aqua
-    Aqua.test_all(SPEDAS)
+    Aqua.test_all(
+        SPEDAS;
+        ambiguities=(exclude=[Base.show],)
+    )
 end
 
 @testitem "dropna" begin
