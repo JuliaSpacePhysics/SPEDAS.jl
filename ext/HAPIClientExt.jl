@@ -4,8 +4,8 @@ using SPEDAS
 using HAPIClient
 using DimensionalData
 import SPEDAS: xlabel
+import SPEDAS: transform
 
-SPEDAS.get_data(x::HAPIVariable; kwargs...) = DimArray(x; kwargs...)
-SPEDAS.meta(x::HAPIVariable) = x.meta
+SPEDAS.transform(x::HAPIVariable; kwargs...) = DimArray(x; kwargs...)
 
 end
