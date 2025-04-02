@@ -21,8 +21,9 @@ using FFTW, DSP, SignalAnalysis
 using Tullio
 using Bumper
 using InverseFunctions
+using NamedTupleTools
 
-export AbstractProduct, SpeasyProduct
+export AbstractProduct, Product, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange
 export tclip, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
