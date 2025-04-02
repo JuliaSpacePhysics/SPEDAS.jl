@@ -110,8 +110,7 @@ function heatmap_attributes(ta; kwargs...)
 end
 
 function plottype_attributes(meta; allowed=(:labels,))
-    keys = filter(∈(allowed), Base.keys(meta))
-    NamedTuple{keys}(meta)
+    filterkeys(∈(allowed), meta)
 end
 
 """Plot attributes for a time array (labels)"""
