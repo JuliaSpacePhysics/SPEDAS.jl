@@ -5,14 +5,14 @@ abstract type AbstractDataSet <: AbstractModel end
 
 A concrete dataset with a name, parameters, and metadata.
 """
-@kwdef struct DataSet <: AbstractDataSet
+@kwdef struct DataSet{M} <: AbstractDataSet
     name::String = ""
     parameters::Union{Vector,Dict,NamedTuple} = Dict()
-    metadata::Dict = Dict()
+    metadata::M = Dict()
 end
 
 """Construct a `DataSet` from a name and parameters, with optional metadata."""
-DataSet(name, parameters; metadata=Dict()) = DataSet(name, parameters, metadata)
+DataSet(name, parameters; metadata::M=Dict()) where {M} = DataSet{M}(name, parameters, metadata)
 
 """
     LDataSet <: AbstractDataSet
