@@ -6,7 +6,7 @@ function tplot_spec(da; verbose=true, kwargs...)
     da = resample(da; verbose)
 
     if !isspectrogram(da)
-        Makie.convert_arguments(LinesPlot, da)
+        plot2spec(LinesPlot, da; kwargs...)
     else
         S.Heatmap(xs(da), spectrogram_y_values(da), parent(da); heatmap_attributes(da; kwargs...)...)
     end

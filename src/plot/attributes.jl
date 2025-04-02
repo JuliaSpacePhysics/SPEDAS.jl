@@ -6,6 +6,7 @@ end
 
 meta(ta) = Dict()
 meta(ds::AbstractDataSet) = ds.metadata
+meta(p::Product) = p.metadata
 
 uunit(x) = unit(x)
 uunit(::String) = nothing
@@ -31,9 +32,17 @@ end
 label_func(labels) = latexify.(labels)
 
 axis_attributes(ta, args...; add_title=false, kwargs...) = (; kwargs...)
+
+filterkeys(f, d::Dict) = filter(f ∘ first, d)
+filterkeys(f, nt) = NamedTuple{filter(f, keys(nt))}(nt)
+
+function axis_attributes(meta; allowed=fieldnames(Axis))::Dict
+    filterkeys(∈(allowed), meta)
+end
+
 """Axis attributes for a time array"""
 function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where {Q<:Number}
-    attrs = Attributes(; kwargs...)
+    attrs = Dict()
     # Note: `u != Unitful.NoUnits` would handle cases where `ta` is a array of mixed units
     u = uunit(ta)
 
@@ -55,7 +64,7 @@ function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where
     isempty(yl) || (attrs[:ylabel] = yl)
     isempty(xl) || (attrs[:xlabel] = xl)
     add_title && (attrs[:title] = title(ta))
-    attrs
+    merge(attrs, kwargs)
 end
 
 function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwargs...)
@@ -98,6 +107,11 @@ function heatmap_attributes(ta; kwargs...)
     isnothing(s) || (attrs[:colorscale] = s)
     isnothing(cr) || (attrs[:colorrange] = cr)
     attrs
+end
+
+function plottype_attributes(meta; allowed=(:labels,))
+    keys = filter(∈(allowed), Base.keys(meta))
+    NamedTuple{keys}(meta)
 end
 
 """Plot attributes for a time array (labels)"""

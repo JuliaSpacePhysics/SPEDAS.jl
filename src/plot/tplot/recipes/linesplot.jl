@@ -35,22 +35,24 @@ function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractV
     return (curves,)
 end
 
-function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix)
+Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVecOrMat; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+
+function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix; labels=labels(da))
     da = resample(da; verbose=true)
     x = xs(da)
-    labels = SPEDAS.labels(da)
-    map(eachcol(parent(da)), labels) do y, label
-        S.Lines(x, y; label)
+    map(enumerate(eachcol(parent(da)))) do (i, y)
+        S.Lines(x, y; label=get(labels, i, nothing))
     end
+end
+
+function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector; label=to_value(label(da)))
+    S.Lines(xs(da), parent(da); label)
 end
 
 function Makie.convert_arguments(t::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector{<:AbstractVector})
     Makie.convert_arguments(t, tstack(da))
 end
 
-function Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector)
-    S.Lines(xs(da), parent(da); label=label(da))
-end
 
 function Makie.plot!(plot::LinesPlot)
     curves = plot[1]

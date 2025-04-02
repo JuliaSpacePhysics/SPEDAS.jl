@@ -11,9 +11,13 @@ Interactively plot a function over a time range on a grid position
 function functionplot(gp, f, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=DEFAULTS.add_colorbar, kwargs...)
     # get a sample data to determine the attributes and plot types
     data = f(tmin, tmax)
-    attrs = axis_attributes(data; add_title)
+    m = meta(f)
+    attrs = merge(
+        axis_attributes(data; add_title),
+        axis_attributes(m),
+    )
     ax = Axis(gp; attrs..., axis...)
-    plot = functionplot!(ax, f, tmin, tmax; data, kwargs...)
+    plot = functionplot!(ax, f, tmin, tmax; data, plot=plottype_attributes(m), kwargs...)
     isspectrogram(data) && add_colorbar && Colorbar(gp[1, 1, Right()], plot; label=clabel(data))
     PanelAxesPlots(gp, AxisPlots(ax, plot))
 end
@@ -23,8 +27,8 @@ end
 
 Interactive plot of a function `f` on `ax` for a time range from `tmin` to `tmax`
 """
-function functionplot!(ax, f, tmin, tmax; data=nothing, plotfunc=tplot_spec, kwargs...)
-    to_plotspec = trange -> plotfunc(f(trange...); kwargs...)
+function functionplot!(ax, f, tmin, tmax; data=nothing, plotfunc=tplot_spec, plot=(;), kwargs...)
+    to_plotspec = trange -> plotfunc(f(trange...); plot...)
     iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end
 
