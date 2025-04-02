@@ -95,6 +95,8 @@ function find_spikes_1d_mad(data; threshold=3.0, window::Int=16)
     return spike_indices
 end
 
+find_spikes_1d_mad(data::AbstractArray{Q}; kwargs...) where {Q<:Quantity} = find_spikes_1d_mad(ustrip(data); kwargs...)
+
 """
     replace_outliers(data; detector=find_spikes, replacement_fn=nothing, kwargs...)
 
@@ -110,7 +112,7 @@ For multidimensional arrays, the `dims` parameter specifies the dimension along 
 
 See also: [`find_spikes`](@ref)
 """
-function replace_outliers(data; detector=find_spikes, replacement_fn=nothing, dims=nothing, kwargs...)
+function replace_outliers(data::AbstractArray{Q}; detector=find_spikes, replacement_fn=nothing, dims=nothing, kwargs...) where {Q}
 
     # Get outlier indices
     indices = detector(data; dims, kwargs...)
@@ -124,7 +126,7 @@ function replace_outliers(data; detector=find_spikes, replacement_fn=nothing, di
             if replacement_fn !== nothing
                 cleaned_data[i] = replacement_fn(data, i)
             else
-                cleaned_data[i] = NaN
+                cleaned_data[i] = NaN * oneunit(Q)
             end
         end
     else
@@ -141,7 +143,7 @@ function replace_outliers(data; detector=find_spikes, replacement_fn=nothing, di
                     slice = view(data, selector...)
                     cleaned_data[full_idx...] = replacement_fn(slice, i)
                 else
-                    cleaned_data[full_idx...] = NaN
+                    cleaned_data[full_idx...] = NaN * oneunit(Q)
                 end
             end
         end
