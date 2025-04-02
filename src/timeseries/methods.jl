@@ -71,5 +71,5 @@ function tnorm_combine(x; dims=Ti, name=:magnitude)
     odimType = basetypeof(odim)
     new_odim = odimType(vcat(odim.val, name))
     new_dims = map(d -> d isa odimType ? new_odim : d, DD.dims(x))
-    return DimArray(new_x, new_dims)
+    return DimArray(new_x, new_dims; metadata=metadata(x))
 end
