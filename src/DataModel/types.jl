@@ -59,7 +59,7 @@ function Base.show(io::IO, ::MIME"text/plain", p::T) where {T<:AbstractModel}
         ff = getfield(p, field)
         if !isempty(ff)
             println(io, titlecase("  $field ($(length(ff))):"))
-            for (k, v) in ff
+            for (k, v) in pairs(ff)
                 println(io, "    $k: $(_repr(v))")
             end
         end
