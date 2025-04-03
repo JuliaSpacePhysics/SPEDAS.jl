@@ -26,12 +26,19 @@ tlines!(faxes::FigureAxes, time; kwargs...) =
     end
 
 """
+Get the default orientation for a legend based on the position
+"""
+function default_orientation(position)
+    position in [Top(), Bottom()] ? :horizontal : :vertical
+end
+
+"""
 Only add legend when the axis contains multiple labels
 """
-function add_legend!(gp, ax; min=2, position=Right(), kwargs...)
+function add_legend!(gp, ax; min=2, position=Right(), orientation=default_orientation(position), kwargs...)
     plots, labels = Makie.get_labeled_plots(ax; merge=false, unique=false)
     length(plots) < min && return
-    Legend(gp[1, 1, position], ax; kwargs...)
+    Legend(gp[1, 1, position], ax; orientation, kwargs...)
 end
 
 """
@@ -56,7 +63,7 @@ Add labels to a grid of layouts
 # Notes
 - See `tag_facet` in `egg` for reference
 """
-function add_labels!(layouts; labels='a':'z', open="(", close=")", position=TopLeft(), font=:bold, halign=:left, valign=:bottom, padding=(-5, 0, 5, 0), kwargs...)
+function add_labels!(layouts::AbstractArray; labels='a':'z', open="(", close=")", position=TopLeft(), font=:bold, halign=:left, valign=:bottom, padding=(-5, 0, 5, 0), kwargs...)
     for (label, layout) in zip(labels, layouts)
         tag = open * label * close
         Label(
@@ -67,14 +74,17 @@ function add_labels!(layouts; labels='a':'z', open="(", close=")", position=TopL
     end
 end
 
+_content(f) = contents(content(f))
+_content(f::Figure) = f.content
+
 """
 Add labels to a figure, automatically searching for blocks to label.
 
 # Notes
 - https://github.com/brendanjohnharris/Foresight.jl/blob/main/src/Layouts.jl#L2
 """
-function add_labels!(; f=current_figure(), allowedblocks=Union{Axis,Axis3,PolarAxis}, kwargs...)
-    axs = filter(x -> x isa allowedblocks, f.content)
+function add_labels!(f=current_figure(); allowedblocks=Union{Axis,Axis3,PolarAxis}, kwargs...)
+    axs = filter(x -> x isa allowedblocks, _content(f))
     layouts = gridposition.(axs)
     add_labels!(unique(layouts); kwargs...)
 end
