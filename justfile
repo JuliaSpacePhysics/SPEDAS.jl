@@ -1,7 +1,7 @@
 [no-cd]
 servedocs:
     #!/usr/bin/env -S julia --threads=auto --project=docs/ -i
-    using Speasy
+    import Speasy
     using Pkg
     Pkg.develop(PackageSpec(path=pwd()))
     using LiveServer;
