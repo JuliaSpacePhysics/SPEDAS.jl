@@ -2,11 +2,21 @@ import Base: ∘
 
 abstract type AbstractProduct end
 
-@kwdef struct Product{Me} <: AbstractProduct
+struct Product <: AbstractProduct
     name::String
-    transformation::Function = identity
+    transformation::Function
     data::Any
-    metadata::Me
+    metadata::Any
+end
+
+function Product(; name, transformation=identity, data, metadata=Dict(), kwargs...)
+    metadata = merge(metadata, kwargs)
+    Product(
+        name,
+        transformation,
+        data,
+        metadata
+    )
 end
 
 (p::Product)(args...) = p.transformation(p.data, args...)

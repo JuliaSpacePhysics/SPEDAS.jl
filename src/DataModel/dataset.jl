@@ -5,14 +5,14 @@ abstract type AbstractDataSet <: AbstractModel end
 
 A concrete dataset with a name, parameters, and metadata.
 """
-@kwdef struct DataSet{M} <: AbstractDataSet
+@kwdef struct DataSet <: AbstractDataSet
     name::String = ""
     parameters::Union{Vector,Dict,NamedTuple} = Dict()
-    metadata::M = Dict()
+    metadata::Dict = Dict()
 end
 
 """Construct a `DataSet` from a name and parameters, with optional metadata."""
-DataSet(name, parameters; metadata::M=Dict()) where {M} = DataSet{M}(name, parameters, metadata)
+DataSet(name, parameters; metadata=Dict(), kwargs...) = DataSet(name, parameters, merge(metadata, kwargs))
 
 """
     LDataSet <: AbstractDataSet
@@ -65,6 +65,9 @@ end
 
 Base.length(ds::AbstractDataSet) = length(ds.parameters)
 Base.getindex(ds::AbstractDataSet, i) = ds.parameters[i]
+Base.iterate(ds::AbstractDataSet, state=1) = state > length(ds) ? nothing : (ds.parameters[state], state + 1)
 Base.map(f, ds::AbstractDataSet) = map(f, ds.parameters)
 
 _repr(ld::LDataSet) = isempty(ld.name) ? ld.format : ld.name
+
+plottype(::AbstractDataSet) = MultiPlot

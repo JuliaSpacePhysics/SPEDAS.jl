@@ -40,7 +40,8 @@ Merge specs before plotting so as to cycle through them.
 """
 function multiplot!(ax::Axis, fs, tmin, tmax; plotfunc=tplot_spec, kwargs...)
     to_plotspec = trange -> mapreduce(vcat, fs) do f
-        plotfunc(f(trange...); kwargs...)
+        plot = plottype_attributes(meta(f))
+        plotfunc(f(trange...); plot..., kwargs...)
     end
     iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end

@@ -68,7 +68,7 @@ function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where
 end
 
 function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwargs...)
-    attrs = Attributes(; kwargs...)
+    attrs = Dict()
 
     # Handle units
     uts = uunit.(tas)
@@ -83,7 +83,7 @@ function axis_attributes(tas::Union{AbstractArray,Tuple}; add_title=false, kwarg
     set_if_equal!(attrs, :yscale, scale.(tas))
     add_title && set_if_equal!(attrs, :title, title.(tas))
 
-    attrs
+    merge(attrs, kwargs)
 end
 
 function axis_attributes(ds::DataSet; add_title=false, kwargs...)
@@ -96,7 +96,10 @@ apply(f, args...) = f(args...)
 
 function axis_attributes(fs, tmin, tmax; kwargs...)
     data = apply.(fs, tmin, tmax)
-    axis_attributes(data; kwargs...)
+    merge(
+        axis_attributes(data; kwargs...),
+        axis_attributes(meta(fs)),
+    )
 end
 
 function heatmap_attributes(ta; kwargs...)
@@ -109,7 +112,7 @@ function heatmap_attributes(ta; kwargs...)
     attrs
 end
 
-function plottype_attributes(meta; allowed=(:labels,))
+function plottype_attributes(meta; allowed=(:labels, :label))
     filterkeys(∈(allowed), meta)
 end
 

@@ -7,12 +7,19 @@ using Speasy: TimeRangeType
 using DimensionalData
 import SPEDAS: transform, get_data, axis_attributes, SpeasyProduct
 
-SPEDAS.SpeasyProduct(id::String, metadata=Dict()) = Product(;
-    name=id,
-    transformation=DimArray ∘ Speasy.get_data,
-    data=id,
-    metadata
-)
+contain_provider(s::String) = length(split(s, "/")) == 3
+
+function SPEDAS.SpeasyProduct(id, metadata=Dict(); provider="cda", kwargs...)
+    id = contain_provider(id) ? id : "$provider/$id"
+    Product(;
+        name=id,
+        transformation=DimArray ∘ Speasy.get_data,
+        data=id,
+        metadata,
+        kwargs...
+    )
+end
+
 
 SPEDAS.transform(p::SpeasyVariable; kwargs...) = DimArray(p; kwargs...)
 SPEDAS.transform(p::AbstractArray{<:SpeasyVariable}; kwargs...) = DimArray.(p; kwargs...)

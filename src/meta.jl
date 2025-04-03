@@ -7,6 +7,11 @@ const yunit_sources = (:yunit, :units)
 const colorrange_sources = (:colorrange, :z_range, "z_range")
 const title_sources = (:title, "CATDESC")
 
+function ulabel(l, u; multiline=false)
+    multiline ? "$(l)\n($(u))" : "$(l) ($(u))"
+end
+ulabel(l, u::String) = ulabel(l, uparse(u))
+
 xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
 ylabel(ta) = ""
@@ -15,7 +20,7 @@ function ylabel(da::AbstractDimArray; multiline=true)
     default_name = isspectrogram(da) ? DD.label(dims(da, 2)) : DD.label(da)
     name = prioritized_get(da, ylabel_sources, default_name)
     units = isspectrogram(da) ? prioritized_get(da, yunit_sources, "") : format_unit(da)
-    units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
+    units == "" ? name : ulabel(name, units; multiline)
 end
 
 function clabel(ta::AbstractDimArray; multiline=true)
