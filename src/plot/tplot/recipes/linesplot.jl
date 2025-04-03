@@ -35,7 +35,8 @@ function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractV
     return (curves,)
 end
 
-Makie.convert_arguments(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVecOrMat; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
 
 function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix; labels=labels(da))
     da = resample(da; verbose=true)
