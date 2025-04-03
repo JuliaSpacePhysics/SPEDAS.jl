@@ -22,6 +22,6 @@ transform_speasy(x::String) = SpeasyProduct(x)
 transform_speasy(x::AbstractArray{String}) = map(SpeasyProduct, x)
 transform_speasy(x::NTuple{N,String}) where {N} = map(SpeasyProduct, x)
 transform_speasy(x) = x
+transform_speasy(ds::AbstractDataSet) = @set ds.parameters = transform_speasy.(ds.parameters)
 
 transform(x::AbstractDimStack) = layers(x)
-transform(ds::AbstractDataSet) = ds.parameters

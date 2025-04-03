@@ -22,6 +22,7 @@ using Tullio
 using Bumper
 using InverseFunctions
 using NamedTupleTools
+using Accessors: @set
 
 export AbstractProduct, Product, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
