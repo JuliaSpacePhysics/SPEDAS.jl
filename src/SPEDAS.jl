@@ -21,6 +21,7 @@ using FFTW, DSP, SignalAnalysis
 using Tullio
 using Bumper
 using InverseFunctions
+using EasyPlots
 
 export AbstractProduct, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit

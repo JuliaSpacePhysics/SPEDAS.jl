@@ -26,31 +26,6 @@ tlines!(faxes::FigureAxes, time; kwargs...) =
     end
 
 """
-Only add legend when the axis contains multiple labels
-"""
-function add_legend!(gp, ax; min=2, position=Right(), kwargs...)
-    plots, labels = Makie.get_labeled_plots(ax; merge=false, unique=false)
-    length(plots) < min && return
-    Legend(gp[1, 1, position], ax; kwargs...)
-end
-
-"""
-Only add legend when the axis contains multiple labels
-"""
-function add_legend!(ap::Makie.AxisPlot; kwargs...)
-    ax = ap.axis
-    gp = gridposition(ax)
-    add_legend!(gp, ax; kwargs...)
-end
-
-
-# TODO: support legend merge for secondary axes
-function add_legend!(p::PanelAxesPlots; kwargs...)
-    ax = p.axisPlots[1].axis
-    add_legend!(p.pos, ax; kwargs...)
-end
-
-"""
 Add labels to a grid of layouts
 
 # Notes
