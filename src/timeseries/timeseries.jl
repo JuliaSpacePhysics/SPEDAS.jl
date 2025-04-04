@@ -123,6 +123,18 @@ function tsplit(da::AbstractDimArray, dim=Ti; new_names=labels(da))
     DimStack(das...)
 end
 
+"""
+    tmask(da::AbstractDimArray, tstart, tend)
+
+Mask all data values within the specified time range with NaN.
+"""
+function tmask(da::AbstractDimArray, tstart, tend; dim=timedim(da))
+    new_da = copy(da)
+    dimType = DD.basetypeof(dim)
+    new_da[dimType(DD.Between(tstart, tend))] .= NaN
+    return new_da
+end
+
 for f in (:smooth, :tfilter, :tclip)
     @eval $f(args...; kwargs...) = da -> $f(da, args...; kwargs...)
 end

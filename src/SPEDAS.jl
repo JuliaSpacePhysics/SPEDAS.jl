@@ -25,7 +25,7 @@ using NamedTupleTools
 using Accessors: @set
 
 export AbstractProduct, Product, SpeasyProduct
-export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
+export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit, tmask
 export timerange, TimeRange
 export tclip, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
 export proj, tproj, sproj, tsproj, oproj, toproj
