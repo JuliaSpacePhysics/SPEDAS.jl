@@ -72,8 +72,8 @@ function find_spikes_1d_mad(data; threshold=3.0, window::Int=16)
     n = length(data)
 
     if window <= 0  # use global statistics
-        med = NaNMath.median(data)
-        mad = NaNMath.median(abs.(data .- med)) + eps()  # add eps() to avoid zero MAD
+        med = nanmedian(data)
+        mad = nanmedian(abs.(data .- med)) + eps()  # add eps() to avoid zero MAD
         for i in 1:n
             if abs(data[i] - med) > threshold * mad
                 push!(spike_indices, i)
@@ -85,8 +85,8 @@ function find_spikes_1d_mad(data; threshold=3.0, window::Int=16)
             start_idx = max(1, i - half_window)
             end_idx = min(n, i + half_window)
             window_data = @view data[start_idx:end_idx]
-            med_local = NaNMath.median(window_data)
-            mad_local = NaNMath.median(abs.(window_data .- med_local)) + eps()
+            med_local = nanmedian(window_data)
+            mad_local = nanmedian(abs.(window_data .- med_local)) + eps()
             if abs(data[i] - med_local) > threshold * mad_local
                 push!(spike_indices, i)
             end

@@ -2,6 +2,19 @@ function tmean(x; dims=timedim(x))
     mean(x; dims)
 end
 
+function tmedian(x; dims=timedim(x))
+    nanmedian(x; dims)
+end
+
+"""
+    tsubtract(x, f=nanmedian; dims=timedim(x))
+
+Subtract a statistic (default function `f`: `nanmedian`) along dimensions (default: time dimension) from `x`.
+"""
+function tsubtract(x, f=nanmedian; dims=timedim(x))
+    x .- f(x; dims)
+end
+
 function tnorm(x; dims=Ti)
     norm.(eachslice(x; dims))
 end
@@ -72,4 +85,9 @@ function tnorm_combine(x; dims=Ti, name=:magnitude)
     new_odim = odimType(vcat(odim.val, name))
     new_dims = map(d -> d isa odimType ? new_odim : d, DD.dims(x))
     return DimArray(new_x, new_dims; metadata=metadata(x))
+end
+
+
+for f in (:tsubtract,)
+    @eval $f(args...; kwargs...) = x -> $f(x, args...; kwargs...)
 end
