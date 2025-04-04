@@ -20,3 +20,10 @@ function specplot!(ax::Axis, ta; labels=labels(ta), verbose=true, kwargs...)
     ta = resample(ta; verbose)
     heatmap!(ax, xs(ta), spectrogram_y_values(ta), ta.data; heatmap_attributes(ta; kwargs...)...)
 end
+
+function plot2spec(::Type{<:SpecPlot}, da; kwargs...)
+    x = xs(da)
+    y = spectrogram_y_values(da)
+    attributes = heatmap_attributes(da; kwargs...)
+    S.Heatmap(x, y, parent(da); attributes...)
+end

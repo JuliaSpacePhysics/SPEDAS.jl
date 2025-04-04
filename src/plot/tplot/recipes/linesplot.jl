@@ -39,7 +39,6 @@ Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimMatrix; kwargs...
 Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
 
 function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix; labels=labels(da))
-    da = resample(da; verbose=true)
     x = xs(da)
     map(enumerate(eachcol(parent(da)))) do (i, y)
         S.Lines(x, y; label=get(labels, i, nothing))

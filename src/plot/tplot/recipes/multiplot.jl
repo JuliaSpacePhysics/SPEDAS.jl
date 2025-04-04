@@ -25,7 +25,7 @@ multiplot_func!(ax::Axis, data, args...; plotfunc=tplot_panel!, kwargs...) =
         plotfunc(ax, x, args...; kwargs...)
     end
 
-function multiplot_spec!(ax::Axis, data, args...; to_plotspec=tplot_spec, kwargs...)
+function multiplot_spec!(ax::Axis, data, args...; to_plotspec=plot2spec, kwargs...)
     specs = mapreduce(vcat, data) do x
         to_plotspec(x, args...; kwargs...)
     end

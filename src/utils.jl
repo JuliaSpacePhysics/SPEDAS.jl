@@ -1,3 +1,6 @@
+_merge(x, args...) = merge(x, args...)
+_merge(x::Dict, y::NamedTuple) = merge(x, Dict(pairs(y)))
+
 function donothing(args...; kwargs...) end
 
 vectorize(x) = [x]

@@ -8,7 +8,7 @@ end
 
 Interactively plot a function over a time range on a grid position
 """
-function functionplot(gp, f, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=DEFAULTS.add_colorbar, kwargs...)
+function functionplot(gp, f, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=DEFAULTS.add_colorbar, plot=(;), kwargs...)
     # get a sample data to determine the attributes and plot types
     data = f(tmin, tmax)
     m = meta(f)
@@ -17,9 +17,10 @@ function functionplot(gp, f, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title,
         axis_attributes(m),
     )
     ax = Axis(gp; attrs..., axis...)
-    plot = functionplot!(ax, f, tmin, tmax; data, plot=plottype_attributes(m), kwargs...)
-    isspectrogram(data) && add_colorbar && Colorbar(gp[1, 1, Right()], plot; label=clabel(data))
-    PanelAxesPlots(gp, AxisPlots(ax, plot))
+    plot = _merge(plottype_attributes(m), plot)
+    p = functionplot!(ax, f, tmin, tmax; data, plot, kwargs...)
+    isspectrogram(data) && add_colorbar && Colorbar(gp[1, 1, Right()], p; label=clabel(data))
+    PanelAxesPlots(gp, AxisPlots(ax, p))
 end
 
 """
@@ -27,21 +28,21 @@ end
 
 Interactive plot of a function `f` on `ax` for a time range from `tmin` to `tmax`
 """
-function functionplot!(ax, f, tmin, tmax; data=nothing, plotfunc=tplot_spec, plot=(;), kwargs...)
+function functionplot!(ax, f, tmin, tmax; data=nothing, plotfunc=plot2spec, plot=(;), kwargs...)
     to_plotspec = trange -> plotfunc(f(trange...); plot...)
     iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end
 
 """
-    multiplot!(ax, fs, t0, t1; plotfunc=tplot_spec, kwargs...)
+    multiplot!(ax, fs, t0, t1; plotfunc=plot2spec, kwargs...)
 
 Specialized multiplot function for `functionplot`.
 Merge specs before plotting so as to cycle through them.
 """
-function multiplot!(ax::Axis, fs, tmin, tmax; plotfunc=tplot_spec, kwargs...)
+function multiplot!(ax::Axis, fs, tmin, tmax; plotfunc=plot2spec, plot=(;), kwargs...)
     to_plotspec = trange -> mapreduce(vcat, fs) do f
-        plot = plottype_attributes(meta(f))
-        plotfunc(f(trange...); plot..., kwargs...)
+        attrs = plottype_attributes(meta(f))
+        plotfunc(f(trange...); attrs..., plot...)
     end
     iviz_api!(ax, to_plotspec, (tmin, tmax); kwargs...)
 end
