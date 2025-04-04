@@ -5,7 +5,7 @@ using SPEDAS: AbstractDataSet
 using Speasy
 using Speasy: TimeRangeType
 using DimensionalData
-import SPEDAS: transform, get_data, axis_attributes, SpeasyProduct
+import SPEDAS: transform, get_data, axis_attributes, SpeasyProduct, transform_speasy
 
 contain_provider(s::String) = length(split(s, "/")) == 3
 
@@ -20,7 +20,9 @@ function SPEDAS.SpeasyProduct(id, metadata=Dict(); provider="cda", kwargs...)
     )
 end
 
-
+SPEDAS.transform_speasy(x::String) = SpeasyProduct(x)
+SPEDAS.transform_speasy(x::AbstractArray{String}) = map(SpeasyProduct, x)
+SPEDAS.transform_speasy(x::NTuple{N,String}) where {N} = map(SpeasyProduct, x)
 SPEDAS.transform(p::SpeasyVariable; kwargs...) = DimArray(p; kwargs...)
 SPEDAS.transform(p::AbstractArray{<:SpeasyVariable}; kwargs...) = DimArray.(p; kwargs...)
 
