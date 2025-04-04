@@ -1,3 +1,6 @@
+include("stats.jl")
+include("methods.jl")
+
 function tclip(da, trange)
     tmin = trange |> first |> DateTime
     tmax = trange |> last |> DateTime

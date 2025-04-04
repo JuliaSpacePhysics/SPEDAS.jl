@@ -5,7 +5,7 @@ using NanoDates
 using DimensionalData
 using DimensionalData.Dimensions
 using LinearAlgebra
-import NaNMath
+using NaNStatistics
 using Makie
 using TimeseriesTools
 using Intervals: Interval
@@ -27,7 +27,7 @@ using Accessors: @set
 export AbstractProduct, Product, SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange
-export tclip, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot
+export tclip, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
 export proj, tproj, sproj, tsproj, oproj, toproj
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers
@@ -55,10 +55,9 @@ include("DataModel/DataModel.jl")
 include("projects/project.jl")
 include("mhd.jl")
 include("methods.jl")
-include("timeseries.jl")
+include("timeseries/timeseries.jl")
 include("timeseries/interactive.jl")
 include("timeseries/spectrum.jl")
-include("timeseries/methods.jl")
 include("timeseries/spike.jl")
 include("timeseries/gap.jl")
 include("utils.jl")

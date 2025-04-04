@@ -23,7 +23,7 @@ title(ds::AbstractDataSet) = ds.name
 format_datetime(dt) = Dates.format(dt, "HH:MM:SS\nyyyy-mm-dd")
 
 function colorrange(da::AbstractDimArray; scale=10)
-    cmid = NaNMath.median(da)
+    cmid = nanmedian(da)
     cmax = cmid * scale
     cmin = cmid / scale
     return (cmin, cmax)
