@@ -52,7 +52,7 @@ The size of the sliding `window` can be either:
 - `suffix="_smoothed"`: Suffix to append to the variable name in output
 - `kwargs...`: Additional arguments passed to `RollingWindowArrays.rolling`
 """
-smooth(da::AbstractDimArray, window::Quantity; kwargs...) = smooth(da, convert(Integer, window / resolution(da)); kwargs...)
+smooth(da::AbstractDimArray, window::Quantity; kwargs...) = smooth(da, Integer(div(window, resolution(da))); kwargs...)
 
 function smooth(da::AbstractDimArray, window::Integer; dims=Ti, suffix="_smoothed", kwargs...)
     new_da = mapslices(da; dims) do slice
@@ -82,7 +82,6 @@ function tfilter(da::AbstractDimArray, Wn1, Wn2=0.999 * samplingrate(da) / 2; de
     rebuild(da; data=res * (da |> eltype |> unit))
 end
 
-tfilter(args...; kwargs...) = da -> tfilter(da, args...; kwargs...)
 
 """
     dropna(da::DimArray, query)
@@ -119,4 +118,8 @@ function tsplit(da::AbstractDimArray, dim=Ti; new_names=labels(da))
         rename(modify_meta(row; long_name=name), name)
     end
     DimStack(das...)
+end
+
+for f in (:smooth, :tfilter, :tclip)
+    @eval $f(args...; kwargs...) = da -> $f(da, args...; kwargs...)
 end
