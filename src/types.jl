@@ -1,4 +1,3 @@
-# Overload function composition operator for AbstractProduct
 @kwdef mutable struct Defaults
     add_title::Bool
     add_colorbar::Bool

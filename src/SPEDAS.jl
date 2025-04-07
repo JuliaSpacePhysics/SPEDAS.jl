@@ -23,8 +23,9 @@ using Bumper
 using InverseFunctions
 using NamedTupleTools
 using Accessors: @set
+using Reexport
 
-export AbstractProduct, Product, SpeasyProduct
+export SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit, tmask
 export timerange, TimeRange
 export tclip, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
@@ -52,6 +53,7 @@ const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTool
 const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
 include("DataModel/DataModel.jl")
+@reexport using .SpaceDataModel
 include("projects/project.jl")
 include("mhd.jl")
 include("methods.jl")
@@ -83,5 +85,7 @@ include("multispacecraft/timing.jl")
 include("waves/polarization.jl")
 include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
+
+function SpeasyProduct end
 
 end

@@ -1,6 +1,3 @@
-import Base: ∘
-
-
 struct Product <: AbstractProduct
     name::String
     transformation::Function
@@ -35,4 +32,16 @@ function ∘(g::AbstractProduct, f::AbstractProduct)
     typeof(g)(g.name, g.transformation ∘ f.transformation, g.data, g.metadata)
 end
 
-function SpeasyProduct end
+function set(ds::Product, args...; name=nothing, data=nothing, kwargs...)
+    !isnothing(name) && (ds = @set ds.name = name)
+    !isnothing(data) && (ds = @set ds.data = data)
+    (!isnothing(kwargs) || !isnothing(args)) && (ds = @set ds.metadata = set(ds.metadata, args...; kwargs...))
+    return ds
+end
+
+function set!!(ds::Product, args...; name=nothing, data=nothing, kwargs...)
+    !isnothing(name) && (ds = @set ds.name = name)
+    !isnothing(data) && (ds = @set ds.data = data)
+    set!(ds.metadata, args...; kwargs...)
+    ds
+end
