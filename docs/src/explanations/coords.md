@@ -62,3 +62,7 @@ Error estimates for MVA:
 SPEDAS.Δφij
 SPEDAS.B_x3_error
 ```
+
+## Reference
+
+- [The International Radiation Belt Environment Modeling (IRBEM) library](https://prbem.github.io/IRBEM/)
