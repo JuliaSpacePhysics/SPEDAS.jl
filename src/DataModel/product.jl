@@ -1,6 +1,5 @@
 import Base: ∘
 
-abstract type AbstractProduct end
 
 struct Product <: AbstractProduct
     name::String
@@ -19,11 +18,15 @@ function Product(; name, transformation=identity, data, metadata=Dict(), kwargs.
     )
 end
 
-(p::Product)(args...) = p.transformation(p.data, args...)
+data(p::Product) = p.data
+func(p::AbstractProduct) = identity
+func(p::Product) = p.transformation
+
+(p::AbstractProduct)(args...) = func(p)(data(p), args...)
 
 """Create a new product with the composed function"""
 function ∘(f, p::AbstractProduct)
-    typeof(p)(p.name, f ∘ p.transformation, p.data, p.metadata)
+    typeof(p)(p.name, f ∘ func(p), data(p), p.metadata)
 end
 
 # Allow chaining of transformations with multiple products

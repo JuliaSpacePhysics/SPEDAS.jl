@@ -1,6 +1,7 @@
 abstract type AbstractModel end
 abstract type AbstractProject <: AbstractModel end
 abstract type AbstractInstrument <: AbstractModel end
+abstract type AbstractProduct <: AbstractModel end
 
 """
     Project <: AbstractProject
@@ -48,20 +49,24 @@ _repr(m::AbstractModel) = name(m)
 _repr(m) = m
 
 # Custom display methods for Project type
-Base.show(io::IO, p::T) where {T<:AbstractModel} = print(io, "$(T)(\"$(_repr(p))\")")
+Base.show(io::IO, p::T) where {T<:AbstractModel} = print(io, T, "(", _repr(p), ")")
 
 function Base.show(io::IO, ::MIME"text/plain", p::T) where {T<:AbstractModel}
-    print(io, "$T: ")
+    print(io, T, ": ")
     printstyled(io, _repr(p), color=:yellow)
     println(io)
 
     for field in setdiff(fieldnames(T), (:name, :format))
         ff = getfield(p, field)
-        if !isempty(ff)
+
+        if ff isa Dict || ff isa Vector || ff isa Tuple
             println(io, titlecase("  $field ($(length(ff))):"))
             for (k, v) in pairs(ff)
-                println(io, "    $k: $(_repr(v))")
+                println(io, "    ", k, ": ", _repr(v))
             end
+        else
+            print(io, titlecase("  $field"), ": ")
+            println(io, ff)
         end
     end
 end
