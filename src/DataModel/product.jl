@@ -1,18 +1,16 @@
 struct Product <: AbstractProduct
-    name::String
-    transformation::Function
     data::Any
+    transformation::Function
+    name::Union{String,Symbol}
     metadata::Any
+    function Product(data, transformation=identity, name="", metadata=Dict(); kwargs...)
+        metadata = merge(metadata, kwargs)
+        new(data, transformation, name, metadata)
+    end
 end
 
-function Product(; name, transformation=identity, data, metadata=Dict(), kwargs...)
-    metadata = merge(metadata, kwargs)
-    Product(
-        name,
-        transformation,
-        data,
-        metadata
-    )
+function Product(data; transformation=identity, name="", metadata=Dict(), kwargs...)
+    Product(data, transformation, name, metadata; kwargs...)
 end
 
 data(p::Product) = p.data
