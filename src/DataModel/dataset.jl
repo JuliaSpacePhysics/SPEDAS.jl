@@ -82,5 +82,3 @@ Base.iterate(ds::AbstractDataSet, state=1) = state > length(ds) ? nothing : (ds.
 Base.map(f, ds::AbstractDataSet) = map(f, ds.data)
 
 _repr(ld::LDataSet) = isempty(ld.name) ? ld.format : ld.name
-
-plottype(::AbstractDataSet) = MultiPlot

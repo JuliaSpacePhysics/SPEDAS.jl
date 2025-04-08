@@ -23,6 +23,7 @@ plottype(::DualAxisData) = DualPlot
 plottype(::NTuple{2,Any}) = DualPlot
 plottype(::Function) = FunctionPlot
 plottype(::AbstractProduct) = FunctionPlot
+plottype(::AbstractDataSet) = MultiPlot
 plottype(args...) = plottype(args[1])
 
 plotfunc(args...) = Makie.MakieCore.plotfunc(plottype(args...))
