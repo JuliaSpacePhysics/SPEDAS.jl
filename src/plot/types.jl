@@ -11,6 +11,14 @@ end
 FigureAxes(gp::GridPosition, axes) = FigureAxes(gp.layout.parent, axes)
 FigureAxes(gp::GridSubposition) = FigureAxes(gp.parent, axes)
 
+for f in (:hideydecorations!, :hidexdecorations!, :hidedecorations!, :hidespines!)
+    @eval import Makie: $f
+    @eval $f(fa::FigureAxes, args...; kwargs...) =
+        foreach(fa.axes) do ax
+            $f(ax, args...; kwargs...)
+        end
+end
+
 struct AxisPlots
     axis::Axis
     plots
