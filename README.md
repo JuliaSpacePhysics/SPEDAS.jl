@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/Beforerr/SPEDAS.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Beforerr/SPEDAS.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://Beforerr.github.io/SPEDAS.jl/dev/)
+[![DOI](https://zenodo.org/badge/923721479.svg)](https://doi.org/10.5281/zenodo.15181866)
 
 A collection of tools for space physics / heliophysics.
 
