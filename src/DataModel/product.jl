@@ -3,7 +3,7 @@ struct Product <: AbstractProduct
     transformation::Function
     name::Union{String,Symbol}
     metadata::Any
-    function Product(data, transformation=identity, name="", metadata=Dict(); kwargs...)
+    function Product(data, transformation, name="", metadata=Dict(); kwargs...)
         metadata = merge(metadata, kwargs)
         new(data, transformation, name, metadata)
     end

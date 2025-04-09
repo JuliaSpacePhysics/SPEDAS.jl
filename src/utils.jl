@@ -30,6 +30,10 @@ function timedim(x; query=timeDimType)
     isempty(qdims) ? dims(x, 1) : qdims[1]
 end
 
+function timedimtype(x; query=timeDimType)
+    DimensionalData.basetypeof(timedim(x; query))
+end
+
 function times(x::AbstractDimArray; query=timeDimType)
     lookup(timedim(x; query))
 end

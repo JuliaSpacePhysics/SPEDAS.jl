@@ -1,6 +1,6 @@
 using DimensionalData.Lookups
 
-const timeDimType = (Dim{:time}, Ti)
+const timeDimType = (DimensionalData.TimeDim, Dim{:time})
 
 meta(da::AbstractDimArray) = metadata(da)
 

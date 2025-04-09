@@ -1,11 +1,11 @@
 include("stats.jl")
 include("methods.jl")
 
-function tclip(da, trange)
-    tmin = trange |> first |> DateTime
-    tmax = trange |> last |> DateTime
-    da[Ti=tmin .. tmax]
-end
+tclip(da, tmin, tmax) = da[Ti=DateTime(tmin) .. DateTime(tmax)]
+tclip(da, trange) = tclip(da, trange...)
+
+tview(da, tmin, tmax; dimType=timedimtype(da)) = @view da[dimType(DD.Between(DateTime(tmin), DateTime(tmax)))]
+tview(da, trange) = tview(da, trange...)
 
 """
     tclip(da1, da2::AbstractDimArray)
@@ -135,6 +135,6 @@ function tmask(da::AbstractDimArray, tstart, tend; dim=timedim(da))
     return new_da
 end
 
-for f in (:smooth, :tfilter, :tclip)
+for f in (:smooth, :tfilter, :tclip, :tview)
     @eval $f(args...; kwargs...) = da -> $f(da, args...; kwargs...)
 end
