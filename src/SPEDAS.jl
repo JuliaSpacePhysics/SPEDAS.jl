@@ -27,6 +27,7 @@ using InverseFunctions
 using NamedTupleTools
 using Accessors: @set
 using Reexport
+@reexport using SpaceDataModel
 
 export SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
@@ -55,8 +56,6 @@ const AbstractDimMatrix = Union{DimensionalData.AbstractDimMatrix,TimeseriesTool
 const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTools.AbstractDimVector}
 const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
-include("DataModel/DataModel.jl")
-@reexport using .SpaceDataModel
 include("projects/project.jl")
 include("mhd.jl")
 include("methods.jl")
