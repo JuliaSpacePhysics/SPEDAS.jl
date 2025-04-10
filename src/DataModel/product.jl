@@ -17,7 +17,7 @@ data(p::Product) = p.data
 func(p::AbstractProduct) = identity
 func(p::Product) = p.transformation
 
-(p::AbstractProduct)(args...) = func(p)(data(p), args...)
+(p::AbstractProduct)(args...; kwargs...) = func(p)(data(p), args...; kwargs...)
 
 """Create a new product with the composed function"""
 function ∘(f, p::AbstractProduct)

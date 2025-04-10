@@ -11,7 +11,7 @@ contain_provider(s::String) = length(split(s, "/")) == 3
 
 function SPEDAS.SpeasyProduct(id, metadata=Dict(); provider="cda", kwargs...)
     id = contain_provider(id) ? id : "$provider/$id"
-    Product(id, DimArray ∘ Speasy.get_data, id, metadata; kwargs...)
+    Product(id, Speasy.getdimarray, id, metadata; kwargs...)
 end
 
 SPEDAS.transform_speasy(x::String) = SpeasyProduct(x)
