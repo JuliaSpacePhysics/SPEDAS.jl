@@ -1,21 +1,10 @@
+export tclip, tclips, tview, tviews, tmask, tmask!
+
+include("operations.jl")
 include("reduce.jl")
 include("stats.jl")
 include("methods.jl")
 include("lazyoperations.jl")
-
-tclip(da, tmin, tmax) = da[Ti=DateTime(tmin) .. DateTime(tmax)]
-tclip(da, trange) = tclip(da, trange...)
-
-tview(da, tmin, tmax; dimType=timedimtype(da)) = @view da[dimType(DD.Between(DateTime(tmin), DateTime(tmax)))]
-tview(d::Dimension, tmin, tmax) = @view d[DD.Between(DateTime(tmin), DateTime(tmax))]
-tview(da, trange) = tview(da, trange...)
-
-"""
-    tclip(da1, da2::AbstractDimArray)
-
-Clip the time dimension of `da1` to match the time range of `da2`.
-"""
-tclip(da1, da2::AbstractDimArray) = tclip(da1, timerange(da2))
 
 """
     tderiv(data, times; dims = 1)
@@ -154,18 +143,6 @@ function tsplit(da::AbstractDimArray, dim=Ti; new_names=labels(da))
     DimStack(das...)
 end
 
-"""
-    tmask(da::AbstractDimArray, tstart, tend)
-
-Mask all data values within the specified time range with NaN.
-"""
-function tmask(da::AbstractDimArray, tstart, tend; dim=timedim(da))
-    new_da = copy(da)
-    dimType = DD.basetypeof(dim)
-    new_da[dimType(DD.Between(tstart, tend))] .= NaN
-    return new_da
-end
-
-for f in (:smooth, :tfilter, :tclip, :tview)
+for f in (:smooth, :tfilter)
     @eval $f(args...; kwargs...) = da -> $f(da, args...; kwargs...)
 end
