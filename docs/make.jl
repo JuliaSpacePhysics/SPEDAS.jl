@@ -31,6 +31,7 @@ makedocs(
             "explanations/multispacecraft.md",
             "explanations/resampling.md",
             "explanations/waves.md",
+            "explanations/analysis.md",
         ],
         "Observatories" => [
             "observatory/index.md",
