@@ -4,6 +4,7 @@ using Dates
 using NanoDates
 using DimensionalData
 using DimensionalData.Dimensions
+using DimensionalData.Dimensions: Dimension
 using LinearAlgebra
 using NaNStatistics
 using Makie
@@ -28,7 +29,7 @@ using Reexport
 export SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit, tmask
 export timerange, TimeRange
-export tclip, tview, timeshift, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
+export tclip, tview, timeshift, tderiv, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
 export proj, tproj, sproj, tsproj, oproj, toproj
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers

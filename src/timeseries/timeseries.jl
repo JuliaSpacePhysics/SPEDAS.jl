@@ -1,10 +1,12 @@
 include("stats.jl")
 include("methods.jl")
+include("lazyoperations.jl")
 
 tclip(da, tmin, tmax) = da[Ti=DateTime(tmin) .. DateTime(tmax)]
 tclip(da, trange) = tclip(da, trange...)
 
 tview(da, tmin, tmax; dimType=timedimtype(da)) = @view da[dimType(DD.Between(DateTime(tmin), DateTime(tmax)))]
+tview(d::Dimension, tmin, tmax) = @view d[DD.Between(DateTime(tmin), DateTime(tmax))]
 tview(da, trange) = tview(da, trange...)
 
 """
@@ -13,6 +15,34 @@ tview(da, trange) = tview(da, trange...)
 Clip the time dimension of `da1` to match the time range of `da2`.
 """
 tclip(da1, da2::AbstractDimArray) = tclip(da1, timerange(da2))
+
+"""
+    tderiv(data, times; dims = 1)
+
+Compute the time derivative of `data` with respect to `times`.
+"""
+function tderiv(data::AbstractArray{T,N}, times; dims=1) where {T,N}
+    # return diff(data; dims) ./ diff(times) # this allocates and is slow
+    Base.require_one_based_indexing(data)
+    1 <= dims <= N || throw(ArgumentError("dimension $dims out of range (1:$N)"))
+
+    r = Base.axes(data)
+    r0 = ntuple(i -> i == dims ? UnitRange(1, last(r[i]) - 1) : UnitRange(r[i]), N)
+    r1 = ntuple(i -> i == dims ? UnitRange(2, last(r[i])) : UnitRange(r[i]), N)
+    rt0 = r0[dims]
+    rt1 = r1[dims]
+
+    return (view(data, r1...) .- view(data, r0...)) ./ (view(times, rt1) .- view(times, rt0))
+end
+
+"""
+    tderiv(data; dims = Ti)
+
+Compute the time derivative of `data`.
+
+See also: [deriv_data - PySPEDAS](https://pyspedas.readthedocs.io/en/latest/_modules/pyspedas/analysis/deriv_data.html)
+"""
+tderiv(data; dims=Ti) = diff(data; dims) ./ diff(times(data))
 
 function timeshift(ta; dim=1, t0=nothing)
     td = dims(ta, dim)
