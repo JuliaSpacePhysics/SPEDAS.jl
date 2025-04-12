@@ -1,3 +1,4 @@
+include("reduce.jl")
 include("stats.jl")
 include("methods.jl")
 include("lazyoperations.jl")

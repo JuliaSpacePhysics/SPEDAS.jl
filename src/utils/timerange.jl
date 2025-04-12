@@ -29,6 +29,8 @@ function Base.getindex(S::TimeRange, i::Int)
 end
 Base.lastindex(S::TimeRange) = 2
 
-timerange(first, last) = Interval(first, last)
-timerange(first::AbstractString, last::AbstractString) = Interval(DateTime(first), DateTime(last))
-timerange(trange) = timerange(first(trange), last(trange))
+timerange(t0::AbstractTime, t1::AbstractTime) = minmax(t0, t1)
+timerange(t0::AbstractString, t1::AbstractString) = timerange(t0, DateTime(t1))
+timerange(t0::AbstractString, t1) = timerange(DateTime(t0), t1)
+timerange(t0, t1::AbstractString) = timerange(t0, DateTime(t1))
+timerange(times) = extrema(times)

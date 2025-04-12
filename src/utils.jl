@@ -25,22 +25,17 @@ prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata
 
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
-function timedim(x; query=timeDimType)
-    qdims = dims(x, query)
-    isempty(qdims) ? dims(x, 1) : qdims[1]
+function timedim(x; query=TimeDim)
+    qdim = dims(x, query)
+    isnothing(qdim) ? dims(x, 1) : qdim
 end
 
-function timedimtype(x; query=timeDimType)
+function timedimtype(x; query=TimeDim)
     DimensionalData.basetypeof(timedim(x; query))
 end
 
-function times(x::AbstractDimArray; query=timeDimType)
-    lookup(timedim(x; query))
-end
-
-function timerange(x::AbstractDimArray; query=timeDimType)
-    times(x; query) |> extrema
-end
+times(x::AbstractDimArray; query=TimeDim) = lookup(timedim(x; query))
+times(x) = x
 
 # hack as `Makie` does not support `NanoDate` directly
 function xs(da::AbstractDimArray)
