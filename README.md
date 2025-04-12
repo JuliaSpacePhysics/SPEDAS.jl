@@ -10,7 +10,7 @@ A collection of tools for space physics / heliophysics.
 
 ```julia
 using Pkg
-Pkg.add(PackageSpec(url="https://github.com/Beforerr/SPEDAS.jl"))
+Pkg.add("SPEDAS")
 ```
 
 ## Related packages
