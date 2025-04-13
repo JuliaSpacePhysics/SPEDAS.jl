@@ -22,10 +22,10 @@ The data model organizes data in a hierarchical type structure:
   - Created with specific values (e.g., probe number, data rate)
 
 ```@docs; canonical=false
-Project
-Instrument
-LDataSet
-DataSet
+SpaceDataModel.Project
+SpaceDataModel.Instrument
+SpaceDataModel.LDataSet
+SpaceDataModel.DataSet
 ```
 
 ## Project Module and Configuration

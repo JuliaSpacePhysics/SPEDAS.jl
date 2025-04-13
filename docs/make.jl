@@ -1,4 +1,5 @@
 using SPEDAS
+using SPEDAS.SpaceDataModel
 using Documenter
 using DocumenterCitations
 # using DemoCards
@@ -45,7 +46,7 @@ makedocs(
         "API" => "api.md",
     ],
     format=Documenter.HTML(size_threshold=nothing),
-    modules=[SPEDAS],
+    modules=[SPEDAS, SPEDAS.SpaceDataModel],
     warnonly=Documenter.except(:missing_docs),
     plugins=[bib],
     doctest=true

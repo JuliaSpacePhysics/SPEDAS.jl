@@ -10,6 +10,8 @@ Pages = ["api.md"]
 Modules = [SPEDAS.SpaceDataModel]
 ```
 
+## SPEDAS
+
 ```@autodocs
 Modules = [SPEDAS]
 ```
