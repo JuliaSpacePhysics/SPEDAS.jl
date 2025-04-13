@@ -12,7 +12,7 @@ end
 Subtract a statistic (default function `f`: `nanmedian`) along dimensions (default: time dimension) from `x`.
 """
 function tsubtract(x, f=nanmedian; dims=timedim(x))
-    x .- f(x; dims)
+    x .- f(parent(x); dims=dimnum(x, dims))
 end
 
 function tnorm(x; dims=Ti)
@@ -72,19 +72,19 @@ end
 norm_combine(x; dims=1) = cat(x, norm.(eachslice(x; dims)); dims=setdiff(1:ndims(x), dims))
 
 """
-    tnorm_combine(x; dims=Ti, name=:magnitude)
+    tnorm_combine(x; dims=timedim(x), name=:magnitude)
 
-Calculate the norm of each slice along dimension `dims` and combine it with the original components.
+Calculate the norm of each slice along `query` dimension and combine it with the original components.
 """
-function tnorm_combine(x; dims=Ti, name=:magnitude)
-    new_x = norm_combine(x.data; dims=dimnum(x, dims))
+function tnorm_combine(x; dims=timedim(x), name=:magnitude)
+    data = norm_combine(parent(x); dims=dimnum(x, dims))
 
     # Replace the original dimension with our new one that includes the magnitude
     odim = otherdims(x, dims) |> only
     odimType = basetypeof(odim)
     new_odim = odimType(vcat(odim.val, name))
     new_dims = map(d -> d isa odimType ? new_odim : d, DD.dims(x))
-    return DimArray(new_x, new_dims; metadata=metadata(x))
+    return rebuild(x, data, new_dims)
 end
 
 
