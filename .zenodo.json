@@ -1,0 +1,15 @@
+{
+  "title": "SPEDAS.jl: Julia-based Space Physics Environment Data Analysis Software",
+  "creators": [
+    {
+      "name": "Zijin Zhang",
+      "affiliation": "University of California, Los Angeles",
+      "orcid": "0000-0002-9968-067X"
+    },
+    {
+      "name": "Vassilis Angelopoulos",
+      "affiliation": "University of California, Los Angeles"
+    }
+  ],
+  "keywords": ["Space physics", "Heliophysics", "Data analysis"]
+}
