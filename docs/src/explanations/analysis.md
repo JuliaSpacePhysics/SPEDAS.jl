@@ -25,5 +25,5 @@ tsubtract
 tclip
 tview
 tmask
-timeshift
+tshift
 ```

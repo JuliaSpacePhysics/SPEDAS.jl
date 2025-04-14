@@ -1,5 +1,5 @@
 function tmean(x; dims=timedim(x))
-    mean(x; dims)
+    nanmean(x; dims)
 end
 
 function tmedian(x; dims=timedim(x))
@@ -15,7 +15,7 @@ function tsubtract(x, f=nanmedian; dims=timedim(x))
     x .- f(parent(x); dims=dimnum(x, dims))
 end
 
-function tnorm(x; dims=Ti)
+function tnorm(x; dims=TimeDim)
     norm.(eachslice(x; dims))
 end
 
@@ -38,34 +38,42 @@ function sproj(a, b)
     return dot(a, b) / norm(b)
 end
 
-function tsproj(a, b; dims=Ti)
+function tsproj(a, b; dims=TimeDim)
     sproj.(eachslice(a; dims), eachslice(b; dims))
 end
 
-function tproj(a, b; dims=Ti)
+function tproj(a, b; dims=TimeDim)
     proj.(eachslice(a; dims), eachslice(b; dims))
 end
 
 """Vector rejection"""
 oproj(a, b) = a - proj(a, b)
 
-function toproj(v, B; dims=Ti)
-    res = oproj.(eachslice(v; dims), eachslice(B; dims))
+function toproj(a, b; dims=TimeDim)
+    res = oproj.(eachslice(a; dims), eachslice(b; dims))
     tstack(res)
 end
 
 """
+    tcross(x, y; dims=TimeDim, stack=nothing)
+
+Compute the cross product of two (arrays of) vectors along the `dims` dimension.
 
 References:
 - https://docs.xarray.dev/en/stable/generated/xarray.cross.html
 """
-function tcross(x, y; dims=Ti, stack=nothing)
+function tcross(x, y; dims=TimeDim, stack=nothing)
     stack = @something stack (ndims(x) == 2)
     res = cross.(eachslice(x; dims), eachslice(y; dims))
     stack ? tstack(res) : res
 end
 
-function tdot(x, y; dims=Ti)
+"""
+    tdot(x, y; dims=TimeDim)
+
+Dot product of two arrays `x` and `y` along the `dims` dimension.
+"""
+function tdot(x, y; dims=TimeDim)
     dot.(eachslice(x; dims), eachslice(y; dims))
 end
 

@@ -34,8 +34,7 @@ using Reexport
 
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange, common_timerange
-export timeshift, tderiv, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
-export proj, tproj, sproj, tsproj, oproj, toproj
+export norm_combine, tnorm_combine
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers
 export fill_gaps

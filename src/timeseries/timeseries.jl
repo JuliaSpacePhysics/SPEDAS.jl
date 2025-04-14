@@ -1,4 +1,12 @@
-export tclip, tclips, tview, tviews, tmask, tmask!
+# Time operations
+export tclip, tclips, tview, tviews, tmask, tmask!, tshift
+# Linear Algebra
+export proj, sproj, oproj
+export tdot, tcross, tnorm, tproj, tsproj, toproj
+# Statistics
+export tmean, tmedian
+# Derivatives
+export tderiv, tsubtract
 
 include("operations.jl")
 include("reduce.jl")
@@ -33,17 +41,6 @@ Compute the time derivative of `data`.
 See also: [deriv_data - PySPEDAS](https://pyspedas.readthedocs.io/en/latest/_modules/pyspedas/analysis/deriv_data.html)
 """
 tderiv(data; dims=Ti) = diff(data; dims) ./ diff(times(data))
-
-function timeshift(ta; dim=1, t0=nothing)
-    td = dims(ta, dim)
-    times = td.val.data
-    t0 = something(t0, times[1])
-
-    new_dim_name = Symbol("Time after ", t0)
-    new_dim = Dim{new_dim_name}(times .- t0)
-
-    DimArray(ta.data, (new_dim, otherdims(ta, dim)...), name=ta.name, metadata=ta.metadata)
-end
 
 function resolution(times; tol=2, f=stat_relerr(median))
     dt = diff(times)

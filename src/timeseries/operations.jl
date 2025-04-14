@@ -36,11 +36,28 @@ end
 
 tmask(da, args...; kwargs...) = tmask!(deepcopy(da), args...; kwargs...)
 
+"""
+    tshift(x; dim=TimeDim, t0=nothing, new_dim=nothing)
+
+Shift the `dim` of `x` by `t0`.
+"""
+function tshift(x::AbstractDimArray, t0=nothing; dim=TimeDim, new_dim=nothing)
+    td = dims(x, dim)
+    times = parent(lookup(td))
+    t0 = @something t0 first(times)
+    new_dim = @something new_dim Dim{Symbol("Time after ", t0)}
+    set(x, dim => new_dim(times .- t0))
+end
+
 for f in (:tclip, :tview, :tmask!, :tmask)
     @eval $f(da, trange; kwargs...) = $f(da, trange...; kwargs...)
     @eval $f(da1, da2::AbstractDimArray) = $f(da1, timerange(da2))
+end
+
+for f in (:tclip, :tview, :tmask!, :tmask, :tshift)
     @eval $f(args...; kwargs...) = da -> $f(da, args...; kwargs...)
 end
+
 
 """
     tclips(xs...; trange=common_timerange(xs...))
