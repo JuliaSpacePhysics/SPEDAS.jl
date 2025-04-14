@@ -33,6 +33,6 @@ end
 
 include("utils.jl")
 include("toml.jl")
-include("MMS.jl")
-include("THEMIS.jl")
-include("PSP.jl")
+include("MMS/MMS.jl")
+include("THEMIS/THEMIS.jl")
+include("PSP/PSP.jl")
