@@ -37,10 +37,10 @@ Generic entry point for plotting different types of data on a grid position `gp`
 Transforms the arguments to appropriate types and calls the plotting function.
 Dispatches to appropriate implementation based on the plotting trait of the transformed arguments.
 """
-function tplot_panel(gp, args...; kwargs...)
-    new_args = transform_pipeline.(args)
-    pf = plotfunc(new_args...)
-    pf(gp, new_args...; kwargs...)
+function tplot_panel(gp, data, args...; kwargs...)
+    transformed = transform_pipeline(data)
+    pf = plotfunc(transformed)
+    pf(gp, transformed, args...; kwargs...)
 end
 
 """
@@ -51,10 +51,10 @@ Generic entry point for adding plots to an existing axis `ax`.
 Transforms the arguments to appropriate types and calls the plotting function.
 Dispatches to appropriate implementation based on the plotting trait of the transformed arguments.
 """
-function tplot_panel!(ax::Axis, args...; kwargs...)
-    new_args = transform_pipeline.(args)
-    pf! = plotfunc!(new_args...)
-    pf!(ax, new_args...; kwargs...)
+function tplot_panel!(ax::Axis, data, args...; kwargs...)
+    transformed = transform_pipeline(data)
+    pf! = plotfunc!(transformed)
+    pf!(ax, transformed, args...; kwargs...)
 end
 
 tplot_panel!(args...; kwargs...) = tplot_panel!(current_axis(), args...; kwargs...)

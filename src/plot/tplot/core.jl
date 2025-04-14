@@ -3,6 +3,8 @@ Core functionality for time series plotting.
 This file contains the main `tplot` function and its variants.
 """
 
+default_palette(x) = ((i, 1) for i in 1:length(x))
+
 """
     tplot(f, tas; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, kwargs...)
 
@@ -13,9 +15,8 @@ By default, the time series are transformed via `transform_pipeline`, which is e
 
 See also: [`tplot_panel`](@ref), [`transform_pipeline`](@ref), [`transform`](@ref)
 """
-function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, axis=(;), kwargs...)
+function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, axis=(;), palette=default_palette(tas), kwargs...)
     tas = transform(tas)
-    palette = [(i, 1) for i in 1:length(tas)]
     gaps = map(palette, tas) do pos, ta
         gp = f[pos...]
         pap = tplot_panel(gp, ta, args...; axis, kwargs...)
