@@ -29,7 +29,6 @@ using Accessors: @set
 using Reexport
 @reexport using SpaceDataModel
 
-export SpeasyProduct
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange, common_timerange
 export timeshift, tderiv, tmean, tnorm, norm_combine, tnorm_combine, tmean, tcross, tdot, tsubtract
@@ -88,7 +87,5 @@ include("analysis/analysis.jl")
 include("waves/polarization.jl")
 include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
-
-function SpeasyProduct end
 
 end

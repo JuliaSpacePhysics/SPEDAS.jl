@@ -22,7 +22,7 @@ Filter = t -> t isa AbstractDataSet
 ## Examples
 
 ```@example PSP
-import Speasy
+using Speasy: SpeasyProduct
 using SPEDAS
 using Unitful
 
