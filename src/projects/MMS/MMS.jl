@@ -1,6 +1,6 @@
 @doc project_doc("MMS", "Magnetospheric Multiscale")
 module MMS
-using ..SPEDAS: @load_project_config
+using ..SPEDAS: @load_project_config, project_doc
 using SpaceDataModel: DataSet
 export FPIDataSet
 
