@@ -1,3 +1,8 @@
+"""
+Julia-based Space Physics Environment Data Analysis Software
+
+See the [Documentation](https://beforerr.github.io/SPEDAS.jl/dev/) for more information.
+"""
 module SPEDAS
 
 using Dates
@@ -12,14 +17,12 @@ using NaNStatistics
 using Makie
 using TimeseriesTools
 using Intervals: Interval
-using StructArrays
 using StaticArrays
 using OhMyThreads
 using Statistics
 using Unitful, DimensionfulAngles
 using Latexify, UnitfulLatexify
 using RollingWindowArrays
-using InteractiveViz
 using FFTW, DSP, SignalAnalysis
 using Tullio
 using Bumper
@@ -36,8 +39,6 @@ export proj, tproj, sproj, tsproj, oproj, toproj
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers
 export fill_gaps
-export tplot!, tplot, tplot_panel, tplot_panel!
-export tsheat, tlims!, tlines!, add_labels!
 export ylabel, plot_attributes
 export LMN
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_mat, check_mva_mat
@@ -59,7 +60,6 @@ include("projects/project.jl")
 include("mhd.jl")
 include("methods.jl")
 include("timeseries/timeseries.jl")
-include("timeseries/interactive.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/spike.jl")
 include("timeseries/gap.jl")
@@ -70,11 +70,9 @@ include("types.jl")
 include("resampling/resample.jl")
 include("resampling/interp.jl")
 include("meta.jl")
-include("plot/types.jl")
 include("plot/transform.jl")
 include("plot/attributes.jl")
 include("plot/tplot.jl")
-include("plot/methods.jl")
 include("cotrans/coordinate.jl")
 include("cotrans/rotate.jl")
 include("cotrans/fac.jl")

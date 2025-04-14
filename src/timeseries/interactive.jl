@@ -28,8 +28,6 @@ end
 
 limits(data::RangeFunction1D) = (data.xmin, data.xmax, nothing, nothing)
 
-get_xrange(limit) = (limit.origin[1], limit.origin[1] + limit.widths[1])
-
 """
 Remove the resolution-based updates and only update based on axis limit to improve performance
 """

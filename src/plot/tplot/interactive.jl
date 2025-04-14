@@ -1,3 +1,5 @@
+get_xrange(limit) = (limit.origin[1], limit.origin[1] + limit.widths[1])
+
 """
 Interactive plotting functionality for time series.
 This file contains functions for interactive plotting of time series data.
