@@ -50,8 +50,8 @@ Clip multiple arrays to a common time range `trange`.
 If `trange` is not provided, automatically finds the common time range
 across all input arrays.
 """
-tclips(xs::Vararg{<:Any,N}; trange=common_timerange(xs...)) where N =
+tclips(xs::Vararg{Any,N}; trange=common_timerange(xs...)) where N =
     ntuple(i -> tclip(xs[i], trange...), N)
 
-tviews(xs::Vararg{<:Any,N}; trange=common_timerange(xs...)) where N =
+tviews(xs::Vararg{Any,N}; trange=common_timerange(xs...)) where N =
     ntuple(i -> tview(xs[i], trange...), N)
