@@ -4,7 +4,10 @@ name = "Parker Solar Probe"
 [metadata]
 abbreviation = "PSP"
 spase_id = "spase://SMWG/Observatory/ParkerSolarProbe"
-links = ["https://hpde.io/SMWG/Observatory/ParkerSolarProbe.html"]
+links = [
+    "https://hpde.io/SMWG/Observatory/ParkerSolarProbe.html",
+    "[Wikipedia](https://en.wikipedia.org/wiki/Parker_Solar_Probe)",
+]
 
 # Instruments
 [instruments.fields]

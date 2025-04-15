@@ -22,18 +22,11 @@ Filter = t -> t isa AbstractDataSet
 ## Examples
 
 ```@example PSP
-using Speasy: SpeasyProduct
 using SPEDAS
 using Unitful
+using SPEDAS.PSP
 
-n = DataSet("Density",
-    [
-        SpeasyProduct("PSP_SWP_SPI_SF00_L3_MOM/DENS"; labels=["SPI Proton"]),
-        Base.Fix2(*, u"cm^-3") ∘ SpeasyProduct("PSP_SWP_SPC_L3I/np_moment"; labels=["SPC Proton"]),
-        SpeasyProduct("PSP_FLD_L3_RFS_LFR_QTN/N_elec"; labels=["RFS Electron"]),
-        SpeasyProduct("PSP_FLD_L3_SQTN_RFS_V1V2/electron_density"; labels=["SQTN Electron"])
-    ]
-)
+n = PSP.n
 ```
 
 ```@example PSP
