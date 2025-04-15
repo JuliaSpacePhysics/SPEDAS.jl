@@ -1,6 +1,6 @@
 _dict2nt(d::Dict; f=identity) = NamedTuple((Symbol(key), f(value)) for (key, value) in d)
 
-function project_doc(mod, name, file=nothing, base_url="https://github.com/Beforerr/SPEDAS.jl")
+function project_doc(mod, name, file=nothing, base_url="https://github.com/Beforerr/SPEDAS.jl/blob/main/config")
     doc = """
 Sub-module for **"$(name) ($mod)"**
 
@@ -11,7 +11,7 @@ using SPEDAS.$(mod)
 ```
 """
     if file !== nothing
-        doc *= "\n\n[Configuration File: $(file)]($(base_url)/$(file))"
+        doc *= "\n\nConfiguration File:[$(file)]($(base_url)/$(file))"
     end
     return doc
 end

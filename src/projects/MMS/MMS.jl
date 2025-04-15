@@ -1,4 +1,4 @@
-@doc project_doc("MMS", "Magnetospheric Multiscale")
+@doc project_doc("MMS", "Magnetospheric Multiscale", "MMS.toml")
 module MMS
 using ..SPEDAS: @load_project_config, project_doc
 using SpaceDataModel: DataSet
