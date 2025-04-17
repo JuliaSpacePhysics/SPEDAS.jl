@@ -14,7 +14,7 @@ function functionplot(gp, f, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title,
     m = meta(f)
     attrs = merge(
         axis_attributes(data; add_title),
-        axis_attributes(m),
+        convert(Dict, filter_by_fieldnames(Axis, m)),
     )
     ax = Axis(gp; attrs..., axis...)
     plot = _merge(plottype_attributes(m), plot)

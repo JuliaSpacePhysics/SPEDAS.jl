@@ -35,10 +35,7 @@ axis_attributes(ta, args...; add_title=false, kwargs...) = (; kwargs...)
 
 filterkeys(f, d::Dict) = filter(f ∘ first, d)
 filterkeys(f, nt) = NamedTuple{filter(f, keys(nt))}(nt)
-
-function axis_attributes(meta; allowed=fieldnames(Axis))::Dict
-    filterkeys(∈(allowed), meta)
-end
+filter_by_fieldnames(T::Type, d::Dict) = filterkeys(∈(fieldnames(T)), d)
 
 """Axis attributes for a time array"""
 function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where {Q<:Number}
@@ -98,7 +95,7 @@ function axis_attributes(fs, tmin, tmax; kwargs...)
     data = apply.(fs, tmin, tmax)
     merge(
         axis_attributes(data; kwargs...),
-        axis_attributes(meta(fs)),
+        convert(Dict, filter_by_fieldnames(Axis, meta(fs))),
     )
 end
 

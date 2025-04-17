@@ -12,6 +12,11 @@ function plot2spec(da; resample=(; verbose=true), kwargs...)
     end
 end
 
+plot2spec(nt::Union{NamedTuple,Tuple}; kwargs...) =
+    map(collect(values(nt))) do da
+        plot2spec(da; kwargs...)
+    end
+
 """
     tplot_panel_s!(ax::Axis, data; kwargs...)
 
