@@ -21,7 +21,7 @@ end
 """
     mva_eigen(B::AbstractMatrix; sort=(;), check=false) -> F::Eigen
 
-Perform minimum variance analysis to generate a LMN coordinate transformation matrix from matrix `B`.
+Perform minimum variance analysis, returning `Eigen` factorization object `F` which contains the eigenvalues in `F.values` and the eigenvectors in the columns of the matrix `F.vectors`.
 
 Set `check=true` to check the reliability of the result.
 

@@ -63,6 +63,8 @@ SPEDAS.Δφij
 SPEDAS.B_x3_error
 ```
 
+See also: [Comparison with PySPEDAS](../validation/pyspedas.md#minimum-variance-analysis).
+
 ## Reference
 
 - [The International Radiation Belt Environment Modeling (IRBEM) library](https://prbem.github.io/IRBEM/)

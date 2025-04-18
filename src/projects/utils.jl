@@ -10,8 +10,8 @@ To load project, project-specific instrument and dataset variables into scope:
 using SPEDAS.$(mod)
 ```
 """
-    if file !== nothing
-        doc *= "\n\nConfiguration File:[$(file)]($(base_url)/$(file))"
+    if !isnothing(file)
+        doc *= "\n\nConfiguration File: [$(file)]($(base_url)/$(file))"
     end
     return doc
 end
