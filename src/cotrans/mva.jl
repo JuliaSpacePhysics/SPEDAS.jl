@@ -8,39 +8,32 @@
     Eigen(F.values[order], F.vectors[:, order])
 end
 
+@views function mva_mat(B::AbstractMatrix, ::Val{N}; sort=(;)) where N
+    n = size(B, 1)
+    B̄ = SVector{N}(sum(Bc) / n for Bc in eachcol(B))
+    M = SMatrix{N,N}(
+        B[:, i] ⋅ B[:, j] / n - B̄[i] * B̄[j]
+        for i in 1:N, j in 1:N
+    )
+    sorteigen(eigen(M); sort...)
+end
+
 """
-    mva_mat(Bx, By, Bz; verbose=false, sort=(;))
+    mva_mat(B::AbstractMatrix; sort=(;), check=false)
 
-Generates a LMN coordinate transformation matrix from 3 orthogonal vectors `Bx`, `By`, `Bz`.
+Perform minimum variance analysis to generate a LMN coordinate transformation matrix from matrix `B`.
 
-Perform minimum variance analysis to vector components defined in orthogonal coordinates `Bx`, `By` and `Bz`.
 Set `check=true` to check the reliability of the result.
 
 The `k`th eigenvector can be obtained from the slice `F.vectors[:, k]`.
 """
-function mva_mat(Bx, By, Bz; check=false, sort=(;))
-    n = length(Bx)
-
-    B̄1 = sum(Bx) / n
-    B̄2 = sum(By) / n
-    B̄3 = sum(Bz) / n
-    B̄11 = (Bx ⋅ Bx) / n - B̄1 * B̄1
-    B̄22 = (By ⋅ By) / n - B̄2 * B̄2
-    B̄33 = (Bz ⋅ Bz) / n - B̄3 * B̄3
-    B̄12 = (Bx ⋅ By) / n - B̄1 * B̄2
-    B̄23 = (By ⋅ Bz) / n - B̄2 * B̄3
-    B̄31 = (Bz ⋅ Bx) / n - B̄3 * B̄1
-    # Construct the matrix
-    M = SA[B̄11 B̄12 B̄31; B̄12 B̄22 B̄23; B̄31 B̄23 B̄33]
-
-    # Compute the eigen values and ratios (descending order)
-    F = sorteigen(eigen(M); sort...)
-
+function mva_mat(B::AbstractMatrix; sort=(;), check=false)
+    N = size(B, 2)
+    F = mva_mat(B, Val(N); sort)
     check && check_mva(F)
     F
 end
 
-mva_mat(B::AbstractMatrix; kwargs...) = mva_mat(eachcol(B)...; kwargs...)
 function mva_mat(B::AbstractMatrix{Q}; kwargs...) where {Q<:Quantity}
     F = mva_mat(ustrip(B); kwargs...)
     Eigen(F.values * unit(Q)^2, F.vectors)
