@@ -1,5 +1,10 @@
 # Validation with PySPEDAS
 
+!!! note "Performance Notes"
+    - Calling Python from Julia (via [PythonCall.jl](https://github.com/JuliaPy/PythonCall.jl)) introduces only a negligible overhead, typically within nanoseconds.
+    - Memory allocations shown in Julia benchmarks do not include allocations that occur within Python. To measure Python-side allocations, profiling should be done directly in Python.
+    - The documentation and benchmarks are generated using a single thread on GitHub Actions. Running the code locally with multiple threads (e.g., by setting `JULIA_NUM_THREADS`) can yield even greater performance improvements for Julia.
+
 ```@example pyspedas
 using PySPEDAS
 using SPEDAS
