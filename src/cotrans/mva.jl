@@ -3,8 +3,13 @@
 # - https://github.com/henry2004y/VisAnaJulia/blob/master/src/MVA.jl
 # - https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar
 
+@inline function sorteigen(F; sortby=abs, rev=true)
+    order = sortperm(F.values; rev, by=sortby)
+    Eigen(F.values[order], F.vectors[:, order])
+end
+
 """
-    mva_mat(Bx, By, Bz; verbose=false)
+    mva_mat(Bx, By, Bz; verbose=false, sort=(;))
 
 Generates a LMN coordinate transformation matrix from 3 orthogonal vectors `Bx`, `By`, `Bz`.
 
@@ -13,22 +18,23 @@ Set `check=true` to check the reliability of the result.
 
 The `k`th eigenvector can be obtained from the slice `F.vectors[:, k]`.
 """
-function mva_mat(Bx, By, Bz; check=false)
+function mva_mat(Bx, By, Bz; check=false, sort=(;))
+    n = length(Bx)
 
-    B̄1 = mean(Bx)
-    B̄2 = mean(By)
-    B̄3 = mean(Bz)
-    B̄11 = mean(Bx .* Bx) - B̄1 * B̄1
-    B̄22 = mean(By .* By) - B̄2 * B̄2
-    B̄33 = mean(Bz .* Bz) - B̄3 * B̄3
-    B̄12 = mean(Bx .* By) - B̄1 * B̄2
-    B̄23 = mean(By .* Bz) - B̄2 * B̄3
-    B̄31 = mean(Bz .* Bx) - B̄3 * B̄1
+    B̄1 = sum(Bx) / n
+    B̄2 = sum(By) / n
+    B̄3 = sum(Bz) / n
+    B̄11 = (Bx ⋅ Bx) / n - B̄1 * B̄1
+    B̄22 = (By ⋅ By) / n - B̄2 * B̄2
+    B̄33 = (Bz ⋅ Bz) / n - B̄3 * B̄3
+    B̄12 = (Bx ⋅ By) / n - B̄1 * B̄2
+    B̄23 = (By ⋅ Bz) / n - B̄2 * B̄3
+    B̄31 = (Bz ⋅ Bx) / n - B̄3 * B̄1
     # Construct the matrix
-    M = [B̄11 B̄12 B̄31; B̄12 B̄22 B̄23; B̄31 B̄23 B̄33]
+    M = SA[B̄11 B̄12 B̄31; B̄12 B̄22 B̄23; B̄31 B̄23 B̄33]
 
     # Compute the eigen values and ratios (descending order)
-    F = eigen(M, sortby=x -> -abs(x))
+    F = sorteigen(eigen(M); sort...)
 
     check && check_mva(F)
     F
