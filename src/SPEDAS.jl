@@ -40,7 +40,7 @@ export find_spikes, replace_outliers
 export fill_gaps
 export ylabel, plot_attributes
 export LMN
-export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_mat, check_mva_mat
+export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
 export standardize, modify_meta, amap, ω2f
 export reciprocal_vector, reciprocal_vectors, lingradest

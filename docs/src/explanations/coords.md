@@ -51,9 +51,9 @@ References:
 - [https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar](https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar)
 
 ```@docs; canonical=false
-mva_mat
+mva_eigen
 mva
-check_mva_mat
+check_mva_eigen
 ```
 
 Error estimates for MVA:

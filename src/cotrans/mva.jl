@@ -8,7 +8,7 @@
     Eigen(F.values[order], F.vectors[:, order])
 end
 
-@views function mva_mat(B::AbstractMatrix, ::Val{N}; sort=(;)) where N
+@views function mva_eigen(B::AbstractMatrix, ::Val{N}; sort=(;)) where N
     n = size(B, 1)
     B̄ = SVector{N}(sum(Bc) / n for Bc in eachcol(B))
     M = SMatrix{N,N}(
@@ -19,7 +19,7 @@ end
 end
 
 """
-    mva_mat(B::AbstractMatrix; sort=(;), check=false)
+    mva_eigen(B::AbstractMatrix; sort=(;), check=false) -> F::Eigen
 
 Perform minimum variance analysis to generate a LMN coordinate transformation matrix from matrix `B`.
 
@@ -27,51 +27,40 @@ Set `check=true` to check the reliability of the result.
 
 The `k`th eigenvector can be obtained from the slice `F.vectors[:, k]`.
 """
-function mva_mat(B::AbstractMatrix; sort=(;), check=false)
+function mva_eigen(B; sort=(;), check=false)
     N = size(B, 2)
-    F = mva_mat(B, Val(N); sort)
+    F = mva_eigen(B, Val(N); sort)
     check && check_mva(F)
     F
 end
 
-function mva_mat(B::AbstractMatrix{Q}; kwargs...) where {Q<:Quantity}
-    F = mva_mat(ustrip(B); kwargs...)
+function mva_eigen(B::AbstractMatrix{Q}; kwargs...) where {Q<:Quantity}
+    F = mva_eigen(ustrip(B); kwargs...)
     Eigen(F.values * unit(Q)^2, F.vectors)
 end
 
 """
-    mva(V::AbstractMatrix, B::AbstractMatrix; kwargs...)
+    mva(V, B=V; kwargs...)
 
 Rotate a timeseries `V` into the LMN coordinates based on the reference field `B`.
 
 # Arguments
-- `V::AbstractMatrix`: The timeseries data to be transformed, where each column represents a component
-- `B::AbstractMatrix`: The reference field used to determine the minimum variance directions, where each column represents a component
+- `V`: The timeseries data to be transformed, where each column represents a component
+- `B`: The reference field used to determine the minimum variance directions, where each column represents a component
 
-See also: [`mva_mat(Bx, By, Bz)`](@ref), [`rotate`](@ref)
+See also: [`mva_eigen`](@ref), [`rotate`](@ref)
 """
-function mva(V::AbstractMatrix, B::AbstractMatrix; kwargs...)
-    F = mva_mat(B; kwargs...)
-    rotate(V, F.vectors)
-end
-
-function mva(V::AbstractDimArray, B::AbstractDimArray; new_dim=B_LMN, kwargs...)
-    V_mva = mva(V, B.data)
-    old_dim = otherdims(V_mva, (Ti, 𝑡))[1]
-    set(V_mva, old_dim => new_dim)
-end
-
-mva(B) = mva(B, B)
+mva(V, B=V; kwargs...) = rotate(V, mva_eigen(B; kwargs...))
 
 """
-    check_mva_mat(F; r=5, verbose=false)
+    check_mva_eigen(F; r=5, verbose=false)
 
 Check the quality of the MVA result. 
 
 If λ₁ ≥ λ₂ ≥ λ₃ are 3 eigenvalues of the constructed matrix M, then a good
 indicator of nice fitting LMN coordinate system should have λ₂ / λ₃ > r.
 """
-function check_mva_mat(F; r0=5, verbose=false)
+function check_mva_eigen(F; r0=5, verbose=false)
     r = F.values[2] / F.values[3]
     verbose && println(F.vectors)
     verbose && println("Ratio of intermediate variance to minimum variance = ", r)

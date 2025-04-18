@@ -19,8 +19,7 @@ using Test
 
 ## Wave polarization
 
-https://github.com/spedas/mms-examples/blob/master/advanced/Wave_polarization_using_SCM_data.ipynb
-https://github.com/spedas/pyspedas/blob/master/pyspedas/analysis/tests/test_twavpol.py
+References: [`twavpol`](@ref), [test_twavpol.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/analysis/tests/test_twavpol.py), [Wave polarization using SCM data - PySPEDAS](https://github.com/spedas/mms-examples/blob/master/advanced/Wave_polarization_using_SCM_data.ipynb)
 
 ```@example pyspedas
 @py import pyspedas.analysis.tests.test_twavpol: TwavpolDataValidation
@@ -55,7 +54,7 @@ Julia is about 100 times faster than Python.
 
 ## Minimum variance analysis
 
-References: [`mva_mat`](@ref), [test_minvar.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/test_minvar.py)
+References: [`mva_eigen`](@ref), [test_minvar.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/test_minvar.py)
 
 ```@example pyspedas
 @py import pyspedas.cotrans_tools.tests.test_minvar: TestMinvar
@@ -67,7 +66,7 @@ pytest = TestMinvar()
 pytest.setUpClass()
 
 thb_fgs_gsm = get_data(DimArray, "idl_thb_fgs_gsm_mvaclipped1")
-jl_mva_eigen = mva_mat(thb_fgs_gsm)
+jl_mva_eigen = mva_eigen(thb_fgs_gsm)
 jl_mva_mat = jl_mva_eigen.vectors
 jl_mva_vals = jl_mva_eigen.values
 
@@ -83,7 +82,7 @@ Test passed.
 ### Benchmark
 
 ```@example pyspedas
-@b mva_mat(thb_fgs_gsm), minvar_matrix_make("idl_thb_fgs_gsm_mvaclipped1")
+@b mva_eigen(thb_fgs_gsm), minvar_matrix_make("idl_thb_fgs_gsm_mvaclipped1")
 ```
 
 Julia demonstrates a performance advantage of approximately 1000 times over Python, with significantly reduced memory allocations. 
