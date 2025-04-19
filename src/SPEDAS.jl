@@ -57,7 +57,6 @@ const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
 include("projects/project.jl")
 include("mhd.jl")
-include("methods.jl")
 include("timeseries/timeseries.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/spike.jl")

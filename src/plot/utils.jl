@@ -1,5 +1,3 @@
-function get_data end
-
 function y_values(x)
     metadata = meta(x)
     if haskey(metadata, "axes")
