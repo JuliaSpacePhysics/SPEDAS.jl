@@ -1,0 +1,34 @@
+# Juno Project Configuration
+name = "Juno"
+
+[metadata]
+spase_id = "spase://CNES/Observatory/Juno"
+links = [
+    "[HPDE.io](https://hpde.io/CNES/Observatory/CDPP-AMDA/Juno)",
+    "[Wikipedia](https://en.wikipedia.org/wiki/Juno_(spacecraft))",
+]
+
+[instruments.jade]
+name = "Jovian Auroral Distributions Experiment"
+
+[instruments.jade.metadata]
+spase_id = "spase://CNES/Instrument/CDPP-AMDA/Juno/JADE"
+links = [
+    "[HPDE.io](https://hpde.io/CNES/Instrument/CDPP-AMDA/Juno/JADE)",
+    "[PDS](https://pds-ppi.igpp.ucla.edu/mission/juno/Jovian_Auroral_Distributions_Experiment)",
+    "[Wikipedia](https://en.wikipedia.org/wiki/Jovian_Auroral_Distributions_Experiment)",
+    "[NumericalData - HPDE.io](https://hpde.io/CNES/NumericalData/CDPP-AMDA/Juno/JADE)",
+]
+datasets = ["juno-jadel5-protmom"]
+
+[datasets.juno-jadel5-protmom]
+name = "Juno - JADE - L5 : ions - protons moments"
+
+[datasets.juno-jadel5-protmom.metadata]
+links = [
+    "[HPDE.io](https://hpde.io/CNES/NumericalData/CDPP-AMDA/Juno/JADE/juno-jadel5-protmom)",
+    "[PDS](https://pds-ppi.igpp.ucla.edu/data/JNO-J-JAD-5-MOMENTS-V1.0/DOCUMENT/JADE_FSW4_SIS_V04.PDF)",
+    "[AMDA HAPI](https://amda.irap.omp.eu/service/hapi/info?id=juno-jadel5-protmom)",
+]
+time_range = "2016/06/24 08:17:26 — 2020/04/10 05:29:55"
+sampling = "30s — 10m"
