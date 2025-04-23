@@ -25,8 +25,7 @@ function _load_project_config(file; mod=Main, directory=joinpath(pkgdir(@__MODUL
     @eval mod CONFIG = $config
     for (sym, value) in config
         # @eval mod const $sym = $value
-        doc = repr2doc(value)
-        @eval mod @doc $doc $sym = $value
+        @eval mod $sym = $value
         export_symbol && @eval mod export $sym
     end
 end
