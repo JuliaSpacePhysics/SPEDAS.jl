@@ -1,12 +1,5 @@
 function y_values(x)
-    metadata = meta(x)
-    if haskey(metadata, "axes")
-        varAxis = metadata["axes"][2]
-        varAxis.values
-        # varAxis.values * unit(varAxis)
-    else
-        lookup(dims(x, 2))
-    end
+    parent(get(meta(x), "y", dims(x, 2)))
 end
 
 """
