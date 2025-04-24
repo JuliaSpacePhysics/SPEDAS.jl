@@ -23,14 +23,26 @@ function tview(da::AbstractDimArray, t0, t1; query=TimeDim)
     return @view da[Dim(T(t0) .. T(t1))]
 end
 
+# Type-stable
+function _tmask!(da, t0, t1, Dim, T)
+    nan = NaN * oneunit(eltype(da))
+    da[Dim(T(t0) .. T(t1))] .= nan
+    return da
+end
+
 """
     tmask!(da, t0, t1)
+    tmask!(da, it::Interval)
+    tmask!(da, its)
 
-Mask all data values within the specified time range `[t0, t1]` with NaN.
+Mask all data values within the specified time range(s) `(t0, t1)` / `it` / `its` with NaN.
 """
-function tmask!(da, t0, t1; query=TimeDim)
-    Dim, T = dimtype_eltype(da, query)
-    da[Dim(T(t0) .. T(t1))] .= NaN
+tmask!(da, t0, t1; query=TimeDim) = _tmask!(da, t0, t1, dimtype_eltype(da, query)...)
+tmask!(da, it::Interval; kw...) = tmask!(da, first(it), last(it); kw...)
+function tmask!(da, its::AbstractArray; kw...)
+    for it in its
+        tmask!(da, it; kw...)
+    end
     return da
 end
 
