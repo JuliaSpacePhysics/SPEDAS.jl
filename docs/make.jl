@@ -35,10 +35,7 @@ makedocs(
             "explanations/analysis.md",
         ],
         "Observatories" => [
-            "observatory/index.md",
-            "observatory/mms.md",
-            "observatory/psp.md",
-            "observatory/themis.md",
+            "observatory/$f" for f in filter(endswith(".md"), readdir("src/observatory"))
         ],
         "Validation" => [
             "validation/pyspedas.md",
