@@ -22,7 +22,7 @@ function load_project_config(toml)
     )
 
     dict = Dict{Symbol,Any}()
-    dict[Symbol(abbr(project))] = project
+    dict[Symbol(lowercase(abbr(project)))] = project
     for (key, value) in pairs(datasets) ∪ pairs(instruments)
         dict[Symbol(key)] = value
     end
