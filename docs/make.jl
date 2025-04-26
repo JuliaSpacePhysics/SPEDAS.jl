@@ -8,15 +8,14 @@ bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
 
 # demopage, postprocess_cb, gallery_assets = makedemos("gallery")
 
+md_filter(x) = filter(endswith(".md"), x)
+list_pages(dir) = ["$dir/$f" for f in readdir(joinpath(@__DIR__, "src", dir))]
+
 makedocs(
     sitename="SPEDAS.jl",
     pages=[
         "Home" => "index.md",
-        "Tutorials" => [
-            "tutorials/getting-started.md",
-            "tutorials/outliers.md",
-            # demopage
-        ],
+        "Tutorials" => list_pages("tutorials"),
         "Examples" => [
             "examples/index.md",
             "examples/speasy.md",
@@ -34,9 +33,7 @@ makedocs(
             "explanations/waves.md",
             "explanations/analysis.md",
         ],
-        "Observatories" => [
-            "observatory/$f" for f in filter(endswith(".md"), readdir("src/observatory"))
-        ],
+        "Observatories" => list_pages("observatory"),
         "Validation" => [
             "validation/pyspedas.md",
         ],
