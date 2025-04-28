@@ -1,12 +1,6 @@
 import ..SPEDAS: xlabel, ylabel, title, format_unit, isspectrogram
 import ..SPEDAS: scale, yscale, colorrange
 
-"""Set an attribute if all values are equal and non-empty"""
-function set_if_equal!(attrs, key, values; default=nothing)
-    val = allequal(values) ? first(values) : default
-    isnothing(val) || val == "" || (attrs[key] = val)
-end
-
 uunit(x) = unit(x)
 uunit(::String) = nothing
 uunit(x::AbstractArray{Q}) where {Q<:Number} = unit(Q)
@@ -38,13 +32,11 @@ function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where
             attrs[:dim2_conversion] = Makie.UnitfulConversion(yunit; units_in_label=false)
         end
     end
+    set_if_valid!(attrs,
+        :xlabel => xlabel(ta),
+        :yscale => yscale(ta), :ylabel => ylabel(ta)
+    )
 
-    s = yscale(ta)
-    xl = xlabel(ta)
-    yl = ylabel(ta)
-    isnothing(s) || (attrs[:yscale] = s)
-    isempty(yl) || (attrs[:ylabel] = yl)
-    isempty(xl) || (attrs[:xlabel] = xl)
     add_title && (attrs[:title] = title(ta))
     merge(attrs, kwargs)
 end
@@ -80,10 +72,9 @@ end
 
 function heatmap_attributes(ta; kwargs...)
     attrs = Attributes(; kwargs...)
-    s = scale(ta)
-    cr = colorrange(ta)
-    isnothing(s) || (attrs[:colorscale] = s)
-    isnothing(cr) || (attrs[:colorrange] = cr)
+    set_if_valid!(attrs,
+        :colorscale => scale(ta), :colorrange => colorrange(ta)
+    )
     attrs
 end
 

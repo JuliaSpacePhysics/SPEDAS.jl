@@ -1,3 +1,17 @@
+set_if_valid!(d, val, key) = isempty(val) || d[key] = val
+function set_if_valid!(d, ::Nothing, key) end
+function set_if_valid!(d, pairs::Pair...)
+    for (key, value) in pairs
+        set_if_valid!(d, value, key)
+    end
+end
+
+"""Set an attribute if all values are equal and non-empty"""
+function set_if_equal!(attrs, key, values; default=nothing)
+    val = allequal(values) ? first(values) : default
+    set_if_valid!(attrs, val, key)
+end
+
 """
 Convert x to DateTime
 
