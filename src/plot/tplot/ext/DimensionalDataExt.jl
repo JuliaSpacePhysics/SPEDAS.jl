@@ -8,7 +8,7 @@ plottype(::AbstractDimStack) = MultiPlot
 makie_x(da::AbstractDimArray) = makie_x(parent(times(da)))
 
 """Plot attributes for a time array (labels)"""
-function plottype_attributes(ta::AbstractDimArray)
+function plottype_attributes(ta::AbstractArray)
     attrs = Attributes()
     # handle spectrogram
     if !isspectrogram(ta)

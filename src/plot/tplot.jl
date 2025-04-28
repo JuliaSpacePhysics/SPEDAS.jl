@@ -5,6 +5,7 @@ using Dates
 using Unitful, Latexify, UnitfulLatexify
 using SpaceDataModel: meta
 using Accessors: @set
+import ..SPEDAS: label, labels
 
 import Makie: convert_arguments, plot!
 
@@ -12,6 +13,7 @@ export tplot!, tplot, tplot_panel, tplot_panel!
 export LinesPlot, linesplot, linesplot!
 export tlims!, tlines!, add_labels!
 export transform, transform_speasy
+export plot_attributes
 
 include("tplot/makie.jl")
 include("attributes.jl")
