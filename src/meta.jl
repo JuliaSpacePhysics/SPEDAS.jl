@@ -26,6 +26,8 @@ title(ds::AbstractDataSet) = title(ds, ds.name)
 xvalues(ta) = times(ta)
 xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(meta(da), xlabel_sources, DD.label(dims(da, 1)))
+
+yvalues(x) = parent(get(meta(x), "y", dims(x, 2)))
 ylabel(ta) = ""
 ylabel(x::AbstractVector) = format_unit(x)
 function ylabel(da::AbstractDimArray; multiline=true)

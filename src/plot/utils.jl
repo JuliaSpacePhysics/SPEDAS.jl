@@ -1,3 +1,5 @@
+import ..SPEDAS: yvalues
+
 set_if_valid!(d, val, key) = isempty(val) || d[key] = val
 function set_if_valid!(d, ::Nothing, key) end
 function set_if_valid!(d, pairs::Pair...)
@@ -23,9 +25,6 @@ Reference:
 x2t(x::Millisecond) = DateTime(Dates.UTM(x))
 x2t(x::Float64) = DateTime(Dates.UTM(round(Int64, x)))
 
-function y_values(x)
-    parent(get(meta(x), "y", dims(x, 2)))
-end
 
 """
     spectrogram_y_values(ta; check=false, center=false, transform=identity)
@@ -41,7 +40,7 @@ Can return either bin centers or edges. By default, return bin edges for better 
 Reference: Makie.edges
 """
 function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta))
-    centers = y_values(ta)
+    centers = yvalues(ta)
 
     if isa(centers, AbstractMatrix)
         if check
