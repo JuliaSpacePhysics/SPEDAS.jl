@@ -1,5 +1,3 @@
-function donothing(args...; kwargs...) end
-
 vectorize(x) = [x]
 vectorize(x::AbstractArray) = vec(x)
 
