@@ -1,4 +1,4 @@
-import ..SPEDAS: yvalues
+import ..SPEDAS: yvalues, binedges
 
 set_if_valid!(d, val, key) = setindex!(d, val, key)
 set_if_valid!(d, val::Union{AbstractString,AbstractArray}, key) = isempty(val) || setindex!(d, val, key)

@@ -16,6 +16,8 @@ axis_attributes(ta, args...; add_title=false, kwargs...) = (; kwargs...)
 filterkeys(f, d::Dict) = filter(f ∘ first, d)
 filterkeys(f, nt) = NamedTuple{filter(f, keys(nt))}(nt)
 filter_by_fieldnames(T::Type, d::Dict) = filterkeys(∈(fieldnames(T)), d)
+
+filterkeys(f, ::NoMetadata) = Dict()
 filter_by_fieldnames(T::Type, ::NoMetadata) = Dict()
 
 """Axis attributes for a time array"""
