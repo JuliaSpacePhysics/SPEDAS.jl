@@ -21,10 +21,9 @@
     da3 = DimArray([1.0 4.0; 2.0 5.0; 3.0 6.0], (Ti(times), Y([10, 20])))
 
     # interpolate at two points
-    tpoints = [DateTime(2020, 1, 1, 6), DateTime(2020, 1, 2, 18)]
-    res = tinterp(da3, tpoints)
+    res = tinterp(da3, t2)
     @test isa(res, AbstractDimArray)
     @test size(res) == (2, 2)
-    @test all(dims(res, Ti) .== tpoints)
+    @test all(dims(res, Ti) .== t2)
     @test parent(res) ≈ [1.25 4.25; 2.75 5.75]
 end

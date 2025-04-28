@@ -36,9 +36,10 @@ function _tinterp(A::T, t, interp) where {T<:AbstractDimVector}
     t isa AbstractTime ? out : rebuild(A, out, (Ti(t),))
 end
 
-function _tinterp(A::T, ts, interp) where {T<:AbstractDimMatrix}
-    _times = parent(parent(dims(A, Ti)))
-    out = stack(Tinterp(eachrow(parent(A)), _times, interp)(ts); dims=1)
+function _tinterp(A::T, ts, interp, ::Val{dim}=Val(1)) where {T<:AbstractDimMatrix,dim}
+    u = eachslice(parent(A); dims=dim)
+    t = parent(dims(A, Ti))
+    out = stack(Tinterp(u, t, interp)(ts); dims=dim)
     ts isa AbstractTime ? out : rebuild(A, out, (Ti(ts), dims(A, 2)))
 end
 
