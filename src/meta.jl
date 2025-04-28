@@ -28,6 +28,16 @@ xlabel(ta) = ""
 xlabel(da::AbstractDimArray) = prioritized_get(meta(da), xlabel_sources, DD.label(dims(da, 1)))
 
 yvalues(x) = parent(get(meta(x), "y", dims(x, 2)))
+function yvalues(::Type{Vector}, x)
+    vals = yvalues(x)
+    if isa(vals, AbstractMatrix)
+        all(allequal, eachcol(vals)) || @warn "y values are not constant along time"
+        vec(mean(vals; dims=1))
+    else
+        vals
+    end
+end
+
 ylabel(ta) = ""
 ylabel(x::AbstractVector) = format_unit(x)
 function ylabel(da::AbstractDimArray; multiline=true)

@@ -44,15 +44,7 @@ Can return either bin centers or edges. By default, return bin edges for better 
 Reference: Makie.edges
 """
 function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta))
-    centers = yvalues(ta)
-
-    if isa(centers, AbstractMatrix)
-        if check
-            all(allequal, eachcol(centers)) || @warn "Spectrogram y-axis values are not constant along time"
-        end
-        centers = vec(mean(centers; dims=1))
-    end
-
+    centers = yvalues(Vector, ta)
     if center && transform == log10
         edges = binedges(centers)
         if first(edges) < zero(eltype(edges)) || last(edges) < zero(eltype(edges))
