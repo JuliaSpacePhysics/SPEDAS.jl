@@ -1,6 +1,6 @@
 import DimensionalData
 using DimensionalData: AbstractDimArray, AbstractDimVector, AbstractDimMatrix, AbstractDimStack
-const DD = DimensionalData
+using ..SPEDAS: times
 
 plottype(::AbstractDimVector) = LinesPlot
 plottype(::AbstractDimStack) = MultiPlot
@@ -31,9 +31,9 @@ function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
 end
 
 
-Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
-Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+Makie.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+Makie.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
 
-function Makie.convert_arguments(t::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector{<:AbstractVector})
+function Makie.convert_arguments(t::Type{<:LinesPlot}, da::AbstractDimVector{<:AbstractVector})
     Makie.convert_arguments(t, tstack(da))
 end
