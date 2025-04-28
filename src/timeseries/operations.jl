@@ -46,6 +46,11 @@ function tmask!(da, its::AbstractArray; kw...)
     return da
 end
 
+"""
+    tmask(da, args...; kwargs...)
+
+Non-mutable version of `tmask!`. See also [`tmask!`](@ref).
+"""
 tmask(da, args...; kwargs...) = tmask!(deepcopy(da), args...; kwargs...)
 
 """

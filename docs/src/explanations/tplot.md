@@ -37,8 +37,8 @@ This approach enables efficient interactive exploration of time series.
 Before plotting, data goes through a transformation pipeline to ensure it's in a plottable format (e.g., `DimArray`).
 
 ```@docs
-SPEDAS.transform_pipeline
-SPEDAS.transform
+SPEDAS.TPlot.transform_pipeline
+SPEDAS.TPlot.transform
 ```
 
 You can extend the transformation system by defining methods for your types:
