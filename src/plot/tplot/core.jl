@@ -16,10 +16,9 @@ By default, the time series are transformed via `transform_pipeline`, which is e
 See also: [`tplot_panel`](@ref), [`transform_pipeline`](@ref), [`transform`](@ref)
 """
 function tplot(f::Drawable, tas, args...; legend=(; position=Right()), link_xaxes=true, link_yaxes=false, rowgap=5, transform=transform_pipeline, axis=(;), palette=default_palette(tas), kwargs...)
-    tas = transform(tas)
-    gaps = map(palette, tas) do pos, ta
+    gaps = map(palette, values(tas)) do pos, ta
         gp = f[pos...]
-        pap = tplot_panel(gp, ta, args...; axis, kwargs...)
+        pap = tplot_panel(gp, ta, args...; transform, axis, kwargs...)
         # Hide redundant x labels
         link_xaxes && pos[1] != length(tas) && hidexdecorations!.(pap.axis, grid=false)
         pap

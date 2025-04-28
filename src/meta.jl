@@ -7,19 +7,43 @@ const yunit_sources = (:yunit, :units)
 const colorrange_sources = (:colorrange, :z_range, "z_range")
 const title_sources = (:title, "CATDESC")
 
+function prioritized_get(c, keys, default=nothing)
+    values = get.(Ref(c), keys, nothing)
+    all(isnothing, values) ? default : something(values...)
+end
+
 function ulabel(l, u; multiline=false)
     multiline ? "$(l)\n($(u))" : "$(l) ($(u))"
 end
 ulabel(l, u::String) = ulabel(l, uparse(u))
 
+format_unit(ta) = prioritized_get(meta(ta), unit_sources, "")
+format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
+
+title(ta, default="") = prioritized_get(meta(ta), title_sources, default)
+title(ds::AbstractDataSet) = title(ds, ds.name)
+
+xvalues(ta) = times(ta)
 xlabel(ta) = ""
-xlabel(da::AbstractDimArray) = prioritized_get(da.metadata, xlabel_sources, DD.label(dims(da, 1)))
+xlabel(da::AbstractDimArray) = prioritized_get(meta(da), xlabel_sources, DD.label(dims(da, 1)))
+
+yvalues(x) = parent(get(meta(x), "y", dims(x, 2)))
+function yvalues(::Type{Vector}, x)
+    vals = yvalues(x)
+    if isa(vals, AbstractMatrix)
+        all(allequal, eachcol(vals)) || @warn "y values are not constant along time"
+        vec(mean(vals; dims=1))
+    else
+        vals
+    end
+end
+
 ylabel(ta) = ""
 ylabel(x::AbstractVector) = format_unit(x)
 function ylabel(da::AbstractDimArray; multiline=true)
     default_name = isspectrogram(da) ? DD.label(dims(da, 2)) : DD.label(da)
-    name = prioritized_get(da, ylabel_sources, default_name)
-    units = isspectrogram(da) ? prioritized_get(da, yunit_sources, "") : format_unit(da)
+    name = prioritized_get(meta(da), ylabel_sources, default_name)
+    units = isspectrogram(da) ? prioritized_get(meta(da), yunit_sources, "") : format_unit(da)
     units == "" ? name : ulabel(name, units; multiline)
 end
 
@@ -29,17 +53,26 @@ function clabel(ta::AbstractDimArray; multiline=true)
     units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
 end
 
-label(ta::AbstractDimArray) = prioritized_get(ta, ylabel_sources, DD.label(ta))
-function labels(ta::AbstractDimMatrix)
-    lbls = prioritized_get(ta, labels_sources, string.(dims(ta, 2).val))
+function calc_colorrange(da; scale=10)
+    cmid = nanmedian(da)
+    cmax = cmid * scale
+    cmin = cmid / scale
+    return (cmin, cmax)
+end
+
+colorrange(x) = prioritized_get(meta(x), colorrange_sources)
+
+label(ta) = prioritized_get(meta(ta), ylabel_sources, DD.label(ta))
+function labels(ta)
+    lbls = prioritized_get(meta(ta), labels_sources, string.(dims(ta, 2).val))
     vectorize(lbls)
 end
 
 set_colorrange(x, range) = modify_meta(x; colorrange=range)
-set_colorrange(x; kwargs...) = set_colorrange(x, colorrange(x; kwargs...))
+set_colorrange(x; kwargs...) = set_colorrange(x, calc_colorrange(x; kwargs...))
 
 function isspectrogram(ta::AbstractDimArray; threshold=5)
-    m = prioritized_get(ta, ("DISPLAY_TYPE", :DISPLAY_TYPE), nothing)
+    m = prioritized_get(meta(ta), ("DISPLAY_TYPE", :DISPLAY_TYPE), nothing)
     if isnothing(m)
         size(ta, 2) >= threshold
     else
@@ -58,7 +91,7 @@ end
 
 scale(::Any) = nothing
 scale(f::Function) = f
-function scale(x::AbstractDimArray; sources=scale_sources)
+function scale(x::AbstractArray; sources=scale_sources)
     m = meta(x)
     isnothing(m) ? nothing : scale(prioritized_get(m, sources, nothing))
 end

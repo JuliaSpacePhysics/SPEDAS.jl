@@ -14,16 +14,12 @@ Extend this for custom data types to integrate with the plotting system.
 # default fallback
 plottype(::Any) = PanelPlot
 plottype(x::AbstractVector{<:Number}) = PanelPlot
-plottype(::AbstractDimVector) = LinesPlot
-plottype(x::AbstractDimMatrix) = isspectrogram(x) ? SpecPlot : LinesPlot
+
 plottype(::AbstractVector) = MultiPlot
-plottype(::AbstractDimStack) = MultiPlot
 plottype(::NamedTuple) = MultiPlot
 plottype(::DualAxisData) = DualPlot
 plottype(::NTuple{2,Any}) = DualPlot
 plottype(::Function) = FunctionPlot
-plottype(::AbstractProduct) = FunctionPlot
-plottype(::AbstractDataSet) = MultiPlot
 plottype(args...) = plottype(args[1])
 
 plotfunc(args...) = Makie.MakieCore.plotfunc(plottype(args...))
@@ -37,8 +33,8 @@ Generic entry point for plotting different types of data on a grid position `gp`
 Transforms the arguments to appropriate types and calls the plotting function.
 Dispatches to appropriate implementation based on the plotting trait of the transformed arguments.
 """
-function tplot_panel(gp, data, args...; kwargs...)
-    transformed = transform_pipeline(data)
+function tplot_panel(gp, data, args...; transform=transform_pipeline, kwargs...)
+    transformed = transform(data)
     pf = plotfunc(transformed)
     pf(gp, transformed, args...; kwargs...)
 end

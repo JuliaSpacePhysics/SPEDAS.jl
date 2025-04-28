@@ -1,6 +1,5 @@
 # https://github.com/MakieOrg/Makie.jl/blob/master/src/basic_recipes/series.jl
 # https://github.com/rafaqz/DimensionalData.jl/blob/main/ext/DimensionalDataMakie.jl
-import Makie: convert_arguments, plot!
 
 struct NoDimConversion <: Makie.ConversionTrait end
 
@@ -11,6 +10,18 @@ struct NoDimConversion <: Makie.ConversionTrait end
 end
 
 Makie.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
+
+function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels=labels(da))
+    x = makie_x(da)
+    map(enumerate(eachcol(parent(da)))) do (i, y)
+        S.Lines(x, y; label=get(labels, i, nothing))
+    end
+end
+
+function plot2spec(::Type{<:LinesPlot}, da::AbstractVector; labels=nothing, label=nothing)
+    label = @something label labels to_value(SPEDAS.label(da))
+    S.Lines(makie_x(da), parent(da); label)
+end
 
 function Makie.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys::AbstractMatrix)
     A = parent(ys)
@@ -34,26 +45,6 @@ function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractV
     curves = reduce(vcat, curves_vec)
     return (curves,)
 end
-
-Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
-Makie.convert_arguments(::Type{<:LinesPlot}, da::DD.AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
-
-function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix; labels=labels(da))
-    x = xs(da)
-    map(enumerate(eachcol(parent(da)))) do (i, y)
-        S.Lines(x, y; label=get(labels, i, nothing))
-    end
-end
-
-function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector; labels=nothing, label=nothing)
-    label = @something label labels to_value(SPEDAS.label(da))
-    S.Lines(xs(da), parent(da); label)
-end
-
-function Makie.convert_arguments(t::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector{<:AbstractVector})
-    Makie.convert_arguments(t, tstack(da))
-end
-
 
 function Makie.plot!(plot::LinesPlot)
     curves = plot[1]

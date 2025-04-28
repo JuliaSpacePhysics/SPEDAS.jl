@@ -1,8 +1,3 @@
-_merge(x, args...) = merge(x, args...)
-_merge(x::Dict, y::NamedTuple) = merge(x, Dict(pairs(y)))
-
-function donothing(args...; kwargs...) end
-
 vectorize(x) = [x]
 vectorize(x::AbstractArray) = vec(x)
 
@@ -15,13 +10,6 @@ end
 
 stat_relerr(f) = (x -> stat_relerr(x, f))
 mean_relerr(itr) = stat_relerr(itr, mean)
-
-function prioritized_get(c, keys, default=nothing)
-    values = get.(Ref(c), keys, nothing)
-    all(isnothing, values) ? default : something(values...)
-end
-
-prioritized_get(c::AbstractDimArray, keys, default) = prioritized_get(c.metadata, keys, default)
 
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
@@ -36,13 +24,6 @@ end
 
 times(x::AbstractDimArray; query=TimeDim) = lookup(timedim(x; query))
 times(x) = x
-
-# hack as `Makie` does not support `NanoDate` directly
-function xs(da::AbstractDimArray)
-    x = times(da) |> parent
-    eltype(x) == NanoDate ? DateTime.(x) : x
-end
-xs(ta::DimArray, t0) = (dims(ta, 1).val.data .- t0) ./ Millisecond(1)
 ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""
 ys(ta::DimMatrix) = permutedims(ta.data)

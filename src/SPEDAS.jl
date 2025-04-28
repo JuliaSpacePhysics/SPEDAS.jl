@@ -14,23 +14,21 @@ using DimensionalData: TimeDim
 using DimensionalData.Dimensions: Dimension
 using LinearAlgebra
 using NaNStatistics
-using Makie
 using TimeseriesTools
 using Intervals: Interval
 using StaticArrays
 using OhMyThreads
 using Statistics
 using Unitful, DimensionfulAngles
-using Latexify, UnitfulLatexify
 using RollingWindowArrays
 using FFTW, DSP, SignalAnalysis
 using Tullio
 using Bumper
 using InverseFunctions
 using NamedTupleTools
-using Accessors: @set
 using Reexport
 @reexport using SpaceDataModel
+using SpaceDataModel: meta
 
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange, common_timerange
@@ -38,7 +36,7 @@ export norm_combine, tnorm_combine
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers
 export fill_gaps
-export ylabel, plot_attributes
+export ylabel
 export LMN
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
@@ -68,8 +66,6 @@ include("types.jl")
 include("resampling/resample.jl")
 include("resampling/interp.jl")
 include("meta.jl")
-include("plot/transform.jl")
-include("plot/attributes.jl")
 include("plot/tplot.jl")
 include("cotrans/coordinate.jl")
 include("cotrans/rotate.jl")
@@ -84,4 +80,6 @@ include("waves/polarization.jl")
 include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
 
+@reexport using .TPlot
+import .TPlot: axis_attributes
 end

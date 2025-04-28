@@ -1,3 +1,23 @@
+import ..SPEDAS: yvalues, binedges
+
+set_if_valid!(d, val, key) = setindex!(d, val, key)
+set_if_valid!(d, val::Union{AbstractString,AbstractArray}, key) = isempty(val) || setindex!(d, val, key)
+function set_if_valid!(d, ::Nothing, key) end
+function set_if_valid!(d, pairs::Pair...)
+    for (key, value) in pairs
+        set_if_valid!(d, value, key)
+    end
+end
+
+"""Set an attribute if all values are equal and non-empty"""
+function set_if_equal!(attrs, key, values; default=nothing)
+    val = allequal(values) ? first(values) : default
+    set_if_valid!(attrs, val, key)
+end
+
+_merge(x, args...) = merge(x, args...)
+_merge(x::Dict, y::NamedTuple) = merge(x, Dict(pairs(y)))
+
 """
 Convert x to DateTime
 
@@ -9,9 +29,6 @@ Reference:
 x2t(x::Millisecond) = DateTime(Dates.UTM(x))
 x2t(x::Float64) = DateTime(Dates.UTM(round(Int64, x)))
 
-function y_values(x)
-    parent(get(meta(x), "y", dims(x, 2)))
-end
 
 """
     spectrogram_y_values(ta; check=false, center=false, transform=identity)
@@ -27,15 +44,7 @@ Can return either bin centers or edges. By default, return bin edges for better 
 Reference: Makie.edges
 """
 function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta))
-    centers = y_values(ta)
-
-    if isa(centers, AbstractMatrix)
-        if check
-            all(allequal, eachcol(centers)) || @warn "Spectrogram y-axis values are not constant along time"
-        end
-        centers = vec(mean(centers; dims=1))
-    end
-
+    centers = yvalues(Vector, ta)
     if center && transform == log10
         edges = binedges(centers)
         if first(edges) < zero(eltype(edges)) || last(edges) < zero(eltype(edges))
@@ -46,3 +55,5 @@ function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta)
 
     !center ? binedges(centers; transform) : centers
 end
+
+function donothing(args...; kwargs...) end

@@ -2,7 +2,6 @@ using DimensionalData.Lookups
 
 const timeDimType = (DimensionalData.TimeDim, Dim{:time})
 
-meta(da::AbstractDimArray) = metadata(da)
 
 function standardize(x::AbstractDimArray; floatify=true)
     # Convert integer values to floats
