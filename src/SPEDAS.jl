@@ -6,11 +6,10 @@ See the [Documentation](https://beforerr.github.io/SPEDAS.jl/dev/) for more info
 module SPEDAS
 
 using Dates
-using NanoDates
 using Dates: AbstractTime
 using DimensionalData
 using DimensionalData.Dimensions
-using DimensionalData: TimeDim
+using DimensionalData: AbstractDimVector, AbstractDimMatrix, TimeDim
 using DimensionalData.Dimensions: Dimension
 using LinearAlgebra
 using NaNStatistics
@@ -48,8 +47,6 @@ export spectral_matrix, wavpol, twavpol, wpol_helicity, polarization
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
-const AbstractDimMatrix = DimensionalData.AbstractDimMatrix
-const AbstractDimVector = DimensionalData.AbstractDimVector
 const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
 include("projects/project.jl")
