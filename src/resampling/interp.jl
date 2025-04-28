@@ -10,30 +10,36 @@ using DataInterpolations
 Interpolate time series `A` at time point(s) `t`.
 Returns interpolated value for single time point or DimArray for multiple time points.
 """
-tinterp(A, t; interp=LinearInterpolation) = _tinterp(A, t; interp)
+tinterp(A, t, interp=LinearInterpolation) = _tinterp(A, t, interp)
 
 """
-    tinterp(A, B; interp=LinearInterpolation)
+    tinterp(A, B, interp=LinearInterpolation)
 
 Interpolate `A` to times in `B`
 """
-tinterp(A, B::AbstractDimArray; kwargs...) = _tinterp(A, dims(B, Ti); kwargs...)
+tinterp(A, B::AbstractDimArray, interp=LinearInterpolation; kwargs...) = _tinterp(A, dims(B, Ti), interp; kwargs...)
 
-function _tinterp(A::T, t; interp=LinearInterpolation) where {T<:AbstractDimVector}
-    u = stack(parent(A)) # necessary as no method matching zero(::Type{Vector{}})
-    out = interp(u, t2x.(dims(A, Ti)))(t2x.(t))
-    t isa DateTime && return out
-    data = ndims(out) == 1 ? out : eachcol(out)
-    return DimArray(data, tdim(t); name=A.name, metadata=A.metadata)
+struct Tinterp{F}
+    interp::F
 end
 
-function _tinterp(A::T, t; interp=LinearInterpolation) where {T<:AbstractDimMatrix}
-    u = permutedims(A.data)
-    out = interp(u, t2x.(dims(A, Ti)))(t2x.(t))
-    t isa DateTime && return out
-    data = permutedims(out)
-    newdims = (tdim(t), otherdims(A, Ti)...)
-    return DimArray(data, newdims; name=A.name, metadata=A.metadata)
+Tinterp(u, t, interp) = Tinterp(interp(u, t))
+Tinterp(u, t::AbstractArray{<:AbstractTime}, interp) = Tinterp(u, Dates.value.(t), interp)
+Tinterp(A::AbstractDimArray, interp) = Tinterp(parent(A), parent(dims(A, Ti)), interp)
+
+(ti::Tinterp)(t) = ti.interp(t)
+(ti::Tinterp)(t::AbstractTime) = ti.interp(Dates.value(t))
+(ti::Tinterp)(t::AbstractArray{<:AbstractTime}) = @. ti.interp(Dates.value(t))
+
+function _tinterp(A::T, t, interp) where {T<:AbstractDimVector}
+    out = Tinterp(A, interp)(t)
+    t isa AbstractTime ? out : rebuild(A, out, (Ti(t),))
+end
+
+function _tinterp(A::T, ts, interp) where {T<:AbstractDimMatrix}
+    _times = parent(parent(dims(A, Ti)))
+    out = stack(Tinterp(eachrow(parent(A)), _times, interp)(ts); dims=1)
+    ts isa AbstractTime ? out : rebuild(A, out, (Ti(ts), dims(A, 2)))
 end
 
 """
