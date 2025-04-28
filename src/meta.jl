@@ -7,6 +7,11 @@ const yunit_sources = (:yunit, :units)
 const colorrange_sources = (:colorrange, :z_range, "z_range")
 const title_sources = (:title, "CATDESC")
 
+function prioritized_get(c, keys, default=nothing)
+    values = get.(Ref(c), keys, nothing)
+    all(isnothing, values) ? default : something(values...)
+end
+
 function ulabel(l, u; multiline=false)
     multiline ? "$(l)\n($(u))" : "$(l) ($(u))"
 end
@@ -36,12 +41,14 @@ function clabel(ta::AbstractDimArray; multiline=true)
     units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
 end
 
-function colorrange(da; scale=10)
+function calc_colorrange(da; scale=10)
     cmid = nanmedian(da)
     cmax = cmid * scale
     cmin = cmid / scale
     return (cmin, cmax)
 end
+
+colorrange(x) = prioritized_get(meta(x), colorrange_sources)
 
 label(ta) = prioritized_get(meta(ta), ylabel_sources, DD.label(ta))
 function labels(ta)
@@ -50,7 +57,7 @@ function labels(ta)
 end
 
 set_colorrange(x, range) = modify_meta(x; colorrange=range)
-set_colorrange(x; kwargs...) = set_colorrange(x, colorrange(x; kwargs...))
+set_colorrange(x; kwargs...) = set_colorrange(x, calc_colorrange(x; kwargs...))
 
 function isspectrogram(ta::AbstractDimArray; threshold=5)
     m = prioritized_get(meta(ta), ("DISPLAY_TYPE", :DISPLAY_TYPE), nothing)

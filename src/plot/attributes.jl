@@ -1,5 +1,5 @@
 import ..SPEDAS: xlabel, ylabel, title, format_unit, isspectrogram
-import ..SPEDAS: scale, yscale
+import ..SPEDAS: scale, yscale, colorrange
 
 """Set an attribute if all values are equal and non-empty"""
 function set_if_equal!(attrs, key, values; default=nothing)
@@ -81,8 +81,7 @@ end
 function heatmap_attributes(ta; kwargs...)
     attrs = Attributes(; kwargs...)
     s = scale(ta)
-    m = meta(ta)
-    cr = prioritized_get(m, colorrange_sources)
+    cr = colorrange(ta)
     isnothing(s) || (attrs[:colorscale] = s)
     isnothing(cr) || (attrs[:colorrange] = cr)
     attrs
