@@ -1,5 +1,6 @@
 import ..SPEDAS: xlabel, ylabel, title, format_unit, isspectrogram
 import ..SPEDAS: scale, yscale, colorrange
+import SpaceDataModel: NoMetadata
 
 uunit(x) = unit(x)
 uunit(::String) = nothing
@@ -15,6 +16,7 @@ axis_attributes(ta, args...; add_title=false, kwargs...) = (; kwargs...)
 filterkeys(f, d::Dict) = filter(f ∘ first, d)
 filterkeys(f, nt) = NamedTuple{filter(f, keys(nt))}(nt)
 filter_by_fieldnames(T::Type, d::Dict) = filterkeys(∈(fieldnames(T)), d)
+filter_by_fieldnames(T::Type, ::NoMetadata) = Dict()
 
 """Axis attributes for a time array"""
 function axis_attributes(ta::AbstractArray{Q}; add_title=false, kwargs...) where {Q<:Number}
