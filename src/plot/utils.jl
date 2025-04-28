@@ -1,3 +1,14 @@
+"""
+Convert x to DateTime
+
+Reference:
+- https://docs.makie.org/dev/explanations/dim-converts#Makie.DateTimeConversion
+- https://github.com/MakieOrg/Makie.jl/issues/442
+- https://github.com/MakieOrg/Makie.jl/blob/master/src/dim-converts/dates-integration.jl
+"""
+x2t(x::Millisecond) = DateTime(Dates.UTM(x))
+x2t(x::Float64) = DateTime(Dates.UTM(round(Int64, x)))
+
 function y_values(x)
     parent(get(meta(x), "y", dims(x, 2)))
 end

@@ -71,8 +71,8 @@ function interpolate_nans(u, t; interp=LinearInterpolation)
 end
 
 
-function interpolate_nans(u, t::AbstractArray{<:Dates.AbstractDateTime}; kwargs...)
-    interpolate_nans(u, t2x.(t); kwargs...)
+function interpolate_nans(u, t::AbstractArray{<:AbstractTime}; kwargs...)
+    interpolate_nans(u, Dates.value.(t); kwargs...)
 end
 
 """

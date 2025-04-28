@@ -10,7 +10,7 @@ function tlims!(ax, tmin, tmax)
     elseif dim_conversion isa Makie.UnitfulConversion
         xlims!(ax, tmin, tmax)
     else
-        xlims!(ax, t2x(tmin), t2x(tmax))
+        xlims!(ax, Dates.value(tmin), Dates.value(tmax))
     end
     return current_figure()
 end
@@ -18,7 +18,7 @@ tlims!(tmin, tmax) = tlims!(current_axis(), tmin, tmax)
 tlims!(trange) = tlims!(trange...)
 
 """Add vertical lines to a plot"""
-tlines!(ax, time; kwargs...) = vlines!(ax, t2x.(DateTime.(time)); kwargs...)
+tlines!(ax, time; kwargs...) = vlines!(ax, Dates.value.(DateTime.(time)); kwargs...)
 tlines!(time; kwargs...) = tlines!(current_axis(), time; kwargs...)
 tlines!(faxes::FigureAxes, time; kwargs...) =
     foreach(faxes.axes) do ax

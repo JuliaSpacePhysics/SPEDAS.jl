@@ -55,20 +55,6 @@ Reference: https://www.wikiwand.com/en/articles/Angular_frequency
 """
 ω2f(ω) = uconvert(u"Hz", ω, Periodic())
 
-"""
-Convert x to DateTime
-
-Reference:
-- https://docs.makie.org/dev/explanations/dim-converts#Makie.DateTimeConversion
-- https://github.com/MakieOrg/Makie.jl/issues/442
-- https://github.com/MakieOrg/Makie.jl/blob/master/src/dim-converts/dates-integration.jl
-"""
-x2t(x::Millisecond) = DateTime(Dates.UTM(x))
-x2t(x::Float64) = DateTime(Dates.UTM(round(Int64, x)))
-
-t2x(t) = Dates.value(t)
-t2x(da::AbstractDimArray) = t2x.(dims(da, 1).val.data)
-
 """Return the angle between two vectors."""
 angle(v1::AbstractVector, v2::AbstractVector) = acosd(v1 ⋅ v2 / (norm(v1) * norm(v2)))
 
