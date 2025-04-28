@@ -17,6 +17,4 @@ Transform data into plottable format (e.g., `DimArray`).
 Extend with `transform(x::MyType)` for custom types.
 """
 transform(x) = x
-transform(x::AbstractDimStack) = layers(x)
 transform_speasy(x) = x
-transform_speasy(ds::AbstractDataSet) = @set ds.data = transform_speasy.(ds.data)

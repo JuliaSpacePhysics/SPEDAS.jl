@@ -46,3 +46,9 @@ function spectrogram_y_values(ta; check=false, center=true, transform=yscale(ta)
 
     !center ? binedges(centers; transform) : centers
 end
+
+
+function prioritized_get(c, keys, default=nothing)
+    values = get.(Ref(c), keys, nothing)
+    all(isnothing, values) ? default : something(values...)
+end
