@@ -15,6 +15,9 @@ function set_if_equal!(attrs, key, values; default=nothing)
     set_if_valid!(attrs, val, key)
 end
 
+_merge(x, args...) = merge(x, args...)
+_merge(x::Dict, y::NamedTuple) = merge(x, Dict(pairs(y)))
+
 """
 Convert x to DateTime
 

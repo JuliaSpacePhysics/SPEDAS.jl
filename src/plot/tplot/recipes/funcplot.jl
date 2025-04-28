@@ -11,7 +11,7 @@ Interactively plot a function over a time range on a grid position
 function functionplot(gp, f, tmin, tmax; axis=(;), add_title=DEFAULTS.add_title, add_colorbar=DEFAULTS.add_colorbar, plot=(;), kwargs...)
     # get a sample data to determine the attributes and plot types
     data = f(tmin, tmax)
-    m = meta(f)
+    m = @something meta(f) Dict()
     attrs = merge(
         axis_attributes(data; add_title),
         convert(Dict, filter_by_fieldnames(Axis, m)),
