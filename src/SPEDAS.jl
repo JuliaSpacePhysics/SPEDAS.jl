@@ -20,14 +20,12 @@ using StaticArrays
 using OhMyThreads
 using Statistics
 using Unitful, DimensionfulAngles
-using Latexify, UnitfulLatexify
 using RollingWindowArrays
 using FFTW, DSP, SignalAnalysis
 using Tullio
 using Bumper
 using InverseFunctions
 using NamedTupleTools
-using Accessors: @set
 using Reexport
 @reexport using SpaceDataModel
 using SpaceDataModel: meta
