@@ -16,7 +16,6 @@ plottype(::Any) = PanelPlot
 plottype(x::AbstractVector{<:Number}) = PanelPlot
 
 plottype(::AbstractVector) = MultiPlot
-plottype(x::AbstractMatrix) = isspectrogram(x) ? SpecPlot : LinesPlot
 plottype(::NamedTuple) = MultiPlot
 plottype(::DualAxisData) = DualPlot
 plottype(::NTuple{2,Any}) = DualPlot

@@ -4,6 +4,7 @@ using ..SPEDAS: times
 
 plottype(::AbstractDimVector) = LinesPlot
 plottype(::AbstractDimStack) = MultiPlot
+plottype(x::AbstractDimMatrix) = isspectrogram(x) ? SpecPlot : LinesPlot
 
 makie_x(da::AbstractDimArray) = makie_x(parent(times(da)))
 
