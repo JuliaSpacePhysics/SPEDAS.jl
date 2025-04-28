@@ -14,7 +14,6 @@ using DimensionalData: TimeDim
 using DimensionalData.Dimensions: Dimension
 using LinearAlgebra
 using NaNStatistics
-using TimeseriesTools
 using Intervals: Interval
 using StaticArrays
 using OhMyThreads
@@ -49,11 +48,12 @@ export spectral_matrix, wavpol, twavpol, wpol_helicity, polarization
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
-const AbstractDimMatrix = Union{DimensionalData.AbstractDimMatrix,TimeseriesTools.AbstractDimMatrix}
-const AbstractDimVector = Union{DimensionalData.AbstractDimVector,TimeseriesTools.AbstractDimVector}
+const AbstractDimMatrix = DimensionalData.AbstractDimMatrix
+const AbstractDimVector = DimensionalData.AbstractDimVector
 const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
 
 include("projects/project.jl")
+include("types.jl")
 include("mhd.jl")
 include("timeseries/timeseries.jl")
 include("timeseries/spectrum.jl")
@@ -62,7 +62,6 @@ include("timeseries/gap.jl")
 include("utils.jl")
 include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
-include("types.jl")
 include("resampling/resample.jl")
 include("resampling/interp.jl")
 include("meta.jl")

@@ -21,3 +21,6 @@ const DEFAULTS = Defaults(;
     delay=0.25,
     resample=6070
 )
+
+abstract type FrequencyDim{T} <: Dimension{T} end
+@dim 𝑓 FrequencyDim "Frequency"
