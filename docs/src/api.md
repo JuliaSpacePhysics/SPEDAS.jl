@@ -10,6 +10,12 @@ Pages = ["api.md"]
 Modules = [SPEDAS.SpaceDataModel]
 ```
 
+## TPlot
+
+```@autodocs
+Modules = [SPEDAS.TPlot]
+```
+
 ## SPEDAS
 
 ```@autodocs
