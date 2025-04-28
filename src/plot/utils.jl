@@ -1,6 +1,6 @@
 import ..SPEDAS: yvalues
 
-set_if_valid!(d, val, key) = isempty(val) || d[key] = val
+set_if_valid!(d, val, key) = isempty(val) || setindex!(d, val, key)
 function set_if_valid!(d, ::Nothing, key) end
 function set_if_valid!(d, pairs::Pair...)
     for (key, value) in pairs
