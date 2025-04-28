@@ -46,7 +46,7 @@ function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimMatrix; l
 end
 
 function plot2spec(::Type{<:LinesPlot}, da::DimensionalData.AbstractDimVector; labels=nothing, label=nothing)
-    label = @something label labels to_value(label(da))
+    label = @something label labels to_value(SPEDAS.label(da))
     S.Lines(xs(da), parent(da); label)
 end
 
