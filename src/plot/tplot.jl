@@ -5,7 +5,7 @@ using Dates
 using Unitful, Latexify, UnitfulLatexify
 using SpaceDataModel: meta
 using Accessors: @set
-import ..SPEDAS: label, labels, DEFAULTS
+import ..SPEDAS: label, labels, clabel, DEFAULTS
 
 import Makie: convert_arguments, plot!
 

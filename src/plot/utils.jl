@@ -1,6 +1,7 @@
 import ..SPEDAS: yvalues
 
-set_if_valid!(d, val, key) = isempty(val) || setindex!(d, val, key)
+set_if_valid!(d, val, key) = setindex!(d, val, key)
+set_if_valid!(d, val::Union{AbstractString,AbstractArray}, key) = isempty(val) || setindex!(d, val, key)
 function set_if_valid!(d, ::Nothing, key) end
 function set_if_valid!(d, pairs::Pair...)
     for (key, value) in pairs
