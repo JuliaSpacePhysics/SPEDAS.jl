@@ -32,9 +32,6 @@ function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
 end
 
 
-Makie.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
-Makie.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
-
-function Makie.convert_arguments(t::Type{<:LinesPlot}, da::AbstractDimVector{<:AbstractVector})
-    Makie.convert_arguments(t, tstack(da))
-end
+MakieCore.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+MakieCore.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
+MakieCore.convert_arguments(t::Type{<:LinesPlot}, da::AbstractDimVector{<:AbstractVector}) = convert_arguments(t, tstack(da))

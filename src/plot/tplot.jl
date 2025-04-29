@@ -1,13 +1,14 @@
 module TPlot
 using ..SPEDAS
 using Makie
+using MakieCore
 using Dates
 using Unitful, Latexify, UnitfulLatexify
 using SpaceDataModel: meta
 using Accessors: @set
 import ..SPEDAS: label, labels, clabel, DEFAULTS
 
-import Makie: convert_arguments, plot!
+import MakieCore: convert_arguments, plot!, conversion_trait
 
 export tplot!, tplot, tplot_panel, tplot_panel!
 export LinesPlot, linesplot, linesplot!

@@ -9,7 +9,7 @@ struct NoDimConversion <: Makie.ConversionTrait end
     # resample = 10000
 end
 
-Makie.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
+MakieCore.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
 
 function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels=labels(da))
     x = makie_x(da)
@@ -23,30 +23,30 @@ function plot2spec(::Type{<:LinesPlot}, da::AbstractVector; labels=nothing, labe
     S.Lines(makie_x(da), parent(da); label)
 end
 
-function Makie.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys::AbstractMatrix)
+function MakieCore.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys::AbstractMatrix)
     A = parent(ys)
     curves = map(i -> (x, view(A, :, i)), 1:size(A, 2))
     return (curves,)
 end
 
-function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractMatrix)
-    Makie.convert_arguments(T, 1:size(ys, 1), ys)
+function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractMatrix)
+    convert_arguments(T, 1:size(ys, 1), ys)
 end
 
 """Convert the vector into a single-column matrix"""
-function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractVector{<:Number})
-    return Makie.convert_arguments(T, reshape(ys, :, 1))
+function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractVector{<:Number})
+    convert_arguments(T, reshape(ys, :, 1))
 end
 
 """Convert the vector of vectors into a single vector of curves"""
-function Makie.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractVector})
-    tuples = Makie.convert_arguments.(T, ys)
+function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractVector})
+    tuples = convert_arguments.(T, ys)
     curves_vec = first.(tuples)
     curves = reduce(vcat, curves_vec)
     return (curves,)
 end
 
-function Makie.plot!(plot::LinesPlot)
+function MakieCore.plot!(plot::LinesPlot)
     curves = plot[1]
     nseries = length(curves[])
     for i in 1:nseries
