@@ -34,8 +34,6 @@ export norm_combine, tnorm_combine
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
 export find_spikes, replace_outliers
 export fill_gaps
-export ylabel
-export LMN
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
 export standardize, modify_meta, amap, ω2f

@@ -35,11 +35,9 @@ UnitfulLatexify = "45397f5d-5981-4c77-b2b3-fc36d6e9b728"
 
 [weakdeps]
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
-TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
 
 [extensions]
 SPEDASSpeasyExt = "Speasy"
-TimeSeriesExt = "TimeSeries"
 
 [compat]
 Accessors = "0.1"
@@ -68,7 +66,6 @@ Speasy = "0.3.1"
 StaticArrays = "1"
 Statistics = "1"
 TOML = "1"
-TimeSeries = "0.24"
 Tullio = "0.3"
 Unitful = "1"
 UnitfulLatexify = "1.6.4"
