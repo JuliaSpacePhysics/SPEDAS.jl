@@ -29,21 +29,9 @@ function MakieCore.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys:
     return (curves,)
 end
 
-function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractMatrix)
-    convert_arguments(T, 1:size(ys, 1), ys)
-end
-
-"""Convert the vector into a single-column matrix"""
-function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractVector{<:Number})
-    convert_arguments(T, reshape(ys, :, 1))
-end
-
 """Convert the vector of vectors into a single vector of curves"""
-function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractVector})
-    tuples = convert_arguments.(T, ys)
-    curves_vec = first.(tuples)
-    curves = reduce(vcat, curves_vec)
-    return (curves,)
+function MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::Union{Tuple,AbstractArray})
+    eltype(ys) <: Number ? plot2spec(T, ys) : reduce(vcat, convert_arguments.(T, ys))
 end
 
 function MakieCore.plot!(plot::LinesPlot)

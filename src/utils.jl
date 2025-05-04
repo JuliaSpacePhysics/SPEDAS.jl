@@ -23,7 +23,6 @@ function timedimtype(x; query=TimeDim)
 end
 
 times(x::AbstractDimArray; query=TimeDim) = lookup(timedim(x; query))
-times(x) = x
 ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""
 ys(ta::DimMatrix) = permutedims(ta.data)
