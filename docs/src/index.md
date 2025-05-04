@@ -16,6 +16,8 @@ Pkg.add("SPEDAS")
 
 - [SPEDAS (IDL)](https://spedas.org) / [PySPEDAS](https://github.com/SPEDAS/PySPEDAS) : Space Physics Environment Data Analysis Software framework to support loading, plotting, analysis, and integration of data from a number of space- and ground-based observatories
 - [Kamodo](https://nasa.github.io/Kamodo/) : An official NASA open-source python package built upon the functionalization of datasets
+- [autoplot](https://autoplot.org/) : An interactive browser for data on the web
+    - [das2](https://das2.org/): Web-based data delivery, visualization, and analysis system from the The University of Iowa.
 - [space-analysis.py](https://github.com/Beforerr/space-analysis.py) : Python utils for data analysis in space physics.
 - [SpaceAnalysis.jl](https://henry2004y.github.io/VisAnaJulia/dev/) : Space physics analysis tool using Julia
     - minimum variance analysis (MVA)
