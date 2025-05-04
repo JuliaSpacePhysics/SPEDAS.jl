@@ -15,6 +15,7 @@ Pkg.add("SPEDAS")
 ## Related packages
 
 - [SPEDAS (IDL)](https://spedas.org) / [PySPEDAS](https://github.com/SPEDAS/PySPEDAS) : Space Physics Environment Data Analysis Software framework to support loading, plotting, analysis, and integration of data from a number of space- and ground-based observatories
+- [SpacePy](https://github.com/spacepy/spacepy) : A package for Python, targeted at the space sciences, that aims to make basic data analysis, modeling and visualization easier.
 - [Kamodo](https://nasa.github.io/Kamodo/) : An official NASA open-source python package built upon the functionalization of datasets
 - [autoplot](https://autoplot.org/) : An interactive browser for data on the web
     - [das2](https://das2.org/): Web-based data delivery, visualization, and analysis system from the The University of Iowa.
@@ -24,6 +25,7 @@ Pkg.add("SPEDAS")
     - spectral analysis
     - moving box average for filtering magnetometer data
     - coordinate transformations
+- [irfu-matlab](https://github.com/irfu/irfu-matlab): Matlab routines to work with space data, particularly with MMS and Cluster/CAA data. Also some general plasma routines.
 - [QSAS (C/C++)](http://www.sp.ph.ic.ac.uk/csc-web/QSAS/) : Science Analysis Software for Space Plasmas
 
 ⚠️ **Development Status**: This package is in active development. While functional, the API may undergo changes in future releases. Please review the documentation and test thoroughly before using in scientific work.
