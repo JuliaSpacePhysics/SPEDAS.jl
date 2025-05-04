@@ -22,8 +22,8 @@ function timedimtype(x; query=TimeDim)
     DimensionalData.basetypeof(timedim(x; query))
 end
 
+times(x) = SpaceDataModel.times(x)
 times(x::AbstractDimArray; query=TimeDim) = lookup(timedim(x; query))
-times(x) = x
 ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""
 ys(ta::DimMatrix) = permutedims(ta.data)

@@ -4,7 +4,8 @@ using Makie
 using MakieCore
 using Dates
 using Unitful, Latexify, UnitfulLatexify
-using SpaceDataModel: meta
+using SpaceDataModel: meta, AbstractDataVariable
+using DimensionalData: DimArray
 using Accessors: @set
 import ..SPEDAS: label, labels, clabel, DEFAULTS
 

@@ -26,7 +26,7 @@ using InverseFunctions
 using NamedTupleTools
 using Reexport
 @reexport using SpaceDataModel
-using SpaceDataModel: meta
+using SpaceDataModel: meta, name
 
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange, common_timerange

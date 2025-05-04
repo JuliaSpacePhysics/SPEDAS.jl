@@ -2,7 +2,6 @@ const xlabel_sources = (:xlabel, "xlabel")
 const ylabel_sources = (:ylabel, :long_name, "long_name", :label, "LABLAXIS")
 const labels_sources = (:labels, "labels", "LABL_PTR_1", "LABLAXIS")
 const scale_sources = (:scale, "scale", "SCALETYP")
-const unit_sources = (:unit, :units, "UNITS")
 const yunit_sources = (:yunit, :units)
 const colorrange_sources = (:colorrange, :z_range, "z_range")
 const title_sources = (:title, "CATDESC")
@@ -17,7 +16,10 @@ function ulabel(l, u; multiline=false)
 end
 ulabel(l, u::String) = ulabel(l, uparse(u))
 
-format_unit(ta) = prioritized_get(meta(ta), unit_sources, "")
+_label(x::AbstractDimArray) = DD.label(x)
+_label(x) = name(x)
+
+format_unit(ta) = prioritized_get(meta(ta), (:unit, :units, "UNITS", "units"), "")
 format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
 
 title(ta, default="") = prioritized_get(meta(ta), title_sources, default)
@@ -40,8 +42,8 @@ end
 
 ylabel(ta) = ""
 ylabel(x::AbstractVector) = format_unit(x)
-function ylabel(da::AbstractDimArray; multiline=true)
-    default_name = isspectrogram(da) ? DD.label(dims(da, 2)) : DD.label(da)
+function ylabel(da::Union{AbstractDimArray,AbstractDataVariable}; multiline=true)
+    default_name = isspectrogram(da) ? _label(dims(da, 2)) : _label(da)
     name = prioritized_get(meta(da), ylabel_sources, default_name)
     units = isspectrogram(da) ? prioritized_get(meta(da), yunit_sources, "") : format_unit(da)
     units == "" ? name : ulabel(name, units; multiline)
@@ -50,7 +52,7 @@ end
 function clabel(ta::AbstractDimArray; multiline=true)
     name = get(ta.metadata, "LABLAXIS", DD.label(ta))
     units = format_unit(ta)
-    units == "" ? name : (multiline ? "$name\n($units)" : "$name ($units)")
+    units == "" ? name : ulabel(name, units; multiline)
 end
 
 function calc_colorrange(da; scale=10)
@@ -62,8 +64,9 @@ end
 
 colorrange(x) = prioritized_get(meta(x), colorrange_sources)
 
-label(ta) = prioritized_get(meta(ta), ylabel_sources, DD.label(ta))
-function labels(ta)
+label(ta) = prioritized_get(meta(ta), ylabel_sources, _label(ta))
+labels(x) = Nothing[]
+function labels(ta::Union{AbstractDimArray,AbstractDataVariable})
     lbls = prioritized_get(meta(ta), labels_sources, string.(dims(ta, 2).val))
     vectorize(lbls)
 end
