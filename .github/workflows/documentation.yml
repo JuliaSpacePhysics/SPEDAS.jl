@@ -25,6 +25,7 @@ jobs:
             using Pkg
             Pkg.develop([
               PackageSpec(url="https://github.com/Beforerr/PySPEDAS.jl"),
+              PackageSpec(url="https://github.com/Beforerr/IRBEM.jl"),
               PackageSpec(path=pwd())
             ])
             Pkg.instantiate()

@@ -1,34 +1,10 @@
+# Radiation Belt Modeling
 
-
-## Trace field line
+International Radiation Belt Environment Modeling (IRBEM)
 
 ```@example mag_model
 using CairoMakie
 using IRBEM
-
-# Set up model and input
-model = MagneticField(options=[0,0,0,0,0])
-LLA = Dict(
-    "x1" => 651.0,
-    "x2" => 63.0,
-    "x3" => 15.9,
-    "dateTime" => "2015-02-02T06:12:43"
-)
-maginput = Dict("Kp" => 40.0)
-out = trace_field_line(model, LLA, maginput)
-
-# Extract field line points
-POSIT = out.posit
-pltDensity = 10
-xGEO = POSIT[1, 1:pltDensity:end]
-yGEO = POSIT[2, 1:pltDensity:end]
-zGEO = POSIT[3, 1:pltDensity:end]
-
-# Plot field line
-fig = Figure()
-ax = Axis3(fig[1, 1], xlabel="x GEO", ylabel="y GEO", zlabel="z GEO",
-            limits = ((-5, 5), (-5, 5), (-5, 5)))
-scatter!(ax, xGEO, yGEO, zGEO, color=:blue, markersize=10)
 
 # Draw sphere
 function draw_sphere!(ax)
@@ -39,8 +15,60 @@ function draw_sphere!(ax)
     zs = ones(40)' .* cos.(v) 
     wireframe!(ax, xs, ys, zs, color=:black)
 end
+```
 
-# Draw sphere
+## Trace field line
+
+```@example mag_model
+# Set up model and input
+model = MagneticField(options=[0,0,0,0,0])
+LLA = Dict(
+    "x1" => 651, "x2" => 63, "x3" => 15.9,
+    "dateTime" => "2015-02-02T06:12:43"
+)
+maginput = Dict("Kp" => 40.0)
+out = trace_field_line(model, LLA, maginput)
+
+# Plot field line
+fig = Figure()
+axis = (xlabel="x GEO", ylabel="y GEO", zlabel="z GEO")
+ax = Axis3(fig[1, 1]; axis..., limits=((-5, 5), (-5, 5), (-5, 5)))
+positions = Point3f.(eachcol(out.posit)[1:8:end])
+scatter!(ax, positions)
+draw_sphere!(ax)
+fig
+```
+
+## Azimuthal field line visualization
+
+```@example mag_model
+model = MagneticField(options = [0,0,0,0,0])
+maginput = Dict("Kp"=>0.0)
+posits = mapreduce(hcat, 0:20:360) do x3
+    X = Dict("x1"=>651, "x2"=>55, "x3"=>x3, "dateTime"=>"2015-02-02T06:12:43")
+    output = trace_field_line(model, X, maginput)
+    output.posit
+end
+
+fig = Figure()
+ax = Axis3(fig[1, 1])
+scatter!(Point3f.(eachcol(posits)[1:3:end]))
+draw_sphere!(ax)
+fig
+```
+
+## Drift shell
+
+```@example mag_model
+model = MagneticField(options = [0,0,0,0,0])
+X = Dict("x1"=>651, "x2"=>63, "x3"=>20, "dateTime"=>"2015-02-02T06:12:43")
+maginput = Dict("Kp"=>40)
+output = drift_shell(model, X, maginput)
+posits = Point3f.(vec(eachslice(output.posit;dims=(2,3))))
+
+fig = Figure()
+ax = Axis3(fig[1, 1])
+scatter!(ax, posits)
 draw_sphere!(ax)
 fig
 ```
