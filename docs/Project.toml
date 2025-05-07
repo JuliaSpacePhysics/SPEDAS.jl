@@ -5,6 +5,7 @@ DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
 HAPIClient = "0ce0b37c-8851-4c5b-98a3-e691a5f19c53"
+IRBEM = "d0b46c7b-8a8f-4d20-a1b4-6e9a4a1e4e5f"
 PySPEDAS = "668d2cef-03a7-4c36-a521-7d1c6ddc8846"
 PythonCall = "6099a3de-0909-46bc-b1f4-468b9a2dfc0d"
 SPEDAS = "3930f61c-4d81-4846-ab8f-357babe068a6"
@@ -14,3 +15,6 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 Documenter = "1.8"
+
+[source]
+IRBEM = { url = "https://github.com/Beforerr/IRBEM.jl" }
