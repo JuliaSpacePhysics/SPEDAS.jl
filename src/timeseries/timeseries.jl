@@ -109,10 +109,8 @@ end
 Remove slices containing NaN values along dimensions other than `query`.
 """
 function dropna(da::DimArray, query)
-    valid_idx = .!vec(any(isnan, da; dims=otherdims(da, query)))
-    dim = dims(da, query)
-    selector = DimSelectors(dim[valid_idx])
-    da[selector]
+    valid_idx = vec(all(!isnan, da; dims=otherdims(da, query)))
+    da[query(valid_idx)]
 end
 
 dropna(da::DimArray; query=Ti) = dropna(da, query)
