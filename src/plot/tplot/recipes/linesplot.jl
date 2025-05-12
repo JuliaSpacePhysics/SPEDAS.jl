@@ -12,6 +12,7 @@ end
 MakieCore.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
 
 function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels=labels(da))
+    da = resample(da)
     x = makie_x(da)
     map(enumerate(eachcol(parent(da)))) do (i, y)
         S.Lines(x, y; label=get(labels, i, nothing))

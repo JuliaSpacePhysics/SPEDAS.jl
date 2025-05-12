@@ -6,7 +6,7 @@ plottype(::AbstractDimVector) = LinesPlot
 plottype(::AbstractDimStack) = MultiPlot
 plottype(x::AbstractDimMatrix) = isspectrogram(x) ? SpecPlot : LinesPlot
 
-makie_x(da::AbstractDimArray) = makie_t2x(parent(times(da)))
+makie_x(da::AbstractDimArray) = makie_t2x(times(da))
 
 """Plot attributes for a time array (labels)"""
 function plottype_attributes(ta::AbstractArray)
