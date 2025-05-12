@@ -1,6 +1,15 @@
 dimtype_eltype(d) = (DimensionalData.basetypeof(d), eltype(d))
 dimtype_eltype(d, query) = dimtype_eltype(dims(d, query))
 
+function tsort(A, dim=Ti)
+    time = parent(DD.dims(A, dim))
+    issorted(time) ? A : begin
+        newdata = sortslices(parent(A); dims=dimnum(A, dim))
+        newtime = dim(sort(time))
+        rebuild(A, newdata, setdims(DD.dims(A), newtime))
+    end
+end
+
 """
     tclip(d, t0, t1)
 
@@ -84,8 +93,8 @@ Clip multiple arrays to a common time range `trange`.
 If `trange` is not provided, automatically finds the common time range
 across all input arrays.
 """
-tclips(xs::Vararg{Any,N}; trange=common_timerange(xs...)) where N =
+tclips(xs::Vararg{Any,N}; trange=common_timerange(xs...)) where {N} =
     ntuple(i -> tclip(xs[i], trange...), N)
 
-tviews(xs::Vararg{Any,N}; trange=common_timerange(xs...)) where N =
+tviews(xs::Vararg{Any,N}; trange=common_timerange(xs...)) where {N} =
     ntuple(i -> tview(xs[i], trange...), N)

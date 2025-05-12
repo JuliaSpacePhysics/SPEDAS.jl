@@ -1,5 +1,5 @@
 # Time operations
-export tclip, tclips, tview, tviews, tmask, tmask!, tshift
+export tclip, tclips, tview, tviews, tmask, tmask!, tsort, tshift
 # Linear Algebra
 export proj, sproj, oproj
 export tdot, tcross, tnorm, tproj, tsproj, toproj
