@@ -34,9 +34,7 @@ makedocs(
             "explanations/analysis.md",
         ],
         "Observatories" => list_pages("observatory"),
-        "Validation" => [
-            "validation/pyspedas.md",
-        ],
+        "Validation" => list_pages("validation"),
         "API" => "api.md",
     ],
     format=Documenter.HTML(size_threshold=nothing),
@@ -53,4 +51,5 @@ makedocs(
 # for more information.
 deploydocs(
     repo="github.com/Beforerr/SPEDAS.jl",
+    push_preview=true,
 )
