@@ -1,12 +1,13 @@
 dimtype_eltype(d) = (DimensionalData.basetypeof(d), eltype(d))
 dimtype_eltype(d, query) = dimtype_eltype(dims(d, query))
 
-function tsort(A, query=Ti)
+function tsort(A, query=Ti; rev=false)
     tdim = DD.dims(A, query)
     time = parent(tdim)
     issorted(time) ? A : begin
-        sel = basetypeof(tdim)(sortperm(time))
-        set(A[sel], tdim => ForwardOrdered)
+        order = rev ? ReverseOrdered : ForwardOrdered
+        sel = rebuild(tdim, sortperm(time; rev))
+        set(A[sel], tdim => order)
     end
 end
 
