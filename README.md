@@ -13,6 +13,8 @@ using Pkg
 Pkg.add("SPEDAS")
 ```
 
+For information on using the package, see the documentation available at https://Beforerr.github.io/SPEDAS.jl/dev/.
+
 ## Related packages
 
 - [SPEDAS (IDL)](https://spedas.org) / [PySPEDAS](https://github.com/SPEDAS/PySPEDAS) : Space Physics Environment Data Analysis Software framework to support loading, plotting, analysis, and integration of data from a number of space- and ground-based observatories
