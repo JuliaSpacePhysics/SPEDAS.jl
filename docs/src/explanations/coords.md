@@ -26,8 +26,18 @@ More information can be found in the the following links
 
 - [https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml](https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml)
 
+<!-- 
 !!! note "Implementation Status"
     Transformations between these coordinate systems are planned but not yet implemented.
+-->
+
+
+We use [IRBEM-LIB](https://prbem.github.io/IRBEM/) to to compute magnetic coordinates and perform coordinate conversions. (Julia wrapper is available at [IRBEM.jl](https://github.com/Beforerr/IRBEM.jl))
+
+```@example coords
+using IRBEM
+```
+
 
 ## Specialized Coordinate Systems
 
