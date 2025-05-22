@@ -31,3 +31,22 @@ using SPEDAS
 
 tplot(da)
 ```
+
+## Get data with PySPEDAS
+
+```@example pyspedas
+using SPEDAS: tplot
+using PySPEDAS.Projects
+using DimensionalData
+
+da = themis.fgm(["2020-04-20/06:00", "2020-04-20/08:00"], time_clip=true, probe="d")
+```
+
+### Plot the data
+
+```@example pyspedas
+f = Figure()
+tplot(f[1,1], [da.thd_fgs_gsm, da.thd_fgs_btotal])
+tplot(f[2,1], [DimArray(da.thd_fgl_gsm), DimArray(da.thd_fgl_btotal)])
+f
+```

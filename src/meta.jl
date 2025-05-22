@@ -46,7 +46,7 @@ function ylabel(da::Union{AbstractDimArray,AbstractDataVariable}; multiline=true
     default_name = isspectrogram(da) ? _label(dims(da, 2)) : _label(da)
     name = prioritized_get(meta(da), ylabel_sources, default_name)
     units = isspectrogram(da) ? prioritized_get(meta(da), yunit_sources, "") : format_unit(da)
-    units == "" ? name : ulabel(name, units; multiline)
+    units == "" ? String(name) : ulabel(name, units; multiline)
 end
 
 function clabel(ta::AbstractDimArray; multiline=true)
