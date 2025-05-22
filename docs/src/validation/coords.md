@@ -1,5 +1,7 @@
 # Validation with IRBEM and PySPEDAS
 
+See [Coordinate Systems](../explanations/coords.md) for more information.
+
 References: [`cotrans`](@ref), [test_cotrans.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/cotrans.py)
 
 ```@example coords
@@ -34,5 +36,8 @@ Julia's implementation is about 40 times faster than IRBEM's (Fortran) implement
 
 ```@example coords
 @b gei2geo($jl_tha_pos), cotrans($jl_tha_pos', "GEI", "GEO"), pyspedas.cotrans("tha_pos", "tha_pos_new_geo", coord_in="GEI", coord_out="GEO")
+```
+
+```@example coords
 @b cotrans($jl_tha_pos', "GEI", "GSM"), pyspedas.cotrans("tha_pos", "tha_pos_new_gsm", coord_in="GEI", coord_out="GSM")
 ```
