@@ -39,7 +39,7 @@ makedocs(
     ],
     format=Documenter.HTML(size_threshold=nothing),
     modules=[SPEDAS, SPEDAS.SpaceDataModel],
-    warnonly=Documenter.except(:missing_docs),
+    warnonly=Documenter.except(:doctest),
     plugins=[bib],
     doctest=true
 )
