@@ -1,18 +1,8 @@
-@dim GSE YDim
-@dim GSM YDim
-@dim GEI YDim
-@dim SM YDim
-@dim GEO YDim
-@dim J2000 YDim
-@dim LMN YDim
-@dim FAC YDim
-
-B_GSE = GSE([:Bx, :By, :Bz])
-B_LMN = LMN([:B_l, :B_m, :B_n])
-
-
 get_coord(da) = get(meta(da), "COORDINATE_SYSTEM", nothing)
-get_coords(da) = split(get_coord(da), '>')
+function get_coords(da)
+    coord = get_coord(da)
+    return isnothing(coord) ? [] : split(coord, '>')
+end
 
 _lowercase(x::Tuple) = tuple(lowercase.(x)...)
 _lowercase(x::Pair) = Pair(lowercase(x.first), lowercase(x.second))
