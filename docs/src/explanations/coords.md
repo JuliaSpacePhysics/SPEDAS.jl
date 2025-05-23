@@ -1,4 +1,4 @@
-# Coordinate Systems
+# Coordinate Systems and Transformations
 
 This package defines common coordinate systems used in heliophysics and space physics research.
 
@@ -7,27 +7,42 @@ Pages = ["coords.md"]
 Depth = 2:3
 ```
 
+## Standard Coordinate Systems
+
+* GSE (Geocentric Solar Ecliptic)
+* GSM (Geocentric Solar Magnetic)
+
+Systems based on the Earth's rotation axis
+
+* GEO (Geographic)
+* GEI (Geocentric Equatorial Inertial)
+* J2000
+
+Systems based on the dipole axis of the Earth's magnetic field
+
+* SM (Solar Magnetic)
+* MAG (Geomagnetic)
+
+More information can be found in the the following links
+
+- [https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml](https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml)
+- [Geocentric systems](https://www.mssl.ucl.ac.uk/grid/iau/extra/local_copy/SP_coords/geo_sys.htm)
+
+
 ## Coordinate Transformations
 
 ```@docs; canonical=false
 rotate
 ```
 
-## Standard Coordinate Systems
+A comprehensive description of the transformations can be found in [hapgoodSpacePhysicsCoordinate1992](@citet)
 
-* GSE (Geocentric Solar Ecliptic)
-* GSM (Geocentric Solar Magnetic)
-* GEI (Geocentric Equatorial Inertial)
-* SM (Solar Magnetic)
-* GEO (Geographic)
-* J2000
+### Coordinate transformations between geocentric systems
 
-More information can be found in the the following links
-
-- [https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml](https://stereo-ssc.nascom.nasa.gov/coordinates_explanation.shtml)
-
-`SPEDAS.jl` implements native Julia functions for Geographic (GEO) to Geocentric Equatorial Inertial (GEI) coordinate transformations and vice versa. 
-For other coordinate systems, including magnetic coordinate calculations, we leverage [IRBEM-LIB](https://prbem.github.io/IRBEM/) through its Julia interface [IRBEM.jl](https://github.com/Beforerr/IRBEM.jl).
+```@docs; canonical=false
+cotrans
+SPEDAS.GeoCotrans
+```
 
 ```@example coords
 using DimensionalData
@@ -36,9 +51,9 @@ using CairoMakie
 
 pos_gse = get_data("cda/THC_L1_STATE/thc_pos_gse", "2015-10-16", "2015-10-17") |> DimArray
 
-pos_gsm = cotrans(pos_gse', "GSM")'
-pos_sm = cotrans(pos_gse', "SM")'
-pos_geo = cotrans(pos_gse', "GEO")'
+pos_gsm = cotrans(pos_gse, "GSM")
+pos_sm = cotrans(pos_gse, "SM")
+pos_geo = cotrans(pos_gse, "GEO")
 
 tplot((pos_gse, pos_gsm, pos_sm, pos_geo))
 ```
@@ -84,6 +99,6 @@ See also: [Comparison with PySPEDAS](../validation/pyspedas.md#minimum-variance-
 - [The International Radiation Belt Environment Modeling (IRBEM) library](https://prbem.github.io/IRBEM/)
 
 
-- [PySPEDAS](https://pyspedas.readthedocs.io/en/latest/coords.html)
+- [PySPEDAS: Coordinate Systems](https://pyspedas.readthedocs.io/en/latest/coords.html)
 - [geopack](https://github.com/tsssss/geopack): Python version of geopack and Tsyganenko models
 - [geospacelab](https://github.com/JouleCai/geospacelab): A python-based library to collect, manage, and visualize geospace data (e.g. OMNI, geomagnetic indices, EISCAT, DMSP, SWARM, TEC, AMPERE, etc.).

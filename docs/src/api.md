@@ -10,6 +10,16 @@ Pages = ["api.md"]
 Modules = [SPEDAS.SpaceDataModel]
 ```
 
+## Coordinate Transformations
+
+```@docs
+cotrans
+```
+
+```@autodocs
+Modules = [SPEDAS.GeoCotrans]
+```
+
 ## TPlot
 
 ```@autodocs
