@@ -3,7 +3,6 @@
 # https://github.com/invenia/Intervals.jl
 # https://github.com/JuliaMath/IntervalSets.jl
 
-
 # Iterable but not broadcastable
 using Intervals: Bound, AbstractInterval, Closed
 
@@ -34,7 +33,6 @@ timerange(t0::AbstractString, t1::AbstractString) = timerange(t0, DateTime(t1))
 timerange(t0::AbstractString, t1) = timerange(DateTime(t0), t1)
 timerange(t0, t1::AbstractString) = timerange(t0, DateTime(t1))
 
-
 function _find_continuous_timeranges(times, max_dt)
     # Initialize variables
     ranges = NTuple{2, eltype(times)}[]
@@ -55,13 +53,14 @@ function _find_continuous_timeranges(times, max_dt)
 end
 
 """
-    find_continuous_timeranges(times, max_dt)
+    find_continuous_timeranges(x, max_dt)
 
-Find continuous time ranges from `times`. `max_dt` is the maximum time gap between consecutive times.
+Find continuous time ranges for `x` (e.g. times or `DimArray`). `max_dt` is the maximum time gap between consecutive times.
 """
-function find_continuous_timeranges(times, max_dt)
-    isempty(times) && return []
-    return issorted(times) ?
-        _find_continuous_timeranges(times, max_dt) :
-        _find_continuous_timeranges(sort(times), max_dt)
+function find_continuous_timeranges(x, max_dt)
+    isempty(x) && return []
+    ts = eltype(x) <: AbstractTime ? x : times(x)
+    return issorted(ts) ?
+           _find_continuous_timeranges(ts, max_dt) :
+           _find_continuous_timeranges(sort(ts), max_dt)
 end
