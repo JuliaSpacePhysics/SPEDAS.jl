@@ -27,6 +27,7 @@ Pkg.add("SPEDAS")
     - coordinate transformations
 - [irfu-matlab](https://github.com/irfu/irfu-matlab): Matlab routines to work with space data, particularly with MMS and Cluster/CAA data. Also some general plasma routines.
 - [QSAS (C/C++)](http://www.sp.ph.ic.ac.uk/csc-web/QSAS/) : Science Analysis Software for Space Plasmas
+- [pysat](https://github.com/pysat/pysat): Python Satellite Data Analysis Toolkit
 
 ⚠️ **Development Status**: This package is in active development. While functional, the API may undergo changes in future releases. Please review the documentation and test thoroughly before using in scientific work.
 
