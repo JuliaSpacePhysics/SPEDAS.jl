@@ -1,0 +1,3 @@
+style = "sciml"
+format_docstrings = true
+remove_extra_newlines = true
