@@ -39,13 +39,14 @@ export get_coord, get_coords, set_coord
 export standardize, modify_meta, amap, ω2f
 export reciprocal_vector, reciprocal_vectors, lingradest
 export volumetric_tensor, tetrahedron_quality
-export ConstantVelocityApproach, CVA, ConstantThicknessApproach, CTA, DiscontinuityAnalyzer, DA
+export ConstantVelocityApproach, CVA, ConstantThicknessApproach, CTA
+export DiscontinuityAnalyzer, DA
 export Elsässer, σ_c
 export spectral_matrix, wavpol, twavpol, wpol_helicity, polarization
 
 const DD = DimensionalData
-const AbstractDimType = Union{AbstractDimStack,AbstractDimArray}
-const MatrixLike = Union{AbstractArray{<:AbstractVector},AbstractMatrix}
+const AbstractDimType = Union{AbstractDimStack, AbstractDimArray}
+const MatrixLike = Union{AbstractArray{<:AbstractVector}, AbstractMatrix}
 
 include("projects/project.jl")
 include("types.jl")
@@ -62,9 +63,6 @@ include("resampling/interp.jl")
 include("meta.jl")
 include("plot/tplot.jl")
 include("cotrans/cotrans.jl")
-include("cotrans/rotate.jl")
-include("cotrans/fac.jl")
-include("cotrans/mva.jl")
 include("multispacecraft/reciprocal_vector.jl")
 include("multispacecraft/tetrahedron.jl")
 include("multispacecraft/lingradest.jl")

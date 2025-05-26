@@ -1,8 +1,11 @@
 import IRBEM
 export cotrans
 
+include("rotate.jl")
 include("coordinate.jl")
 include("geocotrans/GeoCotrans.jl")
+include("fac.jl")
+include("mva.jl")
 
 using .GeoCotrans: coord_maps
 
@@ -24,8 +27,8 @@ function cotrans(A, in, out)
     return set_coord(Ac, out)
 end
 
-cotrans(A, out; in=get_coord(A)) = cotrans(A, in, out)
-cotrans(A, f::Function; dims=1) = map(f, eachslice(parent(A); dims), times(A))
+cotrans(A, out; in = get_coord(A)) = cotrans(A, in, out)
+cotrans(A, f::Function; dims = 1) = map(f, eachslice(parent(A); dims), times(A))
 
 function irbem_cotrans(A, in, out)
     dims = dimnum(A, TimeDim)

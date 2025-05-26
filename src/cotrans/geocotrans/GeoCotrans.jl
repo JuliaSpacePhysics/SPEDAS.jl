@@ -53,7 +53,7 @@ const coord_pairs = (
     (:gei, :gsm), (:gsm, :gei),
     (:gse, :gsm), (:gsm, :gse),
     # Chain transformations
-    (:geo, :gsm), (:gsm, :geo),
+    (:geo, :gsm), (:gsm, :geo)
 )
 
 geo2gsm_mat(t) = gei2gsm_mat(t) * geo2gei_mat(t)
@@ -63,7 +63,7 @@ for p in coord_pairs
     doc = trans_doc(p[1], p[2])
     func = Symbol(p[1], 2, p[2])
     matfunc = Symbol(func, :_mat)
-    @eval @doc $doc $func(x, t) = $matfunc(t) * x
+    @eval @doc $doc $func(x, t)=$matfunc(t) * x
     @eval export $func
 end
 
