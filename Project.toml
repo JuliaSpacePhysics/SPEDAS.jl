@@ -1,7 +1,7 @@
 name = "SPEDAS"
 uuid = "3930f61c-4d81-4846-ab8f-357babe068a6"
 authors = ["Zijin Zhang <zzj956959688@gmail.com> and contributors"]
-version = "0.1.6"
+version = "0.1.7"
 
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
@@ -49,7 +49,7 @@ Bumper = "0.7"
 DSP = "0.7, 0.8"
 DataInterpolations = "7, 8"
 Dates = "1"
-Dictionaries = "0.4.5"
+Dictionaries = "0.4"
 DimensionalData = "0.29"
 DimensionfulAngles = "0.2.1"
 FFTW = "1"
