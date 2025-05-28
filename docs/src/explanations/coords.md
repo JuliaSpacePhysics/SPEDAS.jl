@@ -9,6 +9,8 @@ Depth = 2:3
 
 ## Standard Coordinate Systems
 
+Systems based on the Earth-Sun line
+
 * GSE (Geocentric Solar Ecliptic)
 * GSM (Geocentric Solar Magnetic)
 
@@ -22,6 +24,11 @@ Systems based on the dipole axis of the Earth's magnetic field
 
 * SM (Solar Magnetic)
 * MAG (Geomagnetic)
+
+Other coordinate systems
+
+- [Altitude Adjusted Corrected Geogmagnetic Coordinates (AACGM)](https://superdarn.thayer.dartmouth.edu/aacgm.html)
+
 
 More information can be found in the the following links
 
@@ -102,3 +109,4 @@ See also: [Comparison with PySPEDAS](../validation/pyspedas.md#minimum-variance-
 - [PySPEDAS: Coordinate Systems](https://pyspedas.readthedocs.io/en/latest/coords.html)
 - [geopack](https://github.com/tsssss/geopack): Python version of geopack and Tsyganenko models
 - [geospacelab](https://github.com/JouleCai/geospacelab): A python-based library to collect, manage, and visualize geospace data (e.g. OMNI, geomagnetic indices, EISCAT, DMSP, SWARM, TEC, AMPERE, etc.).
+- [aacgmv2](https://github.com/aburrell/aacgmv2): Python library for AACGM-v2 magnetic coordinates
