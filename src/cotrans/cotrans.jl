@@ -3,11 +3,11 @@ export cotrans
 
 include("rotate.jl")
 include("coordinate.jl")
-include("geocotrans/GeoCotrans.jl")
 include("fac.jl")
 include("mva.jl")
 
-using .GeoCotrans: coord_maps
+@reexport using GeoCotrans
+using GeoCotrans: coord_maps
 
 """
     cotrans(A, in, out)
@@ -18,8 +18,9 @@ Transform the data to the `out` coordinate system from the `in` coordinate syste
 This function automatically choose between Julia's [`GeoCotrans`](@ref) (if available) and Fortran's `IRBEM` implementation.
 
 References:
-- [IRBEM-LIB](https://prbem.github.io/IRBEM/): compute magnetic coordinates and perform coordinate conversions ([Documentation](https://prbem.github.io/IRBEM/api/coordinates_transformations.html), [IRBEM.jl](https://github.com/Beforerr/IRBEM.jl))
-- [SPEDAS Cotrans](https://spedas.org/wiki/index.php?title=Cotrans)
+
+  - [IRBEM-LIB](https://prbem.github.io/IRBEM/): compute magnetic coordinates and perform coordinate conversions ([Documentation](https://prbem.github.io/IRBEM/api/coordinates_transformations.html), [IRBEM.jl](https://github.com/Beforerr/IRBEM.jl))
+  - [SPEDAS Cotrans](https://spedas.org/wiki/index.php?title=Cotrans)
 """
 function cotrans(A, in, out)
     key = (Symbol(lowercase(in)), Symbol(lowercase(out)))
@@ -38,14 +39,4 @@ function irbem_cotrans(A, in, out)
            IRBEM.transform(time, parent(A)', in, out)' :
            IRBEM.transform(time, parent(A), in, out)
     return rebuild(A; data)
-end
-
-for f in nameof.(coord_maps)
-    @eval import .GeoCotrans: $f
-    @eval @inline function $f(A)
-        dims = dimnum(A, TimeDim)
-        data = stack($f, eachslice(parent(A); dims), times(A); dims)
-        return rebuild(A, data)
-    end
-    @eval export $f
 end

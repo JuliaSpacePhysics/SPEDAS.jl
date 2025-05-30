@@ -53,8 +53,8 @@ end
 Compute dipole direction in GEO coordinates. [IRBEM]
 """
 function calc_dipole_geo(time)
-    g, h = get_igrf_coeffs(time, Val(1:3))
-    θ, φ = calc_dipole_angle(g[2], g[3], h[3])
+    g, h = get_igrf_coeffs(time)
+    θ, φ = @inbounds calc_dipole_angle(g[2], g[3], h[3])
     return SA[sin(θ)*cos(φ), sin(θ)*sin(φ), cos(θ)]
 end
 
