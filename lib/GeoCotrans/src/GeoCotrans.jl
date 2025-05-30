@@ -1,10 +1,3 @@
-const coord_text = Dict(
-    :geo => "Geographic (GEO)",
-    :gei => "Geocentric Equatorial Inertial (GEI)",
-    :gse => "Geocentric Solar Ecliptic (GSE)",
-    :gsm => "Geocentric Solar Magnetic (GSM)"
-)
-
 """
 # Coordinate transformations between geocentric systems.
 
@@ -18,22 +11,31 @@ const coord_text = Dict(
 ## References
 
 - [Coordinate transformations between geocentric systems](https://www.mssl.ucl.ac.uk/grid/iau/extra/local_copy/SP_coords/geo_tran.htm)
+- [ppigrf](https://github.com/IAGA-VMOD/ppigrf): Pure Python code to calculate IGRF model predictions.
 """
 module GeoCotrans
-using ..SPEDAS: coord_text
 using Dictionaries
 using Dates
 using Dates: AbstractTime
 using LinearAlgebra
 using StaticArrays
+using LazyArrays
 using AstroLib: ct2lst, jdcnv
 
+include("igrf_coef.jl")
 include("igrf.jl")
 include("csundir.jl")
 include("cdipdir.jl")
 include("geo2gei.jl")
 include("gei2gsm.jl")
 include("gse2gsm.jl")
+
+const coord_text = Dict(
+    :geo => "Geographic (GEO)",
+    :gei => "Geocentric Equatorial Inertial (GEI)",
+    :gse => "Geocentric Solar Ecliptic (GSE)",
+    :gsm => "Geocentric Solar Magnetic (GSM)"
+)
 
 trans_doc(c1, c2) = """
     $(c1)2$(c2)(x, t)
@@ -61,7 +63,7 @@ gsm2geo_mat(t) = inv(geo2gsm_mat(t))
 
 for p in coord_pairs
     doc = trans_doc(p[1], p[2])
-    func = Symbol(p[1], 2, p[2])
+    func = Symbol(p[1], "2", p[2])
     matfunc = Symbol(func, :_mat)
     @eval @doc $doc $func(x, t)=$matfunc(t) * x
     @eval export $func
@@ -69,7 +71,7 @@ end
 
 @doc trans_doc(:gse, :gsm, :gse2gsm_mat) gse2gsm
 
-pair2func(p) = getfield(GeoCotrans, Symbol("$(p[1])2$(p[2])"))
+pair2func(p) = getfield(GeoCotrans, Symbol(p[1], "2", p[2]))
 const coord_maps = dictionary(p => pair2func(p) for p in coord_pairs)
 
 end

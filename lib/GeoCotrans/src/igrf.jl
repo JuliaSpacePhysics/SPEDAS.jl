@@ -1,4 +1,7 @@
-include("igrf_coef.jl")
+check_year(year) =
+    if year > 2025 || year < 1900
+        error("IGRF-14 coefficients are not available for year $year")
+    end
 
 """
     get_igrf_coeffs(time)
@@ -8,16 +11,16 @@ Get IGRF-14 coefficients for a given time.
 Similar to [IRBEM](https://github.com/PRBEM/IRBEM/blob/main/source/igrf_coef.f) implementation,
 but with higher precision (IRBEM uses `year` as the time unit).
 """
-@views function get_igrf_coeffs(time, ::Val{idx}=Val(:)) where idx
+function get_igrf_coeffs(time)
     # Convert time to year and day of year
     dt = time isa Date ? time : Date(time)
-    year = Dates.year(dt)
-    y = year - (year % 5)
-    year0 = max(min(y, igrf_max_year - 5), igrf_min_year)
-    f2 = (dt - Date(year0)) / (Date(year0 + 5) - Date(year0))
-    g0, h0, dg, dh = igrf_lookup[year0]
-    g = @. g0[idx] + dg[idx] * f2
-    h = @. h0[idx] + dh[idx] * f2
+    year0 = year(dt) ÷ 5 * 5
+    check_year(year0)
+    t0, tf = Date(year0), Date(year0 + 5)
+    ratio = (dt - t0) / (tf - t0)
+    g0, h0, dg, dh = @inbounds igrf_lookup[year0]
+    g = @~ dg * ratio + g0
+    h = @~ dh * ratio + h0
     return g, h
 end
 

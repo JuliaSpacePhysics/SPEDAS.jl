@@ -1,3 +1,6 @@
+using GeoCotrans
+using Test
+
 # https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/cotrans.py
 
 @testitem "gse2gsm" begin
