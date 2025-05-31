@@ -1,5 +1,7 @@
 using GeoCotrans
 using Test
+using TestItems, TestItemRunner
+@run_package_tests
 
 # https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/cotrans.py
 
@@ -32,5 +34,19 @@ using Test
 
     # Check that the transformation worked correctly
     expected_gsm = [775.0, 11.70357713, -7.93890939]
-    @test isapprox(gsm_da[Ti=1], expected_gsm)
+    @test isapprox(gsm_da[Ti = 1], expected_gsm)
+end
+
+@testitem "IGRF get_B" begin
+    using Dates
+
+    # Test IGRF magnetic field calculation
+    r, θ, φ = 6500.0, 30.0, 4.0
+    t = Date(2021, 3, 28)
+    B_true = (-46077.31133522, -14227.12618499, 233.14355744)
+    @test all(igrf_Bd(r, θ, φ, t) .≈ B_true)
+
+    𝐫 = GDZ(0, 60.39299, 5.32415)
+    B_true = (458.89660058, 14996.72893889, -49019.55372591)
+    @test all(igrf_B(𝐫, t) .≈ B_true)
 end

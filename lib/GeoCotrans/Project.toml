@@ -5,10 +5,13 @@ version = "0.0.1"
 
 [deps]
 AstroLib = "c7932e45-9af1-51e7-9da9-f004cd3a462b"
+Bumper = "8ce10254-0962-460f-a3d8-1f77fea1446e"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Dictionaries = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LazyArrays = "5078a376-72f3-5289-bfd5-ec5146d43c02"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+SatelliteToolboxLegendre = "7fa26607-a272-47b2-9aa2-a6c1d419d9d2"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [weakdeps]
@@ -19,10 +22,13 @@ GeoCotransDimensionalDataExt = "DimensionalData"
 
 [compat]
 AstroLib = "0.4"
+Bumper = "0.7"
 Dates = "1"
 Dictionaries = "0.4"
 DimensionalData = "0.29"
+ForwardDiff = "0.10, 1"
 LazyArrays = "2"
 LinearAlgebra = "1"
+SatelliteToolboxLegendre = "1.1"
 StaticArrays = "1"
 julia = "1.10"

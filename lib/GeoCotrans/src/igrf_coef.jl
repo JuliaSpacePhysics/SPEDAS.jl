@@ -1,9 +1,12 @@
-# International Geomagnetic Reference Field (IGRF)
-# http://www.ngdc.noaa.gov/IAGA/vmod/coeffs/
 # https://github.com/tsssss/geopack/blob/master/geopack/geopack.py
 # nanoTesla/year for secular variation (SV)
-const igrf_max_year = 2030
-const igrf_min_year = 1965
+const IGRF_max_year = 2030
+const IGRF_min_year = 1965
+const IGRF_degree = 13
+const R🜨 = 6371.2
+
+coeff_size(degree) = (degree + 1) * (degree + 2) ÷ 2
+
 const igrf_ga = Dict{Int,Vector{Float64}}()
 const igrf_ha = Dict{Int,Vector{Float64}}()
 const igrf_dg = [0.0, 12.6, 10.0, -11.2, -5.3, -8.3, -1.5, -4.4, 0.4, -15.6, -1.7, -2.3, -5.8, 5.4, -6.8, 0.6, 1.3, 0.0, 0.7, 2.3, 1.0, -0.2, -0.3, 0.8, 1.2, -0.8, 0.4, 0.9, -0.1, -0.1, -0.1, 0.5, -0.1, -0.8, -0.8, 0.9, -0.1, 0.2, 0.0, 0.4, -0.1, 0.3, 0.1, 0.0, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -37,7 +40,20 @@ igrf_ha[2025] = [0.0, 0.0, 4545.5, 0.0, -3133.6, -814.2, 0.0, -56.9, 237.6, -549
 igrf_ga[2030] = @. igrf_ga[2025] + 5 * igrf_dg
 igrf_ha[2030] = @. igrf_ha[2025] + 5 * igrf_dh
 
+"""
+Format into matrix form (l, m)
+"""
+function matrix_form(g)
+    M = zeros(IGRF_degree + 1, IGRF_degree + 1)
+    for l in 0:IGRF_degree
+        for m in 0:l
+            M[l+1, m+1] = g[l*(l+1)÷2+m+1]
+        end
+    end
+    return M
+end
+
 const igrf_lookup = dictionary(
     i => (igrf_ga[i], igrf_ha[i], igrf_ga[i+5] .- igrf_ga[i], igrf_ha[i+5] .- igrf_ha[i])
-    for i in 1965:5:2025
+    for i in IGRF_min_year:5:IGRF_max_year-5
 )
