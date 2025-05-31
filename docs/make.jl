@@ -1,6 +1,6 @@
 using SPEDAS
 using SPEDAS.SpaceDataModel
-using GeoCotrans
+using SPEDAS.GeoCotrans
 using Documenter
 using DocumenterCitations
 # using DemoCards
