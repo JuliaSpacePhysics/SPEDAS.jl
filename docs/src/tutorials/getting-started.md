@@ -40,8 +40,9 @@ using PySPEDAS.Projects
 using DimensionalData
 using CairoMakie
 
-da = themis.fgm(["2020-04-20/06:00", "2020-04-20/08:00"], time_clip=true, probe="d")
-# The same as more verbose `pyspedas.projects.themis.fgm(...)`
+da = themis.fgm(["2020-04-20/06:00", "2020-04-20/08:00"], time_clip=true, probe="d");
+keys(da)
+# Same as more verbose `pyspedas.projects.themis.fgm(...)`
 ```
 
 ### Plot the data
