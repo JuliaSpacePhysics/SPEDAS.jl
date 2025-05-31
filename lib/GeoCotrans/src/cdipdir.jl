@@ -47,15 +47,6 @@ function cdipdir(time)
     return SA[st0*c10, st0*s10, ct0]
 end
 
-"""
-    calc_dipole_geo(time)
 
-Compute dipole direction in GEO coordinates. [IRBEM]
-"""
-function calc_dipole_geo(time)
-    g, h = get_igrf_coeffs(time)
-    θ, φ = @inbounds calc_dipole_angle(g[2], g[3], h[3])
-    return SA[sin(θ)*cos(φ), sin(θ)*sin(φ), cos(θ)]
-end
 
 calc_dipole_gei(time) = geo2gei_mat(time) * calc_dipole_geo(time)
