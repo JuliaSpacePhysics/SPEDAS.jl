@@ -51,6 +51,7 @@ Be, Bn, Bu = igrf_B(GDZ(0, 60.39299, 5.32415), t)
 
 - [SatelliteToolboxGeomagneticField.jl](https://github.com/JuliaSpace/SatelliteToolboxGeomagneticField.jl): Models to compute the geomagnetic field (IGRF-13, dipole model)
 - [ppigrf](https://github.com/IAGA-VMOD/ppigrf): Pure Python code to calculate IGRF model predictions.
+- [geopack](https://github.com/tsssss/geopack): Python code to calculate IGRF model predictions.
 """
 module GeoCotrans
 using Dictionaries

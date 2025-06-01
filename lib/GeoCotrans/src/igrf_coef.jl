@@ -1,9 +1,7 @@
-# https://github.com/tsssss/geopack/blob/master/geopack/geopack.py
 # nanoTesla/year for secular variation (SV)
 const IGRF_max_year = 2030
 const IGRF_min_year = 1965
 const IGRF_degree = 13
-const R🜨 = 6371.2
 
 coeff_size(degree) = (degree + 1) * (degree + 2) ÷ 2
 
