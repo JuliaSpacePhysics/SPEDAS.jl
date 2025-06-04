@@ -11,17 +11,17 @@ end
 
 MakieCore.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
 
-function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels=labels(da))
+function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels = labels(da))
     da = resample(da)
     x = makie_x(da)
-    map(enumerate(eachcol(parent(da)))) do (i, y)
-        S.Lines(x, y; label=get(labels, i, nothing))
+    return map(enumerate(eachcol(parent(da)))) do (i, y)
+        S.Lines(x, y; label = get(labels, i, nothing))
     end
 end
 
-function plot2spec(::Type{<:LinesPlot}, da::AbstractVector; labels=nothing, label=nothing)
+function plot2spec(::Type{<:LinesPlot}, da::AbstractVector; labels = nothing, label = nothing)
     label = @something label labels to_value(SPEDAS.label(da))
-    S.Lines(makie_x(da), parent(da); label)
+    return S.Lines(makie_x(da), parent(da); label)
 end
 
 function MakieCore.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys::AbstractMatrix)
@@ -30,7 +30,8 @@ function MakieCore.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys:
     return (curves,)
 end
 
-MakieCore.convert_arguments(T::Type{<:LinesPlot}, A::AbstractArray{<:Number}) = plot2spec(T, A)
+MakieCore.convert_arguments(T::Type{<:LinesPlot}, A::AbstractArray{<:Number}, args...) =
+    plot2spec(T, A, args...)
 
 """Convert the vector of vectors into a single vector of curves"""
 MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::Tuple) = reduce(vcat, convert_arguments.(T, ys))
@@ -38,8 +39,7 @@ MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractVector{<:AbstractA
 
 function MakieCore.plot!(plot::LinesPlot)
     curves = plot[1]
-    nseries = length(curves[])
-    for i in 1:nseries
+    return map(eachindex(curves[])) do i
         positions = lift(c -> c[i], plot, curves)
         x = lift(x -> x[1], positions)
         y = lift(x -> x[2], positions)
@@ -52,8 +52,8 @@ end
 
 Plot a multivariate time series on a panel
 """
-function linesplot(gp::Drawable, ta; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
+function linesplot(gp::Drawable, ta; axis = (;), add_title = DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(ta; add_title)..., axis...)
     plots = linesplot!(ax, ta; kwargs...)
-    PanelAxesPlots(gp, AxisPlots(ax, plots))
+    return PanelAxesPlots(gp, AxisPlots(ax, plots))
 end

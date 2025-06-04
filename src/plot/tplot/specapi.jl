@@ -12,6 +12,8 @@ function plot2spec(da; resample=(; verbose=true), kwargs...)
     end
 end
 
+plot2spec(T, da::AbstractArray, t0, t1; kw...) = plot2spec(T, tview(da, t0, t1); kw...)
+
 plot2spec(nt::Union{NamedTuple,Tuple}; kwargs...) =
     map(collect(values(nt))) do da
         plot2spec(da; kwargs...)
