@@ -14,6 +14,7 @@ References: [`cotrans`](@ref), [test_cotrans.py - PySPEDAS](https://github.com/s
 ```@example coords
 using PySPEDAS
 using SPEDAS
+using SPEDAS: irbem_cotrans
 using PythonCall
 using DimensionalData
 using Chairmarks
@@ -45,7 +46,7 @@ GEI <-> GEO
 
 ```@example coords
 jl_tha_pos_geo = gei2geo(jl_tha_pos)
-ir_tha_pos_geo = cotrans(jl_tha_pos', "GEI", "GEO")'
+ir_tha_pos_geo = irbem_cotrans(jl_tha_pos', "GEI", "GEO")'
 py_tha_pos_geo = PySPEDAS.get_data(DimArray, "tha_pos_new_geo")
 
 @test jl_tha_pos_geo ≈ parent(py_tha_pos_geo)
@@ -56,7 +57,7 @@ GEI <-> GSM
 
 ```@example coords
 jl_tha_pos_gsm = gei2gsm(jl_tha_pos)
-ir_tha_pos_gsm = cotrans(jl_tha_pos', "GEI", "GSM")'
+ir_tha_pos_gsm = irbem_cotrans(jl_tha_pos', "GEI", "GSM")'
 pyspedas.cotrans("tha_pos", "tha_pos_new_gsm", coord_in="GEI", coord_out="GSM")
 py_tha_pos_gsm = PySPEDAS.get_data(DimArray, "tha_pos_new_gsm")
 
@@ -68,7 +69,7 @@ GSE <-> GSM
 
 ```@example coords
 jl_tha_pos_gsm = gse2gsm(jl_tha_pos_gse)
-ir_tha_pos_gsm = cotrans(jl_tha_pos_gse', "GSE", "GSM")'
+ir_tha_pos_gsm = irbem_cotrans(jl_tha_pos_gse', "GSE", "GSM")'
 pyspedas.cotrans("tha_pos_gse", "tha_pos_new_gsm", coord_in="GSE", coord_out="GSM")
 py_tha_pos_gsm = PySPEDAS.get_data(DimArray, "tha_pos_new_gsm")
 
@@ -84,13 +85,13 @@ Validate results: `GEI/GEO` transformations is quite accurate, while there are s
 Depends on the transformation, Julia's implementation is about 10-40 times faster than IRBEM's (Fortran) implementation, and 20-50 times faster than PySPEDAS's (Python) implementation.
 
 ```@example coords
-@b gei2geo($jl_tha_pos), cotrans($jl_tha_pos', "GEI", "GEO"), pyspedas.cotrans("tha_pos", "tha_pos_new_geo", coord_in="GEI", coord_out="GEO")
+@b gei2geo($jl_tha_pos), irbem_cotrans($jl_tha_pos', "GEI", "GEO"), pyspedas.cotrans("tha_pos", "tha_pos_new_geo", coord_in="GEI", coord_out="GEO")
 ```
 
 ```@example coords
-@b gei2gsm($jl_tha_pos), cotrans($jl_tha_pos', "GEI", "GSM"), pyspedas.cotrans("tha_pos", "tha_pos_new_gsm", coord_in="GEI", coord_out="GSM")
+@b gei2gsm($jl_tha_pos), irbem_cotrans($jl_tha_pos', "GEI", "GSM"), pyspedas.cotrans("tha_pos", "tha_pos_new_gsm", coord_in="GEI", coord_out="GSM")
 ```
 
 ```@example coords
-@b gse2gsm($jl_tha_pos_gse), cotrans($jl_tha_pos_gse', "GSE", "GSM"), pyspedas.cotrans("tha_pos_gse", "tha_pos_new_gsm", coord_in="GSE", coord_out="GSM")
+@b gse2gsm($jl_tha_pos_gse), irbem_cotrans($jl_tha_pos_gse', "GSE", "GSM"), pyspedas.cotrans("tha_pos_gse", "tha_pos_new_gsm", coord_in="GSE", coord_out="GSM")
 ```
