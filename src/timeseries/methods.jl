@@ -1,21 +1,34 @@
-function tmean(x; dims=timedim(x))
-    nanmean(x; dims)
+function tstat(f, x::AbstractDimVector; query = TimeDim)
+    if dimnum(x, query) == 1
+        f(x)
+    else
+        @error "x is not a vector along the $query dimension"
+    end
 end
 
-function tmedian(x; dims=timedim(x))
-    nanmedian(x; dims)
-end
+tstat(f, x; query = TimeDim) = f(x; dim = dimnum(x, query))
+
+"""
+    tmean(x; query=TimeDim)
+
+Calculate the mean of `x` along the `query` dimension (default: `TimeDim`).
+
+It returns a value if `x` is a vector along the `query` dimension, otherwise returns a `DimArray` with the specified dimension dropped.
+"""
+tmean(x; query = TimeDim) = tstat(nanmean, x; query)
+
+tmedian(x; query = TimeDim) = tstat(nanmedian, x; query)
 
 """
     tsubtract(x, f=nanmedian; dims=timedim(x))
 
 Subtract a statistic (default function `f`: `nanmedian`) along dimensions (default: time dimension) from `x`.
 """
-function tsubtract(x, f=nanmedian; dims=timedim(x))
-    x .- f(parent(x); dims=dimnum(x, dims))
+function tsubtract(x, f = nanmedian; dims = timedim(x))
+    x .- f(parent(x); dims = dimnum(x, dims))
 end
 
-function tnorm(x; dims=TimeDim)
+function tnorm(x; dims = TimeDim)
     norm.(eachslice(x; dims))
 end
 
@@ -33,23 +46,27 @@ function proj(a, b)
     return dot(a, b̂) * b̂
 end
 
-"""Scalar projection"""
+"""
+Scalar projection
+"""
 function sproj(a, b)
     return dot(a, b) / norm(b)
 end
 
-function tsproj(a, b; dims=TimeDim)
+function tsproj(a, b; dims = TimeDim)
     sproj.(eachslice(a; dims), eachslice(b; dims))
 end
 
-function tproj(a, b; dims=TimeDim)
+function tproj(a, b; dims = TimeDim)
     proj.(eachslice(a; dims), eachslice(b; dims))
 end
 
-"""Vector rejection"""
+"""
+Vector rejection
+"""
 oproj(a, b) = a - proj(a, b)
 
-function toproj(a, b; dims=TimeDim)
+function toproj(a, b; dims = TimeDim)
     res = oproj.(eachslice(a; dims), eachslice(b; dims))
     tstack(res)
 end
@@ -60,10 +77,11 @@ end
 Compute the cross product of two (arrays of) vectors along the `dims` dimension.
 
 References:
-- https://docs.xarray.dev/en/stable/generated/xarray.cross.html
+
+  - https://docs.xarray.dev/en/stable/generated/xarray.cross.html
 """
-function tcross(x, y; dims=TimeDim, stack=nothing)
-    stack = @something stack (ndims(x) == 2)
+function tcross(x, y; dims = TimeDim, stack = nothing)
+    stack = @something stack (ndims(x)==2)
     res = cross.(eachslice(x; dims), eachslice(y; dims))
     stack ? tstack(res) : res
 end
@@ -73,19 +91,21 @@ end
 
 Dot product of two arrays `x` and `y` along the `dims` dimension.
 """
-function tdot(x, y; dims=TimeDim)
+function tdot(x, y; dims = TimeDim)
     dot.(eachslice(x; dims), eachslice(y; dims))
 end
 
-norm_combine(x; dims=1) = cat(x, norm.(eachslice(x; dims)); dims=setdiff(1:ndims(x), dims))
+function norm_combine(x; dims = 1)
+    cat(x, norm.(eachslice(x; dims)); dims = setdiff(1:ndims(x), dims))
+end
 
 """
     tnorm_combine(x; dims=timedim(x), name=:magnitude)
 
 Calculate the norm of each slice along `query` dimension and combine it with the original components.
 """
-function tnorm_combine(x; dims=timedim(x), name=:magnitude)
-    data = norm_combine(parent(x); dims=dimnum(x, dims))
+function tnorm_combine(x; dims = timedim(x), name = :magnitude)
+    data = norm_combine(parent(x); dims = dimnum(x, dims))
 
     # Replace the original dimension with our new one that includes the magnitude
     odim = otherdims(x, dims) |> only
@@ -94,7 +114,6 @@ function tnorm_combine(x; dims=timedim(x), name=:magnitude)
     new_dims = map(d -> d isa odimType ? new_odim : d, DD.dims(x))
     return rebuild(x, data, new_dims)
 end
-
 
 for f in (:tsubtract,)
     @eval $f(args...; kwargs...) = x -> $f(x, args...; kwargs...)
