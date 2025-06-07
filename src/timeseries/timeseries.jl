@@ -3,12 +3,14 @@ export tclip, tclips, tview, tviews, tmask, tmask!, tsort, tshift
 # Linear Algebra
 export proj, sproj, oproj
 export tdot, tcross, tnorm, tproj, tsproj, toproj
+export tgroupby
 # Statistics
 export tmean, tmedian
 # Derivatives
 export tderiv, tsubtract
 
 include("operations.jl")
+include("groupby.jl")
 include("reduce.jl")
 include("stats.jl")
 include("methods.jl")
