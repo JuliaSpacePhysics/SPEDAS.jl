@@ -30,9 +30,6 @@ function MakieCore.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys:
     return (curves,)
 end
 
-MakieCore.convert_arguments(T::Type{<:LinesPlot}, A::AbstractArray{<:Number}, args...) =
-    plot2spec(T, A, args...)
-
 """Convert the vector of vectors into a single vector of curves"""
 MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::Tuple) = reduce(vcat, convert_arguments.(T, ys))
 MakieCore.convert_arguments(T::Type{<:LinesPlot}, ys::AbstractVector{<:AbstractArray}) = reduce(vcat, convert_arguments.(T, ys))

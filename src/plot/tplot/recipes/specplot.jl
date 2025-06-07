@@ -21,9 +21,6 @@ function specplot!(ax::Axis, ta; labels = labels(ta), verbose = true, kwargs...)
     return heatmap!(ax, makie_x(ta), spectrogram_y_values(ta), ta.data; heatmap_attributes(ta; kwargs...)...)
 end
 
-MakieCore.convert_arguments(T::Type{<:SpecPlot}, A::AbstractArray{<:Number}, args...) =
-    plot2spec(T, A, args...)
-
 function plot2spec(::Type{<:SpecPlot}, da; kwargs...)
     x = makie_x(da)
     y = spectrogram_y_values(da)

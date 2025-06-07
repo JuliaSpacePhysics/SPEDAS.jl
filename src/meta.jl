@@ -79,7 +79,7 @@ function isspectrogram(ta::AbstractDimArray; threshold=5)
     if isnothing(m)
         size(ta, 2) >= threshold
     else
-        m == "spectrogram"
+        m == "spectrogram" || m == "spectral"
     end
 end
 isspectrogram(ta) = false

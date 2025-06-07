@@ -34,7 +34,7 @@ Transforms the arguments to appropriate types and calls the plotting function.
 Dispatches to appropriate implementation based on the plotting trait of the transformed arguments.
 """
 function tplot_panel(gp, data, args...; transform=transform_pipeline, kwargs...)
-    transformed = transform(data)
+    transformed = transform(data, args...)
     pf = plotfunc(transformed)
     pf(gp, transformed, args...; kwargs...)
 end
