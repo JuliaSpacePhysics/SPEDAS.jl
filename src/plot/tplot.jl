@@ -18,7 +18,6 @@ export transform, transform_speasy
 export plot_attributes
 
 include("tplot/makie.jl")
-include("attributes.jl")
 include("types.jl")
 include("tplot/transform.jl")
 include("tplot/core.jl")
@@ -31,6 +30,7 @@ include("tplot/recipes/multiplot.jl")
 include("tplot/recipes/panelplot.jl")
 include("tplot/recipes/specplot.jl")
 include("tplot/interactive.jl")
+include("attributes.jl")
 include("methods.jl")
 include("utils.jl")
 include("tplot/ext/DimensionalDataExt.jl")
