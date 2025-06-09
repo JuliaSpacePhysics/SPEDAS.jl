@@ -15,6 +15,24 @@ function set_if_equal!(attrs, key, values; default=nothing)
     set_if_valid!(attrs, val, key)
 end
 
+
+function intersect_dicts(dicts)
+    isempty(dicts) && return Dict()
+    length(dicts) == 1 && return first(dicts)
+    
+    # Start with all keys from the first dict
+    common_dict = Dict{Any, Any}()
+    first_dict = first(dicts)
+    
+    for (key, value) in first_dict
+        if all(get(dict, key, nothing) == value for dict in dicts[2:end])
+            common_dict[key] = value
+        end
+    end
+
+    return common_dict
+end
+
 _merge(x, args...) = merge(x, args...)
 _merge(x::Dict, y::NamedTuple) = merge(x, Dict(pairs(y)))
 

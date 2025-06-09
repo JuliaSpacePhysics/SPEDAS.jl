@@ -19,6 +19,7 @@ ulabel(l, u::String) = ulabel(l, uparse(u))
 _label(x::AbstractDimArray) = DD.label(x)
 _label(x) = name(x)
 
+format_unit(u::Unitful.Unitlike) = string(u)
 format_unit(ta) = prioritized_get(meta(ta), (:unit, :units, "UNITS", "units"), "")
 format_unit(ta::AbstractArray{Q}) where {Q<:Quantity} = string(unit(Q))
 

@@ -14,10 +14,7 @@ function functionplot(gp, f, tmin, tmax; axis = (;), add_title = DEFAULTS.add_ti
     # get a sample data to determine the attributes and plot types
     data = f(tmin, tmax)
     m = @something meta(f) Dict()
-    attrs = merge(
-        axis_attributes(data; add_title),
-        convert(Dict, filter_by_fieldnames(Axis, m)),
-    )
+    attrs = axis_attributes(f, tmin, tmax; data, add_title)
     ax = Axis(gp; attrs..., axis...)
     plot = _merge(plottype_attributes(m), plot)
     p = functionplot!(ax, f, tmin, tmax; data, plot, kwargs...)
