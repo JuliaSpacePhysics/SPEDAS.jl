@@ -32,7 +32,6 @@ export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange, common_timerange
 export norm_combine, tnorm_combine
 export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
-export find_spikes, replace_outliers
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
@@ -53,7 +52,6 @@ include("types.jl")
 include("mhd.jl")
 include("timeseries/timeseries.jl")
 include("timeseries/spectrum.jl")
-include("timeseries/spike.jl")
 include("timeseries/gap.jl")
 include("utils.jl")
 include("utils/timerange.jl")

@@ -9,12 +9,16 @@ export tmean, tmedian
 # Derivatives
 export tderiv, tsubtract
 
+export find_outliers, replace_outliers!, replace_outliers
+
 include("operations.jl")
 include("groupby.jl")
 include("reduce.jl")
 include("stats.jl")
 include("methods.jl")
 include("lazyoperations.jl")
+include("outliers.jl")
+include("utils.jl")
 
 """
     tderiv(data, times; dims = 1)
