@@ -43,7 +43,7 @@ using SPEDAS
 using CairoMakie
 using Test
 
-y_remove_outliers = replace_outliers(y_spikey, detector=find_spikes)
+y_remove_outliers = replace_outliers(y_spikey)
 n_removed = sum(isnan.(y_remove_outliers))
 @test n_removed == n_spikes
 
@@ -56,6 +56,7 @@ end
 ```
 
 ```@docs
-find_spikes
+find_outliers
+replace_outliers!
 replace_outliers
 ```
