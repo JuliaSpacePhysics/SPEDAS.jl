@@ -13,7 +13,8 @@ mean_relerr(itr) = stat_relerr(itr, mean)
 
 f2time(x, t0) = string(Millisecond(round(x)) + t0)
 
-function timedim(x, query=TimeDim)
+function timedim(x, query=nothing)
+    query = something(query, TimeDim)
     qdim = dims(x, query)
     isnothing(qdim) ? dims(x, 1) : qdim
 end
@@ -23,7 +24,7 @@ function timedimtype(x; query=TimeDim)
 end
 
 times(x) = SpaceDataModel.times(x)
-times(x::AbstractDimArray; query=TimeDim) = lookup(timedim(x, query))
+times(x::AbstractDimArray, args...) = lookup(timedim(x, args...))
 ys(ta::DimArray) = ta.data
 """permutedims is needed for `series` in Makie"""
 ys(ta::DimMatrix) = permutedims(ta.data)

@@ -36,12 +36,13 @@ TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulLatexify = "45397f5d-5981-4c77-b2b3-fc36d6e9b728"
+VectorizedStatistics = "3b853605-1c98-4422-8364-4bd93ee0529e"
 
 [weakdeps]
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
 
-[sources.GeoCotrans]
-path = "./lib/GeoCotrans"
+[sources]
+GeoCotrans = { path = "./lib/GeoCotrans" }
 
 [extensions]
 SPEDASSpeasyExt = "Speasy"
