@@ -39,6 +39,6 @@ Setup the panel on a position and plot multiple time series on it
 """
 function multiplot(gp, tas, args...; axis=(;), add_title=DEFAULTS.add_title, kwargs...)
     ax = Axis(gp; axis_attributes(tas, args...; add_title)..., axis...)
-    plots = multiplot!(ax, tas, args...; kwargs...)
+    plots = multiplot!(ax, values(tas), args...; kwargs...)
     PanelAxesPlots(gp, AxisPlots(ax, plots))
 end

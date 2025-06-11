@@ -11,10 +11,19 @@ function prioritized_get(c, keys, default=nothing)
     all(isnothing, values) ? default : something(values...)
 end
 
+issymbol(x) = false
+issymbol(x::Symbol) = true
+
+function prioritized_get(c::NamedTuple, keys, default=nothing)
+    for k in filter(issymbol, keys)
+        hasproperty(c, k) && return getfield(c, k)
+    end
+    return default
+end
+
 function ulabel(l, u; multiline=false)
     multiline ? "$(l)\n($(u))" : "$(l) ($(u))"
 end
-ulabel(l, u::String) = ulabel(l, uparse(u))
 
 _label(x::AbstractDimArray) = DD.label(x)
 _label(x) = name(x)
@@ -45,9 +54,10 @@ ylabel(ta) = ""
 ylabel(x::AbstractVector) = format_unit(x)
 function ylabel(da::Union{AbstractDimArray,AbstractDataVariable}; multiline=true)
     default_name = isspectrogram(da) ? _label(dims(da, 2)) : _label(da)
-    name = prioritized_get(meta(da), ylabel_sources, default_name)
-    units = isspectrogram(da) ? prioritized_get(meta(da), yunit_sources, "") : format_unit(da)
-    units == "" ? String(name) : ulabel(name, units; multiline)
+    m = meta(da)
+    name = prioritized_get(m, ylabel_sources, default_name)
+    ustr = isspectrogram(da) ? prioritized_get(m, yunit_sources, "") : format_unit(da)
+    ustr == "" ? name : ulabel(name, ustr; multiline)
 end
 
 function clabel(ta::AbstractDimArray; multiline=true)
@@ -65,7 +75,7 @@ end
 
 colorrange(x) = prioritized_get(meta(x), colorrange_sources)
 
-label(ta) = prioritized_get(meta(ta), ylabel_sources, _label(ta))
+label(ta) = prioritized_get(meta(ta), (:long_name, "long_name", :label, "label", "LABLAXIS"), _label(ta))
 labels(x) = Nothing[]
 function labels(ta::Union{AbstractDimArray,AbstractDataVariable})
     lbls = prioritized_get(meta(ta), labels_sources, string.(dims(ta, 2).val))

@@ -1,6 +1,7 @@
 import ..SPEDAS: xlabel, ylabel, title, format_unit, isspectrogram
 import ..SPEDAS: scale, yscale, colorrange
 import SpaceDataModel: NoMetadata
+import DimensionalData
 
 uunit(x) = unit(x)
 uunit(::String) = nothing
@@ -17,6 +18,7 @@ filter_by_fieldnames(T::Type, d::Dict) = filterkeys(∈(fieldnames(T)), d)
 
 filterkeys(f, ::NoMetadata) = Dict()
 filter_by_fieldnames(T::Type, ::NoMetadata) = Dict()
+filter_by_fieldnames(T::Type, ::DimensionalData.NoMetadata) = Dict()
 
 
 function set_axis_attributes!(attrs, x; add_title = false)
@@ -28,14 +30,21 @@ function set_axis_attributes!(attrs, x; add_title = false)
     return attrs
 end
 
-function _axis_attributes(::Type{LinesPlot}, ta; add_title = false, kwargs...)
+function _axis_attributes(T, ta, args...; add_title = false, kwargs...)
     attrs = Dict()
     attrs[:yunit] = uunit(ta)
     set_axis_attributes!(attrs, ta; add_title)
     return merge!(attrs, kwargs)
 end
 
-function _axis_attributes(::Type{SpecPlot}, ta; add_title = false, kwargs...)
+function _axis_attributes(::Type{LinesPlot}, ta, args...; add_title = false, kwargs...)
+    attrs = Dict()
+    attrs[:yunit] = uunit(ta)
+    set_axis_attributes!(attrs, ta; add_title)
+    return merge!(attrs, kwargs)
+end
+
+function _axis_attributes(::Type{SpecPlot}, ta, args...; add_title = false, kwargs...)
     attrs = Dict()
     y_values = spectrogram_y_values(ta)
     attrs[:yunit] = uunit(y_values)
@@ -53,7 +62,7 @@ function _axis_attributes(::Type{FunctionPlot}, f, args...; data = nothing, kw..
 end
 
 function _axis_attributes(::Type{MultiPlot}, fs, args...; kw...)
-    attr_dicts = _axis_attributes.(plottype.(fs), fs, args...; kw...)
+    attr_dicts = _axis_attributes.(plottype.(values(fs)), values(fs), args...; kw...)
     return merge!(
         intersect_dicts(attr_dicts),
         filter_by_fieldnames(Axis, meta(fs)),
