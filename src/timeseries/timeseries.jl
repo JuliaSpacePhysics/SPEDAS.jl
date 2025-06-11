@@ -1,7 +1,7 @@
 using VectorizedStatistics
 
 # Time operations
-export tclip, tclips, tview, tviews, tmask, tmask!, tsort, tshift
+export tselect, tclip, tclips, tview, tviews, tmask, tmask!, tsort, tshift
 # Linear Algebra
 export proj, sproj, oproj
 export tdot, tcross, tnorm, tproj, tsproj, toproj
@@ -27,7 +27,7 @@ include("utils.jl")
 
 Compute the time derivative of `data` with respect to `times`.
 """
-function tderiv(data::AbstractArray{T,N}, times; dims=1) where {T,N}
+function tderiv(data::AbstractArray{T, N}, times; dims = 1) where {T, N}
     # return diff(data; dims) ./ diff(times) # this allocates and is slow
     Base.require_one_based_indexing(data)
     1 <= dims <= N || throw(ArgumentError("dimension $dims out of range (1:$N)"))
@@ -48,16 +48,16 @@ Compute the time derivative of `data`.
 
 See also: [deriv_data - PySPEDAS](https://pyspedas.readthedocs.io/en/latest/_modules/pyspedas/analysis/deriv_data.html)
 """
-tderiv(data; dims=Ti) = diff(data; dims) ./ diff(times(data))
+tderiv(data; dims = Ti) = diff(data; dims) ./ diff(times(data))
 
-function resolution(times; tol=2, f=stat_relerr(median))
+function resolution(times; tol = 2, f = stat_relerr(median))
     dt = diff(times)
     dt0 = eltype(dt)(1)
     dt_m, relerr = f(dt ./ dt0)
     if relerr > exp10(-tol - 1)
         @warn "Time resolution is is not approximately constant (relerr ≈ $relerr)"
     end
-    round(Integer, dt_m) * dt0
+    return round(Integer, dt_m) * dt0
 end
 
 resolution(da::AbstractDimType; kwargs...) =
@@ -80,13 +80,13 @@ The size of the sliding `window` can be either:
 - `suffix="_smoothed"`: Suffix to append to the variable name in output
 - `kwargs...`: Additional arguments passed to `RollingWindowArrays.rolling`
 """
-smooth(da::AbstractDimArray, window::Quantity; kwargs...) = smooth(da, Integer(div(window, resolution(da))); kwargs...)
+smooth(da, window; kwargs...) = smooth(da, Integer(div(window, resolution(da))); kwargs...)
 
-function smooth(da::AbstractDimArray, window::Integer; dims=Ti, suffix="_smoothed", kwargs...)
+function smooth(da, window::Integer; dims = Ti, suffix = "_smoothed", kwargs...)
     new_da = mapslices(da; dims) do slice
-        mean.(RollingWindowArrays.rolling(slice, window; kwargs...))
+        nanmean.(RollingWindowArrays.rolling(slice, window; kwargs...))
     end
-    rebuild(new_da; name=Symbol(da.name, suffix))
+    return rebuild(new_da; name = Symbol(da.name, suffix))
 end
 
 """
@@ -102,28 +102,41 @@ References
 Issues
 - DSP.jl and Unitful.jl: https://github.com/JuliaDSP/DSP.jl/issues/431
 """
-function tfilter(da::AbstractDimArray, Wn1, Wn2=0.999 * samplingrate(da) / 2; designmethod=Butterworth(2))
+function tfilter(da::AbstractDimArray, Wn1, Wn2 = 0.999 * samplingrate(da) / 2; designmethod = Butterworth(2))
     fs = samplingrate(da)
     Wn1, Wn2, fs = (Wn1, Wn2, fs) ./ 1u"Hz" .|> NoUnits
     f = digitalfilter(Bandpass(Wn1, Wn2; fs), designmethod)
     res = filtfilt(f, ustrip(parent(da)))
-    rebuild(da; data=res * (da |> eltype |> unit))
+    return rebuild(da; data = res * (da |> eltype |> unit))
 end
 
 
 """
-    dropna(da::DimArray, query)
+    dropna(A, query)
 
 Remove slices containing NaN values along dimensions other than `query`.
 """
-function dropna(da::DimArray, query)
-    valid_idx = vec(all(!isnan, da; dims=otherdims(da, query)))
-    da[query(valid_idx)]
+function dropna(A, query = nothing)
+    query = something(query, TimeDim)
+    Dim, T = dimtype_eltype(A, query)
+    valid_idx = vec(all(!isnan, A; dims = otherdims(A, query)))
+    return A[Dim(valid_idx)]
 end
 
-dropna(da::DimArray; query=Ti) = dropna(da, query)
+function dropna(ds::DimStack, query = nothing)
+    query = something(query, TimeDim)
+    Dim, T = dimtype_eltype(ds, query)
+    dims = otherdims(ds, query)
 
-function rectify(ts::DimensionalData.Dimension; tol=4, atol=nothing)
+    valid_idx = mapreduce(.*, values(ds)) do A
+        vec(all(!isnan, A; dims))
+    end
+
+    return ds[Dim(valid_idx)]
+end
+
+
+function rectify(ts::DimensionalData.Dimension; tol = 4, atol = nothing)
     u = unit(eltype(ts))
     ts = collect(ts)
     stp = ts |> diff |> mean
@@ -131,26 +144,26 @@ function rectify(ts::DimensionalData.Dimension; tol=4, atol=nothing)
     tol = Int(tol - round(log10(stp |> ustripall)))
 
     if isnothing(atol) && ustripall(err) > exp10(-tol - 1)
-        @warn "Step $stp is not approximately constant (err=$err, tol=$(exp10(-tol-1))), skipping rectification"
+        @warn "Step $stp is not approximately constant (err=$err, tol=$(exp10(-tol - 1))), skipping rectification"
     else
         if !isnothing(atol)
             tol = atol
         end
-        stp = u == NoUnits ? round(stp; digits=tol) : round(u, stp; digits=tol)
-        t0, t1 = u == NoUnits ? round.(extrema(ts); digits=tol) :
-                 round.(u, extrema(ts); digits=tol)
-        ts = range(start=t0, step=stp, length=length(ts))
+        stp = u == NoUnits ? round(stp; digits = tol) : round(u, stp; digits = tol)
+        t0, t1 = u == NoUnits ? round.(extrema(ts); digits = tol) :
+            round.(u, extrema(ts); digits = tol)
+        ts = range(start = t0, step = stp, length = length(ts))
     end
     return ts
 end
 
 """Rectify the time step of a `DimArray` to be uniform."""
-function rectify_datetime(da; tol=2, kwargs...)
+function rectify_datetime(da; tol = 2, kwargs...)
     times = dims(da, Ti)
     t0 = times[1]
     dtime = Quantity.(times.val .- t0)
     new_times = rectify(Ti(dtime); tol)
-    set(da, Ti => new_times .+ t0)
+    return set(da, Ti => new_times .+ t0)
 end
 
 """
@@ -158,13 +171,13 @@ end
 
 Splits up data along dimension `dim`.
 """
-function tsplit(da::AbstractDimArray, dim=Ti; new_names=labels(da))
+function tsplit(da::AbstractDimArray, dim = Ti; new_names = labels(da))
     odims = otherdims(da, dim)
-    rows = eachslice(da; dims=odims)
+    rows = eachslice(da; dims = odims)
     das = map(rows, new_names) do row, name
-        rename(modify_meta(row; long_name=name), name)
+        rename(modify_meta(row; long_name = name), name)
     end
-    DimStack(das...)
+    return DimStack(das...)
 end
 
 for f in (:smooth, :tfilter)

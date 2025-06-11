@@ -62,6 +62,20 @@ function tmask!(da, its::AbstractArray; kw...)
 end
 
 """
+    tselect(A, t, δt)
+
+Select the value of `A` closest to time `t` within the time range `[t-δt, t+δt]`.
+
+Similar to `DimensionalData.Dimensions.Lookups.At` but choose the closest value and return `missing` if the time range is empty.
+"""
+function tselect(A, t, δt; query=nothing)
+    query = something(query, TimeDim)
+    Dim, T = dimtype_eltype(A, query)
+    tmp = @views A[Dim(T(t - δt) .. T(t + δt))]
+    length(tmp) == 0 ? missing : tmp[Dim(Near(T(t)))]
+end
+
+"""
     tmask(da, args...; kwargs...)
 
 Non-mutable version of `tmask!`. See also [`tmask!`](@ref).

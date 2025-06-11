@@ -36,6 +36,28 @@
     @test_call tview(result, 1.0, 2.0)
 end
 
+@testitem "tselect" begin
+    using DimensionalData
+
+    # Test with numeric time dimension
+    times = [1.0, 3.0, 5.0, 7.0, 9.0]
+    values = [10.0, 20.0, 30.0, 40.0, 50.0]
+    da = DimArray(values, (Ti(times),))
+
+    # Test exact match
+    @test tselect(da, 5.0, 0.5) == tselect(da, 5.2, 0.5) == tselect(da, 4.8, 0.5) == 30.0
+    # Test closest match at edge of range
+    @test tselect(da, 5.5, 0.5) == tselect(da, 4.5, 0.5) == 30.0
+
+    # Test no match within range
+    @test ismissing(tselect(da, 2.0, 0.5))
+    @test ismissing(tselect(da, 8.0, 0.5))
+
+    using JET
+    @test_opt tselect(da, 5.0, 0.5)
+    @test_call tselect(da, 5.0, 0.5)
+end
+
 @testitem "timerange" begin
     using Chairmarks
     using Dates
