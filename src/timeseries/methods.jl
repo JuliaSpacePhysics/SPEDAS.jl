@@ -1,36 +1,15 @@
-function tstat(f, x::AbstractDimVector; query = TimeDim)
-    if dimnum(x, query) == 1
-        f(x)
-    else
-        @error "x is not a vector along the $query dimension"
-    end
-end
-
-tstat(f, x; query = TimeDim) = f(x; dim = dimnum(x, query))
-
-"""
-    tmean(x; query=TimeDim)
-
-Calculate the mean of `x` along the `query` dimension (default: `TimeDim`).
-
-It returns a value if `x` is a vector along the `query` dimension, otherwise returns a `DimArray` with the specified dimension dropped.
-"""
-tmean(x; query = TimeDim) = tstat(nanmean, x; query)
-
-tmedian(x; query = TimeDim) = tstat(nanmedian, x; query)
-
 """
     tsubtract(x, f=nanmedian; dims=timedim(x))
 
 Subtract a statistic (default function `f`: `nanmedian`) along dimensions (default: time dimension) from `x`.
 """
 function tsubtract(x, f = nanmedian; dims = timedim(x))
-    x .- f(parent(x); dims = dimnum(x, dims))
+    return x .- f(parent(x); dims = dimnum(x, dims))
 end
 
 function tnorm(x; dims = nothing)
     dims = something(dims, TimeDim)
-    norm.(eachslice(x; dims))
+    return norm.(eachslice(x; dims))
 end
 
 """
@@ -55,11 +34,11 @@ function sproj(a, b)
 end
 
 function tsproj(a, b; dims = TimeDim)
-    sproj.(eachslice(a; dims), eachslice(b; dims))
+    return sproj.(eachslice(a; dims), eachslice(b; dims))
 end
 
 function tproj(a, b; dims = TimeDim)
-    proj.(eachslice(a; dims), eachslice(b; dims))
+    return proj.(eachslice(a; dims), eachslice(b; dims))
 end
 
 """
@@ -69,7 +48,7 @@ oproj(a, b) = a - proj(a, b)
 
 function toproj(a, b; dims = TimeDim)
     res = oproj.(eachslice(a; dims), eachslice(b; dims))
-    tstack(res)
+    return tstack(res)
 end
 
 """
@@ -82,9 +61,9 @@ References:
   - https://docs.xarray.dev/en/stable/generated/xarray.cross.html
 """
 function tcross(x, y; dims = TimeDim, stack = nothing)
-    stack = @something stack (ndims(x)==2)
+    stack = @something stack (ndims(x) == 2)
     res = cross.(eachslice(x; dims), eachslice(y; dims))
-    stack ? tstack(res) : res
+    return stack ? tstack(res) : res
 end
 
 """
@@ -93,11 +72,11 @@ end
 Dot product of two arrays `x` and `y` along the `dims` dimension.
 """
 function tdot(x, y; dims = TimeDim)
-    dot.(eachslice(x; dims), eachslice(y; dims))
+    return dot.(eachslice(x; dims), eachslice(y; dims))
 end
 
 function norm_combine(x; dims = 1)
-    cat(x, norm.(eachslice(x; dims)); dims = setdiff(1:ndims(x), dims))
+    return cat(x, norm.(eachslice(x; dims)); dims = setdiff(1:ndims(x), dims))
 end
 
 """

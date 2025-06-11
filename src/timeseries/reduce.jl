@@ -1,19 +1,16 @@
-using VectorizedStatistics
-
 tmin(x) = eltype(x) <: AbstractTime ? minimum(x) : error("Element type must be of type Dates.AbstractTime")
 tmax(x) = eltype(x) <: AbstractTime ? maximum(x) : error("Element type must be of type Dates.AbstractTime")
 tmin(x::AbstractDimArray; query=TimeDim) = tmin(times(x; query))
 tmax(x::AbstractDimArray; query=TimeDim) = tmax(times(x; query))
 
 
-function timerange(times)
-    if eltype(times) == DateTime
-        # 4 times faster
-        reinterpret.(DateTime, vextrema(reinterpret(Int, times)))
-    else
-        extrema(times)
-    end
+timerange(times) = _extrema(times)
+
+_extrema(x) = extrema(x)
+function _extrema(x::Array{T}) where {T <: Union{Date, DateTime, Int}}
+    return reinterpret.(T, vextrema(reinterpret(Int, x)))
 end
+
 timerange(times::DimensionalData.Sampled) = timerange(parent(times))
 timerange(times::Dimension) = timerange(parent(times))
 timerange(x::AbstractDimArray) = timerange(times(x))
