@@ -31,7 +31,7 @@ using SpaceDataModel: meta, name
 export dropna, rectify_datetime, resolution, samplingrate, smooth, tsplit
 export timerange, TimeRange, common_timerange
 export norm_combine, tnorm_combine
-export tstack, tinterp, tinterp_nans, resample, tresample, tfilter
+export tstack, tinterp, tinterp_nans, tsync,resample, tresample, tfilter
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
