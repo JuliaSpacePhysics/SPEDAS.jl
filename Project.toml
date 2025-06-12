@@ -39,8 +39,8 @@ UnitfulLatexify = "45397f5d-5981-4c77-b2b3-fc36d6e9b728"
 [weakdeps]
 Speasy = "09b745ad-c67d-442f-94a6-c7f4d1e4d861"
 
-[sources]
-GeoCotrans = { path = "./lib/GeoCotrans" }
+[sources.GeoCotrans]
+path = "./lib/GeoCotrans"
 
 [extensions]
 SPEDASSpeasyExt = "Speasy"
@@ -62,7 +62,7 @@ InverseFunctions = "0.1"
 Latexify = "0.16"
 LinearAlgebra = "1"
 Makie = "0.21, 0.22"
-MakieCore = "0.9"
+MakieCore = "0.9, 0.10"
 NaNStatistics = "0.6"
 NamedTupleTools = "0.14.3"
 NanoDates = "1"
