@@ -1,7 +1,20 @@
 using DimensionalData.Lookups
+using HybridArrays
 
 const timeDimType = (DimensionalData.TimeDim, Dim{:time})
 
+function hybridify(A, dims)
+    sizes = ntuple(ndims(A)) do i
+        i in dims ? StaticArrays.Dynamic() : size(A, i)
+    end
+    HybridArray{Tuple{sizes...}}(A)
+end
+
+function hybridify(A; query=nothing)
+    query = something(query, TimeDim)
+    dim  = dimnum(A, query)
+    rebuild(A, hybridify(parent(A), dim))
+end
 
 function standardize(x::AbstractDimArray; floatify=true)
     # Convert integer values to floats

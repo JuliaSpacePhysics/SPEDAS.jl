@@ -27,3 +27,30 @@
     @test all(dims(res, Ti) .== t2)
     @test parent(res) ≈ [1.25 4.25; 2.75 5.75]
 end
+
+@testitem "tsync function" begin
+    using Dates, DimensionalData
+
+    a_sync, b_sync, c_sync = SPEDAS.workload_interp()
+
+    # Check that all synchronized arrays have the same time dimension
+    @test parent(dims(a_sync, Ti)) == parent(dims(b_sync, Ti)) == parent(dims(c_sync, Ti))
+
+    # Check that the time range is the intersection of all input arrays
+    @test dims(a_sync, Ti)[1] == DateTime(2020, 1, 2)
+    @test dims(a_sync, Ti)[end] == DateTime(2020, 1, 3)
+
+    # Check that values from the first and second array are preserved
+    @test a_sync == [2, 3]
+    @test b_sync == [10, 11]
+    # The values should be interpolated at DateTime(2020, 1, 2) and DateTime(2020, 1, 3)
+    expected_values = [
+        5.5 9;
+        6.5 11
+    ]
+    @test parent(c_sync) ≈ expected_values
+
+    using JET
+    @test_opt broken = true SPEDAS.workload_interp() # runtime dispatch
+    @test_call broken = true SPEDAS.workload_interp() # runtime dispatch
+end

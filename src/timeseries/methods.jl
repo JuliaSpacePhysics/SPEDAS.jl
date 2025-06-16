@@ -28,7 +28,8 @@ function tsubtract(x, f = nanmedian; dims = timedim(x))
     x .- f(parent(x); dims = dimnum(x, dims))
 end
 
-function tnorm(x; dims = TimeDim)
+function tnorm(x; dims = nothing)
+    dims = something(dims, TimeDim)
     norm.(eachslice(x; dims))
 end
 
