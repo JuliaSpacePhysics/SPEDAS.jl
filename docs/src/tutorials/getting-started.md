@@ -1,6 +1,12 @@
 # Quickstart
 
+We provide a few ways to load data, please see [Data](../explanations/data.md) for a detailed explanation of the data formats and retrieval methods.
+
 ## Get data with Speasy
+
+[Speasy.jl](https://github.com/SciQLop/Speasy.jl) provides functions to load data from main Space Physics WebServices (CDA,SSC,AMDA,..).
+
+It could be installed using `using Pkg; Pkg.add("Speasy")`.
 
 ```@example share
 using Speasy: get_data
@@ -18,6 +24,10 @@ tplot(da)
 
 ## Get data using Heliophysics Application Programmer's Interface (HAPI)
 
+[HAPIClient.jl](https://github.com/Beforerr/HAPIClient.jl) provides functions to load data from HAPI-compliant servers.
+
+It could be installed using `using Pkg; Pkg.add("HAPIClient")`.
+
 ```@example hapi
 using HAPIClient: get_data
 
@@ -33,6 +43,10 @@ tplot(da)
 ```
 
 ## Get data with PySPEDAS
+
+[PySPEDAS.jl](https://github.com/Beforerr/PySPEDAS.jl) provides a Julia interface to the [PySPEDAS](https://github.com/spedas/pyspedas) Python package, offering a similar API for Julia users to utilize the existing Python routines.
+
+It could be installed using `using Pkg; Pkg.add("https://github.com/Beforerr/PySPEDAS.jl")`.
 
 ```@example pyspedas
 using SPEDAS: tplot

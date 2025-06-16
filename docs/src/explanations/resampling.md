@@ -15,23 +15,9 @@ This function supports interpolation for both vector-like and matrix-like time s
 ```@docs
 tinterp
 tinterp_nans
+tsync
 resample
 tresample
-```
-
-### Basic Usage
-
-```julia
-using SPEDAS
-using Dates
-using DataInterpolations
-
-# Interpolate at a single time point
-val = tinterp(time_series, DateTime("2023-01-01T12:00:00"))
-
-# Interpolate at multiple time points
-new_times = DateTime("2023-01-01"):Hour(1):DateTime("2023-01-02")
-interpolated = tinterp(time_series, new_times; interp=CubicSpline)
 ```
 
 ## Utilities
