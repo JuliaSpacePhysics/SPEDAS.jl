@@ -8,14 +8,27 @@ using DataInterpolations
 """
     tinterp(A, t; interp=LinearInterpolation)
 
-Interpolate time series `A` at time point(s) `t`.
+Interpolate time series `A` at time point(s) `t` using `interp` (default: `LinearInterpolation`) method.
 Returns interpolated value for single time point or DimArray for multiple time points.
+
+See [`DataInterpolations.jl`](https://github.com/SciML/DataInterpolations.jl) for available interpolation methods.
+
+# Examples
+
+```julia
+# Interpolate at a single time point
+tinterp(time_series, DateTime("2023-01-01T12:00:00"))
+
+# Interpolate at multiple time points using cubic spline interpolation
+new_times = DateTime("2023-01-01"):Hour(1):DateTime("2023-01-02")
+tinterp(time_series, new_times; interp = CubicSpline)
+```
 """
-function tinterp(A, t; interp = nothing, query = nothing)
+function tinterp(A, t; interp = nothing, query = nothing, kws...)
     interp = something(interp, LinearInterpolation)
     query = something(query, TimeDim)
     dim = dimnum(A, query)
-    out = _tinterp(parent(A), parent(lookup(dims(A, dim))), t, interp, dim)
+    out = _tinterp(parent(A), parent(lookup(dims(A, dim))), t, interp, dim; kws...)
     return if t isa AbstractTime
         out
     else
@@ -36,23 +49,22 @@ struct Tinterp{F}
 end
 
 # workaround for `Time` type: https://github.com/SciML/DataInterpolations.jl/issues/436
-Tinterp(u, t, interp) = Tinterp(interp(u, t))
-Tinterp(u, t::AbstractArray{<:AbstractTime}, interp) = Tinterp(u, Dates.value.(t), interp)
+Tinterp(u, t, interp; kws...) = Tinterp(interp(u, t; kws...))
+Tinterp(u, t::AbstractArray{<:AbstractTime}, interp; kws...) = Tinterp(u, Dates.value.(t), interp; kws...)
 
 (ti::Tinterp)(t) = ti.interp(t)
 (ti::Tinterp)(t::AbstractTime) = ti.interp(Dates.value(t))
 (ti::Tinterp)(t::AbstractArray{<:AbstractTime}) = @. ti.interp(Dates.value(t))
 
-function _tinterp(A::AbstractArray, t, ts, interp, dim)
+function _tinterp(A::AbstractArray, t, ts, interp, dim; kws...)
     u = eachslice(hybridify(A, dim); dims = dim) # hybridify to reduce memory allocationallocation
-    return stack(Tinterp(u, t, interp)(ts); dims = dim)
+    return stack(Tinterp(u, t, interp; kws...)(ts); dims = dim)
 end
 
-function _tinterp(u::AbstractVector, t, ts, interp, dim)
+function _tinterp(u::AbstractVector, t, ts, interp, dim; kws...)
     @assert dim == 1
     return Tinterp(u, t, interp)(ts)
 end
-
 
 """
     tsync(A, Bs...)
@@ -60,14 +72,16 @@ end
 Synchronize multiple time series to have the same time points.
 
 This function aligns the time series `Bs...` to match the time points of `A` by:
-1. Finding the common time range between all input time series
-2. Extracting the subset of `A` within this common range
-3. Interpolating each series in `Bs...` to match the time points of the subset of `A`
+
+ 1. Finding the common time range between all input time series
+ 2. Extracting the subset of `A` within this common range
+ 3. Interpolating each series in `Bs...` to match the time points of the subset of `A`
 
 Returns a tuple containing the synchronized time series, with the first element being
 the subset of `A` and subsequent elements being the interpolated versions of `Bs...`.
 
 # Examples
+
 ```julia
 A_sync, B_sync, C_sync = tsync(A, B, C)
 ```
@@ -79,7 +93,7 @@ See also: [`tinterp`](@ref), [`common_timerange`](@ref)
     @assert !isnothing(tr) "No common time range found"
     A_tsync = A[Ti(Between(tr...))]
     return ntuple(1 + length(Bs)) do i
-        i == 1 ? A_tsync : tinterp(Bs[i-1], A_tsync)
+        i == 1 ? A_tsync : tinterp(Bs[i - 1], A_tsync)
     end
 end
 
@@ -111,7 +125,6 @@ function interpolate_nans(u, t; interp = LinearInterpolation)
     end
 end
 
-
 function interpolate_nans(u, t::AbstractArray{<:AbstractTime}; kwargs...)
     return interpolate_nans(u, Dates.value.(t); kwargs...)
 end
@@ -136,14 +149,14 @@ end
 
 function workload_interp_setup(n = 4)
     # Create arrays with different time ranges
-    times1 = DateTime(2020, 1, 1) + Day.(0:n-1)
-    times2 = DateTime(2020, 1, 2) + Day.(0:n-1)
-    times3 = DateTime(2020, 1, 1, 12) + Day.(0:n-2)
+    times1 = DateTime(2020, 1, 1) + Day.(0:(n - 1))
+    times2 = DateTime(2020, 1, 2) + Day.(0:(n - 1))
+    times3 = DateTime(2020, 1, 1, 12) + Day.(0:(n - 2))
 
     # Create DimArrays with different data and time dimensions
     da1 = DimArray(1:n, (Ti(times1),))
-    da2 = DimArray(10:10+n-1, (Ti(times2),))
-    da3 = DimArray(hcat(5:5+n-2, 8:2:8+2n-4), (Ti(times3), Y([1, 2])))
+    da2 = DimArray(10:(10 + n - 1), (Ti(times2),))
+    da3 = DimArray(hcat(5:(5 + n - 2), 8:2:(8 + 2n - 4)), (Ti(times3), Y([1, 2])))
     return da1, da2, da3
 end
 
