@@ -10,11 +10,12 @@ function hybridify(A, dims)
     HybridArray{Tuple{sizes...}}(A)
 end
 
-function hybridify(A; query=nothing)
-    query = something(query, TimeDim)
-    dim  = dimnum(A, query)
+function hybridify(A::AbstractDimArray, dim)
     rebuild(A, hybridify(parent(A), dim))
 end
+
+hybridify(A; query=nothing) = 
+    hybridify(A, dimnum(A, something(query, TimeDim)))
 
 function standardize(x::AbstractDimArray; floatify=true)
     # Convert integer values to floats
@@ -24,6 +25,11 @@ function standardize(x::AbstractDimArray; floatify=true)
 end
 tdim(t) = Ti(t)
 tdim(t::DD.Dimension) = t
+
+function tvec(A::AbstractDimArray; query=nothing)
+    dim = timedim(A, query)
+    DimArray(vec(parent(A)), dim; metadata=meta(A), name=name(A))
+end
 
 """
     nt2ds(nt_arr, dim; fields=propertynames(first(nt_arr)))
@@ -67,9 +73,23 @@ function _new_metadata(meta, args::Pair...; kwargs...)
 end
 
 modify_meta!(da; kwargs...) = (da.metadata = _new_metadata(da.metadata; kwargs))
-modify_meta(da::AbstractDimArray, args...; kwargs...) = rebuild(da; metadata=_new_metadata(da.metadata, args...; kwargs...))
+function modify_meta(da::Union{AbstractDimArray,AbstractDimStack}, args...; kwargs...)
+    rebuild(da; metadata=_new_metadata(meta(da), args...; kwargs...))
+end
 modify_meta(args...; kwargs...) = da -> modify_meta(da, args...; kwargs...)
 
+# similar to DataAPI.metadata!
+function set_meta!(d::AbstractDict, args::Pair...; kwargs...)
+    for (k, v) in args
+        d[k] = v
+    end
+    merge!(d, kwargs)
+end
+
+set_meta!(x::AbstractDimArray, args...; kwargs...) = (set_meta!(meta(x), args...; kwargs...); x)
+set_meta!(args...; kwargs...) = x -> set_meta!(x, args...; kwargs...)
+const set_meta = modify_meta
+    
 """
     amap(f, a, b)
 
