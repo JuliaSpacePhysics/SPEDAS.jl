@@ -17,6 +17,7 @@ plottype(x::AbstractVector{<:Number}) = PanelPlot
 
 plottype(::AbstractVector) = MultiPlot
 plottype(::NamedTuple) = MultiPlot
+plottype(::Tuple) = MultiPlot
 plottype(::DualAxisData) = DualPlot
 plottype(::NTuple{2,Any}) = DualPlot
 plottype(::Function) = FunctionPlot
@@ -48,7 +49,7 @@ Transforms the arguments to appropriate types and calls the plotting function.
 Dispatches to appropriate implementation based on the plotting trait of the transformed arguments.
 """
 function tplot_panel!(ax::Axis, data, args...; kwargs...)
-    transformed = transform_pipeline(data)
+    transformed = transform_pipeline(data, args...)
     pf! = plotfunc!(transformed)
     pf!(ax, transformed, args...; kwargs...)
 end

@@ -2,6 +2,8 @@ import DimensionalData
 using DimensionalData: AbstractDimArray, AbstractDimVector, AbstractDimMatrix, AbstractDimStack
 using ..SPEDAS: times
 
+apply(A::AbstractDimStack, tmin, tmax) = tview(A, tmin, tmax)
+
 plottype(::AbstractDimVector) = LinesPlot
 plottype(::AbstractDimStack) = MultiPlot
 plottype(x::AbstractDimMatrix) = isspectrogram(x) ? SpecPlot : LinesPlot
@@ -31,6 +33,10 @@ function plot_attributes(ta::AbstractDimArray; add_title=false, axis=(;))
     attrs
 end
 
+plot2spec(ds::AbstractDimStack; kwargs...) =
+    map(values(ds)) do ds
+        plot2spec(ds; kwargs...)
+    end |> collect
 
 MakieCore.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimMatrix; kwargs...) = plot2spec(LinesPlot, da; kwargs...)
 MakieCore.convert_arguments(::Type{<:LinesPlot}, da::AbstractDimVector; kwargs...) = plot2spec(LinesPlot, da; kwargs...)

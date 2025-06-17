@@ -11,17 +11,17 @@ end
 
 MakieCore.conversion_trait(::Type{<:LinesPlot}) = NoDimConversion()
 
-function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels = labels(da))
+function plot2spec(::Type{<:LinesPlot}, da::AbstractMatrix; labels = labels(da), kws...)
     da = resample(da)
     x = makie_x(da)
     return map(enumerate(eachcol(parent(da)))) do (i, y)
-        S.Lines(x, y; label = get(labels, i, nothing))
+        S.Lines(x, y; label = get(labels, i, nothing), kws...)
     end
 end
 
-function plot2spec(::Type{<:LinesPlot}, da::AbstractVector; labels = nothing, label = nothing)
+function plot2spec(::Type{<:LinesPlot}, da::AbstractVector; labels = nothing, label = nothing, kws...)
     label = @something label labels to_value(SPEDAS.label(da))
-    return S.Lines(makie_x(da), parent(da); label)
+    return S.Lines(makie_x(da), parent(da); label, kws...)
 end
 
 function MakieCore.convert_arguments(::Type{<:LinesPlot}, x::AbstractVector, ys::AbstractMatrix)
@@ -51,8 +51,8 @@ end
 
 Plot a multivariate time series on a panel
 """
-function linesplot(gp::Drawable, ta; axis = (;), add_title = DEFAULTS.add_title, kwargs...)
+function linesplot(gp::Drawable, ta; axis = (;), add_title = DEFAULTS.add_title, plot = (;), kwargs...)
     ax = Axis(gp; axis_attributes(ta; add_title)..., axis...)
-    plots = linesplot!(ax, ta; kwargs...)
+    plots = linesplot!(ax, ta; plot..., kwargs...)
     return PanelAxesPlots(gp, AxisPlots(ax, plots))
 end

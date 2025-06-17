@@ -4,24 +4,24 @@
 
 
 @recipe PanelPlot begin
-    color = @inherit linecolor
     cycle = [:color]
     plotfunc = plot!
+    plot = (;)
 end
 
 # default fallback
 function Makie.plot!(p::PanelPlot{<:NTuple{N,Any}}) where {N}
     plotfunc = p.plotfunc[]
-    plotfunc(p, p[1:N]...; color=p.color)
+    plotfunc(p, p[1:N]...; to_value(p.plot)...)
 end
 
 function Makie.plot!(p::PanelPlot{<:Tuple{AbstractMatrix}})
     plotfunc = p.plotfunc[]
-    plotfunc(p, p[1])
+    plotfunc(p, p[1]; to_value(p.plot)...)
 end
 
 function Makie.plot!(p::PanelPlot{<:Tuple{AbstractVector{<:AbstractArray}}})
     vecofvec = p[1]
     plotfunc = p.plotfunc[]
-    plotfunc.(p, vecofvec[])
+    plotfunc.(p, vecofvec[]; to_value(p.plot)...)
 end
