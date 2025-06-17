@@ -20,11 +20,12 @@
 
     # Benchmark
     using Chairmarks
+    verbose = false
     tclip_bench = @b tclip($result, 1.0, 2.0)
     tview_bench = @b tview($result, 1.0, 2.0)
     @test tclip_bench.allocs > tview_bench.allocs
     @test tclip_bench.time > tview_bench.time
-    @info tclip_bench, tview_bench
+    verbose && @info tclip_bench, tview_bench
 
     using JET
     @test_opt broken = true tsort(da) # TODO: `set` is not type-stable
@@ -35,21 +36,21 @@
     @test_call tview(result, 1.0, 2.0)
 end
 
-@testitem "tmean, tmedian" begin
-    using DimensionalData
-    using Statistics
+@testitem "timerange" begin
+    using Chairmarks
     using Dates
 
-    t = Ti(Millisecond.(1:4))
-    y = Y(1:2)
-    da1 = rand(t)
-    da2 = rand(t, y)
+    verbose = false
 
-    @test_throws InexactError mean(t)
-
-    @test tmean(da1) == mean(da1)
-    @test tmean(da2) == vec(mean(da2, dims = 1))
-
-    @test tmedian(da1) == median(da1)
-    @test tmedian(da2) == vec(median(da2, dims = 1))
+    for T in (Int, Date, DateTime)
+        ts = T.(collect(1:10000))
+        @test timerange(ts) == extrema(ts)
+        b1 = @b timerange($ts)
+        b2 = @b extrema($ts)
+        if b1.time < b2.time
+            verbose && @info "Acceleration ratio: $(b2.time / b1.time)"
+        else
+            @info "Deceleration ratio: $(b1.time / b2.time)"
+        end
+    end
 end

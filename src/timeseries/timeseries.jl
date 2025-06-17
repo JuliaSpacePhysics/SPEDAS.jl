@@ -1,3 +1,5 @@
+using VectorizedStatistics
+
 # Time operations
 export tclip, tclips, tview, tviews, tmask, tmask!, tsort, tshift
 # Linear Algebra
@@ -5,7 +7,7 @@ export proj, sproj, oproj
 export tdot, tcross, tnorm, tproj, tsproj, toproj
 export tgroupby
 # Statistics
-export tmean, tmedian
+export tsum, tmean, tmedian, tstd, tsem, tvar
 # Derivatives
 export tderiv, tsubtract
 

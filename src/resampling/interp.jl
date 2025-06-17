@@ -42,7 +42,7 @@ end
 
 Interpolate `A` to times in `B`
 """
-tinterp(A, B::AbstractDimArray; kws...) = tinterp(A, parent(lookup(dims(B, Ti))); kws...)
+tinterp(A, B::AbstractDimArray; kws...) = tinterp(A, lookup(dims(B, Ti)); kws...)
 
 struct Tinterp{F}
     interp::F

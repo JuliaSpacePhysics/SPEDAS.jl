@@ -5,18 +5,16 @@
 """
 Group `x` into windows based on `every` and `period`.
 """
-function groupby_dynamic(
-        x::AbstractVector{T}, every, period = every, start_by = :window) where {T}
-    min = minimum(x)
-    max = maximum(x)
+function groupby_dynamic(x, every, period = every, start_by = :window)
+    min, max = timerange(x)
     group_idx = Vector{UnitRange{Int}}()
-    starts = Vector{T}()
-    current_start = ifelse(start_by == :window, floor(min, every), min)
+    starts = Vector{eltype(x)}()
+    current_start = ifelse(start_by == :window, min - mod(min, every), min)
     while current_start <= max
         window_end = current_start + period
         # Find indices of rows that fall in the current window using searchsorted for better performance
         start_idx = searchsortedfirst(x, current_start)
-        end_idx = searchsortedlast(x, window_end)
+        end_idx = searchsortedfirst(x, window_end) - 1
         if start_idx <= end_idx
             indices = start_idx:end_idx
             push!(group_idx, indices)
@@ -28,7 +26,7 @@ function groupby_dynamic(
 end
 
 function groupby_dynamic(x::Dimension, args...; kwargs...)
-    groupby_dynamic(parent(x.val), args...; kwargs...)
+    return groupby_dynamic(parent(lookup(x)), args...; kwargs...)
 end
 
 """
