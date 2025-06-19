@@ -14,18 +14,20 @@
 end
 
 
+"""
+    tstat(f, x, [dt]; dim = nothing)
+
+Calculate the statistic `f` of `x` along the `dim` dimension, optionally grouped by `dt`.
+
+See also: [`groupby_dynamic`](@ref)
+"""
+function tstat end
+
 function tstat(f, x; dim = nothing, query = nothing)
     dim = @something dim dimnum(x, something(query, TimeDim))
     return ndims(x) == 1 ? f(x) : f(x; dim)
 end
 
-"""
-    tstat(f, x, dt; dim = nothing)
-
-Calculate the statistic `f` of `x` along the `dim` dimension grouped by `dt`.
-
-See also: [`groupby_dynamic`](@ref)
-"""
 function tstat(f, x, dt; dim = nothing, query = nothing)
     dim = @something dim dimnum(x, something(query, TimeDim))
     tdim = dims(x, dim)

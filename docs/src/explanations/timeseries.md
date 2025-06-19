@@ -17,7 +17,7 @@ tstd
 tsem
 ```
 
-### Arithmetic
+## Arithmetic
 
 ```@docs; canonical=false
 tcross
@@ -26,7 +26,7 @@ tdot
 tsubtract
 ```
 
-### Time-Domain Operations
+## Time-Domain Operations
 
 ```@docs; canonical=false
 tclip
