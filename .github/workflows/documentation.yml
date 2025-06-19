@@ -24,9 +24,9 @@ jobs:
           julia --project=docs/ -e '
             using Pkg
             Pkg.develop([
-              PackageSpec(url="https://github.com/Beforerr/HAPIClient.jl"),
-              PackageSpec(url="https://github.com/Beforerr/PySPEDAS.jl"),
-              PackageSpec(url="https://github.com/Beforerr/IRBEM.jl"),
+              PackageSpec(name="HAPIClient"),
+              PackageSpec(url="https://github.com/JuliaSpacePhysics/PySPEDAS.jl"),
+              PackageSpec(name="IRBEM"),
               PackageSpec(path=pwd())
             ])
             Pkg.instantiate()

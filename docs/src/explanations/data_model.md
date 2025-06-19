@@ -36,7 +36,7 @@ We support TOML configuration files to define project-specific metadata. A typic
 - Instrument definitions
 - Dataset template definitions
 
-We use the configuration files to generate appropriate data structures in the project module. For example, the corresponding configuration file of Magnetospheric Multiscale (MMS) module [`src/projects/MMS/MMS.jl`](https://github.com/Beforerr/SPEDAS.jl/blob/main/src/projects/MMS/MMS.jl) is [`config/MMS.toml`](https://github.com/Beforerr/SPEDAS.jl/blob/main/config/MMS.toml).
+We use the configuration files to generate appropriate data structures in the project module. For example, the corresponding configuration file of Magnetospheric Multiscale (MMS) module [`src/projects/MMS/MMS.jl`](https://github.com/JuliaSpacePhysics/SPEDAS.jl/blob/main/src/projects/MMS/MMS.jl) is [`config/MMS.toml`](https://github.com/JuliaSpacePhysics/SPEDAS.jl/blob/main/config/MMS.toml).
 
 !!! note
 
