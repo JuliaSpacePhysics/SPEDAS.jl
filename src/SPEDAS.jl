@@ -1,7 +1,7 @@
 """
 Julia-based Space Physics Environment Data Analysis Software
 
-See the [Documentation](https://beforerr.github.io/SPEDAS.jl/dev/) for more information.
+See the [Documentation](https://juliaspacephysics.github.io/SPEDAS.jl) for more information.
 """
 module SPEDAS
 

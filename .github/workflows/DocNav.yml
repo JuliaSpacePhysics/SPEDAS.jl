@@ -1,0 +1,40 @@
+name: Documentation - Rebuild Navigation Bar
+
+on:
+  # 6:07 AM UTC every Sunday -- choose an uncommon time to avoid
+  # periods of heavy GitHub Actions usage
+  schedule:
+    - cron: "7 6 * * 0"
+  # Whenever needed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-navbar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Insert navbar
+        uses: TuringLang/actions/DocsNav@main
+        with:
+          doc-path: "."
+          navbar-url: "https://raw.githubusercontent.com/JuliaSpacePhysics/actions/refs/heads/main/Navbar.html"
+
+      - name: Commit and push changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            git config user.name github-actions[bot]
+            git config user.email github-actions[bot]@users.noreply.github.com
+            git add -A
+            git commit -m "Update navbar (automated)"
+            git push
+          else
+            echo "No changes to commit"
+          fi

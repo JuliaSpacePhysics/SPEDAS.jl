@@ -24,7 +24,7 @@ tplot(da)
 
 ## Get data using Heliophysics Application Programmer's Interface (HAPI)
 
-[HAPIClient.jl](https://github.com/Beforerr/HAPIClient.jl) provides functions to load data from HAPI-compliant servers.
+[HAPIClient.jl](https://github.com/JuliaSpacePhysics/HAPIClient.jl) provides functions to load data from HAPI-compliant servers.
 
 It could be installed using `using Pkg; Pkg.add("HAPIClient")`.
 
@@ -44,9 +44,9 @@ tplot(da)
 
 ## Get data with PySPEDAS
 
-[PySPEDAS.jl](https://github.com/Beforerr/PySPEDAS.jl) provides a Julia interface to the [PySPEDAS](https://github.com/spedas/pyspedas) Python package, offering a similar API for Julia users to utilize the existing Python routines.
+[PySPEDAS.jl](https://github.com/JuliaSpacePhysics/PySPEDAS.jl) provides a Julia interface to the [PySPEDAS](https://github.com/spedas/pyspedas) Python package, offering a similar API for Julia users to utilize the existing Python routines.
 
-It could be installed using `using Pkg; Pkg.add("https://github.com/Beforerr/PySPEDAS.jl")`.
+It could be installed using `using Pkg; Pkg.add("https://github.com/JuliaSpacePhysics/PySPEDAS.jl")`.
 
 ```@example pyspedas
 using SPEDAS: tplot
