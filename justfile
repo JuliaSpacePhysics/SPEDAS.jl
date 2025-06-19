@@ -3,8 +3,8 @@ install:
     julia --project=docs/ -e '
         using Pkg
         Pkg.develop([
-            PackageSpec(url="https://github.com/SciQLop/Speasy.jl"),
-            PackageSpec(url="https://github.com/Beforerr/PySPEDAS.jl"),
+            PackageSpec(name="Speasy"),
+            PackageSpec(url="https://github.com/JuliaSpacePhysics/PySPEDAS.jl"),
             PackageSpec(path=pwd())
         ])
         Pkg.instantiate()

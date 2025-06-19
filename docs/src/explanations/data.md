@@ -22,6 +22,6 @@ Metadata, including units, coordinate systems, and other relevant information, a
 
 - [Speasy (preferred)](https://github.com/SciQLop/speasy): a Python library for accessing space physics data. Integration is provided using the wrapper library [`Speasy.jl`](https://github.com/SciQLop/Speasy.jl).
 
-- [PySPEDAS](https://github.com/spedas/pyspedas): Python-based Space Physics Environment Data Analysis Software. Integration is provided using the wrapper library [`PySPEDAS.jl`](https://github.com/Beforerr/PySPEDAS.jl).
+- [PySPEDAS](https://github.com/spedas/pyspedas): Python-based Space Physics Environment Data Analysis Software. Integration is provided using the wrapper library [`PySPEDAS.jl`](https://github.com/JuliaSpacePhysics/PySPEDAS.jl).
 
-- [HAPI](https://hapi-server.org): Heliophysics Application Programmer’s Interface (HAPI) specification. Integration is provided using the wrapper library [`HAPIClient.jl`](https://github.com/Beforerr/HAPIClient.jl).
+- [HAPI](https://hapi-server.org): Heliophysics Application Programmer’s Interface (HAPI) specification. Integration is provided using the wrapper library [`HAPIClient.jl`](https://github.com/JuliaSpacePhysics/HAPIClient.jl).

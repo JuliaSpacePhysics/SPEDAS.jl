@@ -30,6 +30,7 @@ makedocs(
             "explanations/tplot.md",
             "explanations/coords.md",
             "explanations/multispacecraft.md",
+            "explanations/timeseries.md",
             "explanations/resampling.md",
             "explanations/waves.md",
             "explanations/analysis.md"
@@ -50,4 +51,4 @@ makedocs(
 # Documenter can also automatically deploy documentation to gh-pages.
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
-deploydocs(repo = "github.com/Beforerr/SPEDAS.jl", push_preview = true)
+deploydocs(repo = "github.com/JuliaSpacePhysics/SPEDAS.jl", push_preview = true)
