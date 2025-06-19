@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "src/**"
+      - "docs/**"
+      - "Project.toml"
     tags: ["*"]
   pull_request:
   workflow_dispatch:
@@ -16,23 +20,7 @@ jobs:
       statuses: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: |
-          julia --project=docs/ -e '
-            using Pkg
-            Pkg.develop([
-              PackageSpec(name="HAPIClient"),
-              PackageSpec(url="https://github.com/JuliaSpacePhysics/PySPEDAS.jl"),
-              PackageSpec(name="IRBEM"),
-              PackageSpec(path=pwd())
-            ])
-            Pkg.instantiate()
-          '
-      - name: Build and deploy
+      - name: Build and deploy Documenter.jl docs
+        uses: JuliaSpacePhysics/actions/DocsDocumenter@main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # If authenticating with GitHub Actions token
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }} # If authenticating with SSH deploy key
-        run: SPEASY_CORE_DISABLED_PROVIDERS=csa,amda julia --project=docs/ docs/make.jl
+          SPEASY_CORE_DISABLED_PROVIDERS: csa,amda
