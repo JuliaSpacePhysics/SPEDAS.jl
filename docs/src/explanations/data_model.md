@@ -90,6 +90,6 @@ To add support for a new space physics mission:
 
 1. Create a new TOML file in the `config/` directory (e.g., `config/cluster.toml`)
 2. Define the project metadata, instruments, and dataset templates
-3. Create a corresponding module in the `src/projects/` directory (for example, [`MMS`](@ref SPEDAS.MMS) module is defined in [`src/projects/mms.jl`](https://github.com/Beforerr/SPEDAS.jl/blob/main/src/projects/mms.jl))
+3. Create a corresponding module in the `src/projects/` directory (for example, [`MMS`](@ref SPEDAS.MMS) module is defined in [`src/projects/mms.jl`](https://github.com/JuliaSpacePhysics/SPEDAS.jl/blob/main/src/projects/mms.jl))
 
 The configuration file will be automatically loaded when the project module is imported.
