@@ -15,7 +15,7 @@ using GeoCotrans: coord_maps
 
 Transform the data to the `out` coordinate system from the `in` coordinate system.
 
-This function automatically choose between Julia's [`GeoCotrans`](@ref) (if available) and Fortran's `IRBEM` implementation.
+This function automatically choose between Julia's [`GeoCotrans`](https://juliaspacephysics.github.io/GeoCotrans.jl) (if available) and Fortran's [`IRBEM`](https://juliaspacephysics.github.io/IRBEM.jl) implementation.
 
 References:
 

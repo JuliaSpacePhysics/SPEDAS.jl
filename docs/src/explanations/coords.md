@@ -48,7 +48,6 @@ A comprehensive description of the transformations can be found in [hapgoodSpace
 
 ```@docs; canonical=false
 cotrans
-SPEDAS.GeoCotrans
 ```
 
 ```@example coords

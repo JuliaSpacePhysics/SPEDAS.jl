@@ -1,13 +1,9 @@
 using SPEDAS
 using SPEDAS.SpaceDataModel
-using SPEDAS.GeoCotrans
 using Documenter
 using DocumenterCitations
-# using DemoCards
 
 bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
-
-# demopage, postprocess_cb, gallery_assets = makedemos("gallery")
 
 md_filter(x) = filter(endswith(".md"), x)
 list_pages(dir) = ["$dir/$f" for f in readdir(joinpath(@__DIR__, "src", dir))]
@@ -40,15 +36,13 @@ makedocs(
         "API" => "api.md"
     ],
     format = Documenter.HTML(size_threshold = nothing),
-    modules = [SPEDAS, SPEDAS.SpaceDataModel, GeoCotrans],
+    modules = [SPEDAS, SPEDAS.SpaceDataModel],
     warnonly = Documenter.except(:doctest),
     plugins = [bib],
     doctest = true
 )
 
-# postprocess_cb() # redirect url for DemoCards generated files
-
-# Documenter can also automatically deploy documentation to gh-pages.
-# See "Hosting Documentation" and deploydocs() in the Documenter manual
-# for more information.
-deploydocs(repo = "github.com/JuliaSpacePhysics/SPEDAS.jl", push_preview = true)
+deploydocs(
+    repo = "github.com/JuliaSpacePhysics/SPEDAS.jl", 
+    push_preview = true
+)

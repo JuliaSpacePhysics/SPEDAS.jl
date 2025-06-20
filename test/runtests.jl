@@ -1,10 +1,5 @@
 using TestItems, TestItemRunner
 
-if VERSION < v"1.11"
-    using Pkg
-    Pkg.develop(PackageSpec(path = "../lib/GeoCotrans"))
-end
-
 @run_package_tests
 
 @testitem "Aqua" begin
