@@ -12,12 +12,10 @@ Modules = [SPEDAS.SpaceDataModel]
 
 ## Coordinate Transformations
 
+See [GeoCotrans.jl](https://juliaspacephysics.github.io/GeoCotrans.jl) and [IRBEM.jl](https://juliaspacephysics.github.io/IRBEM.jl) for more details.
+
 ```@docs
 cotrans
-```
-
-```@autodocs
-Modules = [SPEDAS.GeoCotrans]
 ```
 
 ## TPlot
