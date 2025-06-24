@@ -1,6 +1,6 @@
-dimtype_eltype(d) = (basetypeof(d), nonmissingtype(eltype(d)))
-dimtype_eltype(A, query) = dimtype_eltype(dims(A, query))
-dimtype_eltype(A, ::Nothing) = dimtype_eltype(A, TimeDim)
+dimtype_eltype(d) = (basetypeof(d), eltype(d))
+dimtype_eltype(A, query) = dimtype_eltype(dims(A, something(query, TimeDim)))
+# dimtype_eltype(A, ::Nothing) = dimtype_eltype(A, TimeDim)
 
 function tsort(A; query=nothing, rev=false)
     tdim = timedim(A, query)
@@ -20,7 +20,6 @@ Clip a dimension or `DimArray` to a time range `[t0, t1]`.
 For unordered dimensions, the dimension should be sorted before clipping (see [`tsort`](@ref)).
 """
 function tclip(A::AbstractDimArray, t0, t1; query=nothing)
-    query = something(query, TimeDim)
     Dim, T = dimtype_eltype(A, query)
     return A[Dim(T(t0) .. T(t1))]
 end
@@ -34,7 +33,6 @@ View a dimension or `DimArray` in time range `[t0, t1]`.
 """
 tview(d, t0, t1) = @view d[DateTime(t0)..DateTime(t1)]
 function tview(da::AbstractDimArray, t0, t1; query=nothing)
-    query = something(query, TimeDim)
     Dim, T = dimtype_eltype(da, query)
     return @view da[Dim(T(t0) .. T(t1))]
 end
