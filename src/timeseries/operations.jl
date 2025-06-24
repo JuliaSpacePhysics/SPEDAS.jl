@@ -1,5 +1,6 @@
-dimtype_eltype(d) = (DimensionalData.basetypeof(d), eltype(d))
+dimtype_eltype(d) = (basetypeof(d), nonmissingtype(eltype(d)))
 dimtype_eltype(A, query) = dimtype_eltype(dims(A, query))
+dimtype_eltype(A, ::Nothing) = dimtype_eltype(A, TimeDim)
 
 function tsort(A; query=nothing, rev=false)
     tdim = timedim(A, query)
@@ -61,15 +62,19 @@ function tmask!(da, its::AbstractArray; kw...)
     return da
 end
 
+function tselect!(da, t; query=nothing)
+    Dim, T = dimtype_eltype(da, query)
+    return da[Dim(Near(T(t)))]
+end
+
 """
-    tselect(A, t, δt)
+    tselect(A, t, [δt]; query=nothing)
 
 Select the value of `A` closest to time `t` within the time range `[t-δt, t+δt]`.
 
 Similar to `DimensionalData.Dimensions.Lookups.At` but choose the closest value and return `missing` if the time range is empty.
 """
 function tselect(A, t, δt; query=nothing)
-    query = something(query, TimeDim)
     Dim, T = dimtype_eltype(A, query)
     tmp = @views A[Dim(T(t - δt) .. T(t + δt))]
     length(tmp) == 0 ? missing : tmp[Dim(Near(T(t)))]
