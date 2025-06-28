@@ -1,36 +1,5 @@
 # Time Series Utilities
 
-The following utilities are designed to simplify common data analysis tasks for time series data. While most are thin wrappers around existing Julia functions, they ensure proper handling of metadata and dimensions.
+See [TimeseriesUtilities.jl](https://beforerr.github.io/TimeseriesUtilities.jl) for a collection of utilities and tutorials to simplify common time series analysis.
 
-Most of the utilities operate on the time dimension by default, but you can specify other dimensions using the `dim` or `query` parameter.
-
-
-## Statistics
-
-```@docs; canonical=false
-tstat
-tmean
-tmedian
-tsum
-tvar
-tstd
-tsem
-```
-
-## Arithmetic
-
-```@docs; canonical=false
-tcross
-tderiv
-tdot
-tsubtract
-```
-
-## Time-Domain Operations
-
-```@docs; canonical=false
-tclip
-tview
-tmask
-tshift
-```
+- [outliers](https://beforerr.github.io/TimeseriesUtilities.jl/dev/outliers/): remove spikes from signal.

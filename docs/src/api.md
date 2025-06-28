@@ -29,3 +29,9 @@ Modules = [SPEDAS.TPlot]
 ```@autodocs
 Modules = [SPEDAS]
 ```
+
+## Timeseries Utilities
+
+```@autodocs
+Modules = [SPEDAS.TimeseriesUtilities]
+```
