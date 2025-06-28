@@ -58,9 +58,6 @@ function tstack(vectors::AbstractDimVector{<:AbstractVector}; dims=1)
     return rebuild(vectors, data, new_dims)
 end
 
-"https://github.com/JuliaLang/julia/issues/54542"
-tmean(vec::AbstractVector{DateTime}) = convert(Dates.DateTime, Millisecond(mean(Dates.value.(vec))))
-
 """
 Transform matrix-like `A` to `n×m` shape
 """
