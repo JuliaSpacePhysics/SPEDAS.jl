@@ -25,7 +25,7 @@ jobs:
         uses: TuringLang/actions/DocsNav@main
         with:
           doc-path: "."
-          navbar-url: "https://raw.githubusercontent.com/JuliaSpacePhysics/actions/refs/heads/main/Navbar.html"
+          navbar-url: "https://raw.githubusercontent.com/JuliaSpacePhysics/juliaspacephysics.github.io/refs/heads/main/docs/Navbar.html"
 
       - name: Commit and push changes
         run: |

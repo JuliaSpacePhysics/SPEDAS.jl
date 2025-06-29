@@ -19,10 +19,3 @@ tsync
 resample
 tresample
 ```
-
-## Utilities
-
-```@docs
-dropna
-rectify_datetime
-```
