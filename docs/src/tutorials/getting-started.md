@@ -10,10 +10,10 @@ It could be installed using `using Pkg; Pkg.add("Speasy")`.
 
 ```@example share
 using Speasy: get_data
-using SPEDAS
+using CairoMakie, SpacePhysicsMakie
 
 # da = get_data("amda/imf", "2016-6-2", "2016-6-5")
-da = get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-5")
+da = get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-5"; sanitize=true)
 ```
 
 ### Plot the data
@@ -37,7 +37,7 @@ da = get_data("CDAWeb/AC_H0_MFI/Magnitude,BGSEc", "2001-1-2", "2001-1-2T12")
 ### Plot the data
 
 ```@example hapi
-using SPEDAS
+using CairoMakie, SpacePhysicsMakie
 
 tplot(da)
 ```
@@ -49,7 +49,7 @@ tplot(da)
 It could be installed using `using Pkg; Pkg.add("https://github.com/JuliaSpacePhysics/PySPEDAS.jl")`.
 
 ```@example pyspedas
-using SPEDAS: tplot
+using SpacePhysicsMakie: tplot
 using PySPEDAS.Projects
 using DimensionalData
 using CairoMakie

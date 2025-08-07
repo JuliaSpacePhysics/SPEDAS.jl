@@ -8,8 +8,7 @@ The `tplot` system provides a unified interface for time series visualization:
 Both functions are built on Makie's recipe system, allowing customization through plot attributes and functions.
 
 ```@example tplot
-using CairoMakie
-using SPEDAS
+using CairoMakie, SpacePhysicsMakie
 using Unitful
 ```
 
@@ -29,13 +28,13 @@ f = Figure()
 tplot_panel(f[1, 1], data1; axis=(;title="Single time series"))
 
 # Multiple Series (same y-axis)
-tplot_panel(f[2, 1], [data1, data2]; axis=(;title="Multiple series"), plotfunc=lines!)
+tplot_panel(f[2, 1], [data1, data2]; axis=(;title="Multiple series"), plottype=Lines)
 
 # Dual Y-Axes (different units)
-tplot_panel(f[3, 1], (data1, data3); axis=(;title="Dual y-axes"), plotfunc=scatterlines!)
+tplot_panel(f[3, 1], (data1, data3); axis=(;title="Dual y-axes"))
 
 # Matrix as series
-tplot_panel(f[1, 2], data4'; axis=(;title="Series"), plotfunc=series!)
+tplot_panel(f[1, 2], data4'; axis=(;title="Series"), plottype=Series)
 
 # Overlay Series on Heatmap
 tplot_panel(f[2, 2], [data4, data1, data2]; axis=(;title="Heatmap with overlays"))

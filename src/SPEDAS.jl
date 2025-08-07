@@ -46,7 +46,6 @@ const AbstractDimType = Union{AbstractDimStack, AbstractDimArray}
 const MatrixLike = Union{AbstractArray{<:AbstractVector}, AbstractMatrix}
 
 include("projects/project.jl")
-include("types.jl")
 include("mhd.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/gap.jl")
@@ -55,8 +54,6 @@ include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
 include("resampling/resample.jl")
 include("resampling/interp.jl")
-include("meta.jl")
-include("plot/tplot.jl")
 include("cotrans/cotrans.jl")
 include("multispacecraft/reciprocal_vector.jl")
 include("multispacecraft/tetrahedron.jl")
@@ -66,7 +63,4 @@ include("analysis/analysis.jl")
 include("waves/polarization.jl")
 include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
-
-@reexport using .TPlot
-import .TPlot: axis_attributes
 end

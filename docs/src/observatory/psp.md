@@ -24,6 +24,7 @@ Filter = t -> t isa AbstractDataSet
 ```@example PSP
 using Speasy: SpeasyProduct
 using SPEDAS
+using SpacePhysicsMakie
 using Unitful
 
 n = DataSet("Density",
