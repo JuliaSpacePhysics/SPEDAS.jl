@@ -11,9 +11,9 @@
 Built on `Makie`, `tplot` provides both interactive exploration capabilities and publication-quality output. It features dynamic data loading during zoom/pan operations, efficiently retrieving and rendering data on demand.
 
 ```@docs
-tplot
-tplot_panel
-tplot_panel!
+SpacePhysicsMakie.tplot
+SpacePhysicsMakie.tplot_panel
+SpacePhysicsMakie.tplot_panel!
 ```
 
 ## Function as `tplot` argument for interactive exploration
@@ -39,7 +39,7 @@ This approach enables efficient interactive exploration of time series.
 Before plotting, data goes through a transformation pipeline to ensure it's in a plottable format (e.g., `DimArray`).
 
 ```@docs
-transform
+SpacePhysicsMakie.transform
 ```
 
 You can extend the transformation system by defining methods for your types:

@@ -1,6 +1,5 @@
 import ..SPEDAS: xlabel, ylabel, title, format_unit, isspectrogram
 import ..SPEDAS: scale, yscale, colorrange
-import SpaceDataModel: NoMetadata
 import DimensionalData
 
 uunit(x) = unit(x)
