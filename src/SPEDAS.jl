@@ -21,7 +21,6 @@ using Unitful, DimensionfulAngles
 using FFTW, DSP, SignalAnalysis
 using Tullio
 using Bumper
-using InverseFunctions
 using NamedTupleTools
 using Reexport
 @reexport using SpaceDataModel
