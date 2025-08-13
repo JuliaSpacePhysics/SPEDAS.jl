@@ -3,6 +3,9 @@ using HybridArrays
 
 const timeDimType = (DimensionalData.TimeDim, Dim{:time})
 
+abstract type FrequencyDim{T} <: Dimension{T} end
+@dim 𝑓 FrequencyDim "Frequency"
+
 function hybridify(A, dims)
     sizes = ntuple(ndims(A)) do i
         i in dims ? StaticArrays.Dynamic() : size(A, i)
@@ -50,17 +53,6 @@ function nt2ds(nt_arr; sym=:time)
     fields = filter(field -> field != sym, fields)
     nt2ds(nt_arr, dim; fields)
 end
-
-"""
-    dimarrayify(x)
-
-Convert `x` or values of `x` to `DimArray(s)`.
-"""
-dimarrayify(x::AbstractDimArray) = x
-dimarrayify(x) = DimArray(x)
-dimarrayify(nt::NamedTuple{keys}) where {keys} = NamedTuple{keys}(DimArray.(values(nt)))
-dimarrayify(d::Dict) = Dict(k => DimArray(v) for (k, v) in d)
-
 
 function rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)

@@ -8,10 +8,7 @@ Visualize multiple time series in a customized layout.
 using Speasy
 spz = speasy
 
-using CairoMakie
-using DimensionalData
-using SPEDAS
-using Dates
+using CairoMakie, SpacePhysicsMakie
 ```
 
 ## A complex requests
@@ -27,7 +24,7 @@ data = let intervals = ["2019-01-02T15", "2019-01-02T16"]
         spz.inventories.tree.cda.MMS.MMS1.DES.MMS1_FPI_FAST_L2_DES_MOMS.mms1_des_energyspectr_omni_fast,
         spz.inventories.tree.cda.MMS.MMS1.DIS.MMS1_FPI_FAST_L2_DIS_MOMS.mms1_dis_energyspectr_omni_fast
     ]
-    get_data(products, intervals)
+    Speasy.get_data(products, intervals)
 end
 ```
 

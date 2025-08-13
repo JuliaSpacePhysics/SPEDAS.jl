@@ -1,21 +1,17 @@
 # Interactive tplot with Speasy
+
 # Visual exploration of OMNI data
 
 ## tplot with Speasy product ID strings
 
 ```@example interactive_speasy
 using Speasy
-using SPEDAS
 using Dates
-using CairoMakie
+using CairoMakie, SpacePhysicsMakie
 
 t0 = DateTime("2008-09-05T10:00:00")
 t1 = DateTime("2008-09-05T22:00:00")
-tvars = [
-    "cda/OMNI_HRO_1MIN/flow_speed",
-    "cda/OMNI_HRO_1MIN/E",
-    "cda/OMNI_HRO_1MIN/Pressure"
-]
+tvars = spz"cda/OMNI_HRO_1MIN/flow_speed,E,Pressure"
 f, axes = tplot(tvars, t0, t1)
 ```
 

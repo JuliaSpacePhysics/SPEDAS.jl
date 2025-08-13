@@ -1,7 +1,9 @@
 using SPEDAS
 using SPEDAS.SpaceDataModel
+using SpacePhysicsMakie
 using Documenter
 using DocumenterCitations
+using Documenter.Remotes: GitHub
 
 bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"))
 
@@ -36,7 +38,10 @@ makedocs(
         "API" => "api.md"
     ],
     format = Documenter.HTML(size_threshold = nothing),
-    modules = [SPEDAS, SPEDAS.SpaceDataModel],
+    modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie],
+    remotes = Dict(
+        pkgdir(SpacePhysicsMakie) => GitHub("JuliaSpacePhysics", "SpacePhysicsMakie.jl")
+    ),
     warnonly = Documenter.except(:doctest),
     plugins = [bib],
     doctest = true

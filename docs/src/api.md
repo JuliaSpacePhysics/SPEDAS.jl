@@ -18,12 +18,6 @@ See [GeoCotrans.jl](https://juliaspacephysics.github.io/GeoCotrans.jl) and [IRBE
 cotrans
 ```
 
-## TPlot
-
-```@autodocs
-Modules = [SPEDAS.TPlot]
-```
-
 ## SPEDAS
 
 ```@autodocs

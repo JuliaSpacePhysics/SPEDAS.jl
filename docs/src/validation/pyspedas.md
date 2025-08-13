@@ -11,8 +11,7 @@ using SPEDAS
 using PythonCall
 using DimensionalData
 using PySPEDAS: get_data
-using CairoMakie
-using SPEDAS: tplot
+using CairoMakie, SpacePhysicsMakie
 using Chairmarks
 using Test
 ```
