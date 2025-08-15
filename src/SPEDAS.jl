@@ -24,7 +24,7 @@ using Bumper
 using NamedTupleTools
 using Reexport
 @reexport using SpaceDataModel
-using SpaceDataModel: meta, name
+using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData
 @reexport using TimeseriesUtilities
 
 # export TimeRange
@@ -32,7 +32,7 @@ export tstack, tinterp, tinterp_nans, tsync, resample, tresample
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
-export standardize, modify_meta, amap, ω2f
+export standardize, amap, ω2f
 export reciprocal_vector, reciprocal_vectors, lingradest
 export volumetric_tensor, tetrahedron_quality
 export ConstantVelocityApproach, CVA, ConstantThicknessApproach, CTA

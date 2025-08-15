@@ -1,4 +1,4 @@
-using TestItems, TestItemRunner
+using TestItemRunner
 
 @run_package_tests
 

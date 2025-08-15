@@ -1,9 +1,10 @@
 # SPEDAS.jl
 
-[![Build Status](https://github.com/JuliaSpacePhysics/SPEDAS.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/JuliaSpacePhysics/SPEDAS.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaSpacePhysics.github.io/SPEDAS.jl/dev/)
 [![DOI](https://zenodo.org/badge/923721479.svg)](https://doi.org/10.5281/zenodo.15181866)
+
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
+[![Build Status](https://github.com/JuliaSpacePhysics/SPEDAS.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/JuliaSpacePhysics/SPEDAS.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/JuliaSpacePhysics/SPEDAS.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/JuliaSpacePhysics/SPEDAS.jl)
 
 A collection of tools for space physics / heliophysics.
