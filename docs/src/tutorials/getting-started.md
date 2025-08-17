@@ -13,7 +13,7 @@ using Speasy: get_data
 using CairoMakie, SpacePhysicsMakie
 
 # da = get_data("amda/imf", "2016-6-2", "2016-6-5")
-da = get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-5"; sanitize=true)
+da = get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-3"; sanitize=true)
 ```
 
 ### Plot the data
@@ -31,7 +31,7 @@ It could be installed using `using Pkg; Pkg.add("HAPIClient")`.
 ```@example hapi
 using HAPIClient: get_data
 
-da = get_data("CDAWeb/AC_H0_MFI/Magnitude,BGSEc", "2001-1-2", "2001-1-2T12")
+da = get_data("CDAWeb/AC_H0_MFI/Magnitude,BGSEc", "2001-1-2", "2001-1-2T6")
 ```
 
 ### Plot the data
@@ -46,7 +46,7 @@ tplot(da)
 
 [PySPEDAS.jl](https://github.com/JuliaSpacePhysics/PySPEDAS.jl) provides a Julia interface to the [PySPEDAS](https://github.com/spedas/pyspedas) Python package, offering a similar API for Julia users to utilize the existing Python routines.
 
-It could be installed using `using Pkg; Pkg.add("https://github.com/JuliaSpacePhysics/PySPEDAS.jl")`.
+It could be installed using `using Pkg; Pkg.add("PySPEDAS")`.
 
 ```@example pyspedas
 using SpacePhysicsMakie: tplot

@@ -57,30 +57,6 @@ end
 function rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
 end
-
-function _new_metadata(meta, args::Pair...; kwargs...)
-    # Create a dictionary from both positional pair arguments and keyword arguments
-    added_meta = merge(Dict(args...), kwargs)
-    meta isa NoMetadata ? added_meta : merge(meta, added_meta)
-end
-
-modify_meta!(da; kwargs...) = (da.metadata = _new_metadata(da.metadata; kwargs))
-function modify_meta(da::Union{AbstractDimArray,AbstractDimStack}, args...; kwargs...)
-    rebuild(da; metadata=_new_metadata(meta(da), args...; kwargs...))
-end
-modify_meta(args...; kwargs...) = da -> modify_meta(da, args...; kwargs...)
-
-# similar to DataAPI.metadata!
-function set_meta!(d::AbstractDict, args::Pair...; kwargs...)
-    for (k, v) in args
-        d[k] = v
-    end
-    merge!(d, kwargs)
-end
-
-set_meta!(x::AbstractDimArray, args...; kwargs...) = (set_meta!(meta(x), args...; kwargs...); x)
-set_meta!(args...; kwargs...) = x -> set_meta!(x, args...; kwargs...)
-const set_meta = modify_meta
     
 """
     amap(f, a, b)

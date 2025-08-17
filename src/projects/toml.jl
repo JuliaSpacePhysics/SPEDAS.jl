@@ -1,6 +1,3 @@
-using SpaceDataModel: NoMetadata
-const NoData = NoMetadata
-
 # Construct a `LDataSet` from a dictionary.
 function dict2LDataSet(d::Dict)
     return LDataSet(;

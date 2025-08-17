@@ -18,5 +18,6 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 Documenter = "1.8"
 IRBEM = "0.1.3"
-SpaceDataModel = "0.1.12"
+PySPEDAS = "0.1.2"
+SpaceDataModel = "0.2"
 Speasy = "0.4.2"
