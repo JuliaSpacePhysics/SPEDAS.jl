@@ -1,7 +1,7 @@
 name = "SPEDAS"
 uuid = "3930f61c-4d81-4846-ab8f-357babe068a6"
 authors = ["Zijin Zhang <zzj956959688@gmail.com> and contributors"]
-version = "0.1.11"
+version = "0.2.0"
 
 [deps]
 Bumper = "8ce10254-0962-460f-a3d8-1f77fea1446e"
