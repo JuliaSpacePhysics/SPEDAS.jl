@@ -62,4 +62,5 @@ include("analysis/analysis.jl")
 include("waves/polarization.jl")
 include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
+include("../ext/SPEDASDimensionalDataExt.jl")
 end
