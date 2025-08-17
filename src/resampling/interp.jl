@@ -32,8 +32,8 @@ function tinterp(A, t; interp = nothing, query = nothing, kws...)
     return if t isa AbstractTime
         out
     else
-        newdims = ntuple(i -> i == dim ? Ti(t) : dims(A, i), ndims(A))
-        rebuild(A, out, newdims)
+        newdims = ntuple(i -> i == dim ? rebuild(dims(A, i), t) : dims(A, i), ndims(A))
+        rebuild(A, out, DD.format(newdims, out))
     end
 end
 

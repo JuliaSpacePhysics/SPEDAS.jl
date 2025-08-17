@@ -53,7 +53,7 @@ cotrans
 ```@example coords
 using DimensionalData
 using Speasy, SPEDAS
-using CairoMakie
+using CairoMakie, SpacePhysicsMakie
 
 pos_gse = get_data("cda/THC_L1_STATE/thc_pos_gse", "2015-10-16", "2015-10-17") |> DimArray
 
