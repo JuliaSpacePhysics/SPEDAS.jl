@@ -1,5 +1,7 @@
+# - [Spectrogram Computation with Signal Processing Toolbox - MATLAB &amp; Simulink](https://www.mathworks.com/help/signal/ug/spectrogram-computation-with-signal-processing-toolbox.html)
+# - [SignalDecomposition.jl](https://juliadynamics.github.io/SignalDecomposition.jl/dev/)
 # - [PySPEDAS : pytplot.tplot_math.dpwrspc](https://pyspedas.readthedocs.io/en/latest/pytplot.html#dynamic-power-spectrum)
-# - https://pyspedas.readthedocs.io/en/latest/pytplot.html#dynamic-power-spectrum-of-tplot-variable
+# - https://pyspedas.readthedocs.io/en/latest/utilities.html#dynamic-power-spectrum-of-tplot-variable
 
 export pspectrum
 
