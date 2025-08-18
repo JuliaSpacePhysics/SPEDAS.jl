@@ -57,6 +57,15 @@ end
 function rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
 end
+
+function _dimnum(x, query = nothing)
+    # If query is nothing, choose the time dimension or the first dimension
+    if isnothing(query)
+        hasdim(x, TimeDim) ? dimnum(x, TimeDim) : 1
+    else
+        dimnum(x, query)
+    end
+end
     
 """
     amap(f, a, b)
