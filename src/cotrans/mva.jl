@@ -2,39 +2,42 @@
 # References:
 # - https://github.com/henry2004y/VisAnaJulia/blob/master/src/MVA.jl
 # - https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar
+using TimeseriesUtilities: cross3
 
-@inline function sorteigen(F; sortby=abs, rev=true)
-    order = sortperm(F.values; rev, by=sortby)
+@inline function sorteigen(F; sortby = abs, rev = true)
+    order = sortperm(F.values; rev, by = sortby)
     Eigen(F.values[order], F.vectors[:, order])
 end
 
-@views function mva_eigen(B::AbstractMatrix, ::Val{N}; sort=(;)) where N
+function _mva_eigen(B, ::Val{N}; sort = (;)) where {N}
     n = size(B, 1)
-    B̄ = SVector{N}(sum(Bc) / n for Bc in eachcol(B))
-    M = SMatrix{N,N}(
-        B[:, i] ⋅ B[:, j] / n - B̄[i] * B̄[j]
-        for i in 1:N, j in 1:N
-    )
+    Bslices = eachcol(B)
+    B̄ = SVector{N}(sum(Bc) / n for Bc in Bslices)
+    M = SMatrix{N, N}(dot(Bi, Bj) / n for Bi in Bslices, Bj in Bslices) - B̄ * B̄'
     sorteigen(eigen(M); sort...)
 end
 
 """
-    mva_eigen(B::AbstractMatrix; sort=(;), check=false) -> F::Eigen
+    mva_eigen(B::AbstractMatrix; dim = nothing, sort=(;), check=false) -> F::Eigen
 
-Perform minimum variance analysis, returning `Eigen` factorization object `F` which contains the eigenvalues in `F.values` and the eigenvectors in the columns of the matrix `F.vectors`.
+Perform minimum variance analysis for `B` (which varies along the `dim` dimension).
+    
+Return `Eigen` factorization object `F` which contains the eigenvalues in `F.values` and the eigenvectors in the columns of the matrix `F.vectors`.
 
 Set `check=true` to check the reliability of the result.
 
 The `k`th eigenvector can be obtained from the slice `F.vectors[:, k]`.
 """
-function mva_eigen(B; sort=(;), check=false)
-    N = size(B, 2)
-    F = mva_eigen(B, Val(N); sort)
-    check && check_mva(F)
+function mva_eigen(B; dim = nothing, sort = (;), check = false)
+    dim = something(dim, 1)
+    in = dim == 1 ? B : B'
+    N = size(in, 2)
+    F = _mva_eigen(in, Val(N); sort)
+    check && check_mva_eigen(F)
     F
 end
 
-function mva_eigen(B::AbstractMatrix{Q}; kwargs...) where {Q<:Quantity}
+function mva_eigen(B::AbstractMatrix{Q}; kwargs...) where {Q <: Quantity}
     F = mva_eigen(ustrip(B); kwargs...)
     Eigen(F.values * unit(Q)^2, F.vectors)
 end
@@ -45,37 +48,39 @@ end
 Rotate a timeseries `V` into the LMN coordinates based on the reference field `B`.
 
 # Arguments
-- `V`: The timeseries data to be transformed, where each column represents a component
-- `B`: The reference field used to determine the minimum variance directions, where each column represents a component
+
+  - `V`: The timeseries data to be transformed, where each column represents a component
+  - `B`: The reference field used to determine the minimum variance directions, where each column represents a component
 
 See also: [`mva_eigen`](@ref), [`rotate`](@ref)
 """
-mva(V, B=V; kwargs...) = rotate(V, mva_eigen(B; kwargs...))
+mva(V, B = V; kwargs...) = rotate(V, mva_eigen(B; kwargs...))
 
 """
     check_mva_eigen(F; r=5, verbose=false)
 
-Check the quality of the MVA result. 
+Check the quality of the MVA result.
 
 If λ₁ ≥ λ₂ ≥ λ₃ are 3 eigenvalues of the constructed matrix M, then a good
-indicator of nice fitting LMN coordinate system should have λ₂ / λ₃ > r.
+indicator of nice fitting LMN coordinate system should have ``abs(λ₂ / λ₃) > r``.
 """
-function check_mva_eigen(F; r0=5, verbose=false)
-    r = F.values[2] / F.values[3]
-    verbose && println(F.vectors)
-    verbose && println("Ratio of intermediate variance to minimum variance = ", r)
-    if r > r0
-        @info "Seems to be a proper MVA attempt!"
-    else
-        @warn "Take the MVA result with a grain of salt!"
+function check_mva_eigen(F; r0 = 5, verbose = false)
+    r = abs(F.values[2] / F.values[3])
+    flag = r > r0
+    verbose && begin
+        println(F.vectors)
+        println("Ratio of intermediate variance to minimum variance = ", r)
+        flag && @info "Seems to be a proper MVA attempt!"
     end
+    flag || @warn "Take the MVA result with a grain of salt!"
+    return flag
 end
 
 function is_right_handed(v1, v2, v3)
-    dot(cross(v1, v2), v3) > 0
+    cross3(v1, v2) ⋅ v3 > 0
 end
 
-function is_right_handed(F::Eigen)
+@views function is_right_handed(F::Eigen)
     vs = F.vectors
     v1 = vs[:, 1]
     v2 = vs[:, 2]
@@ -94,10 +99,11 @@ Calculate the phase error between components i and j according to:
 |Δφᵢⱼ| = |Δφⱼᵢ| = √(λ₃/(M-1) * (λᵢ + λⱼ - λ₃)/(λᵢ - λⱼ)²)
 
 Parameters:
-- λᵢ: eigenvalue i
-- λⱼ: eigenvalue j
-- λ₃: smallest eigenvalue (λ₃)
-- M: number of samples
+
+  - λᵢ: eigenvalue i
+  - λⱼ: eigenvalue j
+  - λ₃: smallest eigenvalue (λ₃)
+  - M: number of samples
 """
 function Δφij(λᵢ, λⱼ, λ₃, M)
     return sqrt((λ₃ / (M - 1)) * (λᵢ + λⱼ - λ₃) / (λᵢ - λⱼ)^2)
@@ -108,10 +114,11 @@ Calculate the composite statistical error estimate for ⟨B·x₃⟩:
 |Δ⟨B·x₃⟩| = √(λ₃/(M-1) + (Δφ₃₂⟨B⟩·x₂)² + (Δφ₃₁⟨B⟩·x₁)²)
 
 Parameters:
-- λ₁, λ₂, λ₃: eigenvalues in descending order
-- M: number of samples
-- B: mean magnetic field vector
-- x₁, x₂, x₃: eigenvectors
+
+  - λ₁, λ₂, λ₃: eigenvalues in descending order
+  - M: number of samples
+  - B: mean magnetic field vector
+  - x₁, x₂, x₃: eigenvectors
 """
 function B_x3_error(λ₁, λ₂, λ₃, M, B, x₁, x₂, x₃)
     Δφ₃₂ = Δφij(λ₃, λ₂, λ₃, M)
@@ -121,5 +128,4 @@ function B_x3_error(λ₁, λ₂, λ₃, M, B, x₁, x₂, x₃)
     return sqrt(λ₃ / (M - 1) + (Δφ₃₂ * B_x₂)^2 + (Δφ₃₁ * B_x₁)^2)
 end
 
-B_x3_error(F::Eigen, M, B) =
-    B_x3_error(F.values..., M, B, eachcol(F.vectors)...)
+B_x3_error(F::Eigen, M, B) = B_x3_error(F.values..., M, B, eachcol(F.vectors)...)
