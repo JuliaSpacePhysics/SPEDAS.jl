@@ -32,8 +32,8 @@ pytest.test_cotrans()
 trange = ["2010-02-25/00:00:00", "2010-02-25/23:59:59"]
 pyspedas.projects.themis.state(trange, probe="a", time_clip=true)
 
-tha_pos = PySPEDAS.get_data(DimArray, "tha_pos")
-tha_pos_gse = PySPEDAS.get_data(DimArray, "tha_pos_gse")
+tha_pos = PySPEDAS.get_data("tha_pos") |> DimArray
+tha_pos_gse = PySPEDAS.get_data("tha_pos_gse") |> DimArray
 jl_tha_pos = set(tha_pos, Dim{:time}=>Ti)
 jl_tha_pos_gse = set(tha_pos_gse, Dim{:time}=>Ti)
 ```
@@ -47,7 +47,7 @@ GEI <-> GEO
 ```@example coords
 jl_tha_pos_geo = gei2geo(jl_tha_pos)
 ir_tha_pos_geo = irbem_cotrans(jl_tha_pos', "GEI", "GEO")'
-py_tha_pos_geo = PySPEDAS.get_data(DimArray, "tha_pos_new_geo")
+py_tha_pos_geo = PySPEDAS.get_data("tha_pos_new_geo") |> DimArray
 
 @test jl_tha_pos_geo ≈ parent(py_tha_pos_geo)
 @test jl_tha_pos_geo ≈ ir_tha_pos_geo
@@ -59,7 +59,7 @@ GEI <-> GSM
 jl_tha_pos_gsm = gei2gsm(jl_tha_pos)
 ir_tha_pos_gsm = irbem_cotrans(jl_tha_pos', "GEI", "GSM")'
 pyspedas.cotrans("tha_pos", "tha_pos_new_gsm", coord_in="GEI", coord_out="GSM")
-py_tha_pos_gsm = PySPEDAS.get_data(DimArray, "tha_pos_new_gsm")
+py_tha_pos_gsm = PySPEDAS.get_data("tha_pos_new_gsm") |> DimArray
 
 @test isapprox(jl_tha_pos_gsm, parent(py_tha_pos_gsm), rtol=1e-5)
 @test isapprox(jl_tha_pos_gsm, ir_tha_pos_gsm, rtol=1e-3)
@@ -71,7 +71,7 @@ GSE <-> GSM
 jl_tha_pos_gsm = gse2gsm(jl_tha_pos_gse)
 ir_tha_pos_gsm = irbem_cotrans(jl_tha_pos_gse', "GSE", "GSM")'
 pyspedas.cotrans("tha_pos_gse", "tha_pos_new_gsm", coord_in="GSE", coord_out="GSM")
-py_tha_pos_gsm = PySPEDAS.get_data(DimArray, "tha_pos_new_gsm")
+py_tha_pos_gsm = PySPEDAS.get_data("tha_pos_new_gsm") |> DimArray
 
 @test isapprox(jl_tha_pos_gsm, parent(py_tha_pos_gsm), rtol=1e-5)
 @test isapprox(jl_tha_pos_gsm, ir_tha_pos_gsm, rtol=1e-3)

@@ -26,6 +26,7 @@ using Reexport
 @reexport using SpaceDataModel
 using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData
 @reexport using TimeseriesUtilities
+@reexport using MinimumVarianceAnalysis
 
 # export TimeRange
 export tstack, tinterp, tinterp_nans, tsync, resample, tresample
@@ -62,5 +63,4 @@ include("analysis/analysis.jl")
 include("waves/polarization.jl")
 include("waves/helicty.jl")
 include("waves/spectral_matrix.jl")
-include("../ext/SPEDASDimensionalDataExt.jl")
 end
