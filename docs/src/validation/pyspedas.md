@@ -24,7 +24,7 @@ References: [`twavpol`](@ref), [test_twavpol.py - PySPEDAS](https://github.com/s
 @py import pyspedas.analysis.tests.test_twavpol: TwavpolDataValidation
 TwavpolDataValidation.setUpClass()
 
-thc_scf_fac = get_data(DimArray, "thc_scf_fac")
+thc_scf_fac = get_data("thc_scf_fac") |> DimArray
 py_tvars = [
     "thc_scf_fac_powspec",
     "thc_scf_fac_degpol",
@@ -32,7 +32,7 @@ py_tvars = [
     "thc_scf_fac_elliptict",
     "thc_scf_fac_helict",
 ]
-py_result = get_data(DimStack, py_tvars)
+py_result = DimStack(DimArray.(get_data.(py_tvars)))
 res = twavpol(thc_scf_fac)
 res.power.metadata["scale"] = identity
 
@@ -64,7 +64,7 @@ isapprox_eigenvector(v1, v2) = isapprox(v1, v2) || isapprox(v1, -v2)
 pytest = TestMinvar()
 pytest.setUpClass()
 
-thb_fgs_gsm = get_data(DimArray, "idl_thb_fgs_gsm_mvaclipped1")
+thb_fgs_gsm = get_data("idl_thb_fgs_gsm_mvaclipped1") |> DimArray
 jl_mva_eigen = mva_eigen(thb_fgs_gsm)
 jl_mva_mat = jl_mva_eigen.vectors
 jl_mva_vals = jl_mva_eigen.values

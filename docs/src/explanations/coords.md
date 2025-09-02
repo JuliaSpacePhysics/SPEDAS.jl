@@ -80,22 +80,12 @@ fac_mat
 
 A coordinate system derived from the eigenvalues and eigenvectors of the magnetic field variance matrix, commonly used in analyzing current sheets, discontinuities, and wave propagation.
 
-References:
-
-- [Minimum and Maximum Variance Analysis](https://ui.adsabs.harvard.edu/abs/1998ISSIR...1..185S)
-- [https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar](https://pyspedas.readthedocs.io/en/latest/coords.html#pyspedas.minvar)
+See [MinimumVarianceAnalysis.jl](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/) for more details.
 
 ```@docs; canonical=false
 mva_eigen
 mva
 check_mva_eigen
-```
-
-Error estimates for MVA:
-
-```@docs; canonical=false
-SPEDAS.Δφij
-SPEDAS.B_x3_error
 ```
 
 See also: [Comparison with PySPEDAS](../validation/pyspedas.md#minimum-variance-analysis).
