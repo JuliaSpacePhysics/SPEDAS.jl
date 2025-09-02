@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-09-01
+
+### Changed
+
+- Refactor MVA functionality out into separate package MinimumVarianceAnalysis.jl ([#82](https://github.com/JuliaSpacePhysics/SPEDAS.jl/pull/82))
+
 ## [0.2.0] - 2025-08-17
 
 ### Added
