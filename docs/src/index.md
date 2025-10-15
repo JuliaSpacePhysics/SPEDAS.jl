@@ -24,6 +24,8 @@ Pkg.add("SPEDAS")
 - [Kamodo](https://nasa.github.io/Kamodo/) : An official NASA open-source python package built upon the functionalization of datasets
 - [autoplot](https://autoplot.org/) : An interactive browser for data on the web
     - [das2](https://das2.org/): Web-based data delivery, visualization, and analysis system from the The University of Iowa.
+- [geospacelab](https://github.com/JouleCai/geospacelab): A python-based library to collect, manage, and visualize the geospace data
+    - Data sources: Madrigal/EISCAT, Madrigal/GNSS/TECMAP, Madrigal/DMSP...
 - [space-analysis.py](https://github.com/Beforerr/space-analysis.py) : Python utils for data analysis in space physics.
 - [SpaceAnalysis.jl](https://henry2004y.github.io/VisAnaJulia/dev/) : Space physics analysis tool using Julia
     - minimum variance analysis (MVA)
@@ -31,6 +33,7 @@ Pkg.add("SPEDAS")
     - moving box average for filtering magnetometer data
     - coordinate transformations
 - [irfu-matlab](https://github.com/irfu/irfu-matlab): Matlab routines to work with space data, particularly with MMS and Cluster/CAA data. Also some general plasma routines.
+    - [pyrfu](https://pyrfu.readthedocs.io/en/latest/: Python version of irfu-matlab to work with space data, particularly the Magnetospheric MultiScale (MMS) mission.
 - [QSAS (C/C++)](http://www.sp.ph.ic.ac.uk/csc-web/QSAS/) : Science Analysis Software for Space Plasmas
 - [pysat](https://github.com/pysat/pysat): Python Satellite Data Analysis Toolkit
 
