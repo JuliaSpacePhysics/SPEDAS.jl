@@ -11,16 +11,14 @@ end
 stat_relerr(f) = (x -> stat_relerr(x, f))
 mean_relerr(itr) = stat_relerr(itr, mean)
 
-f2time(x, t0) = string(Millisecond(round(x)) + t0)
-
-function timedim(x, query=nothing)
+function timedim(x, query = nothing)
     query = something(query, TimeDim)
     qdim = dims(x, query)
-    isnothing(qdim) ? dims(x, 1) : qdim
+    return isnothing(qdim) ? dims(x, 1) : qdim
 end
 
-function timedimtype(x; query=TimeDim)
-    DimensionalData.basetypeof(timedim(x, query))
+function timedimtype(x; query = TimeDim)
+    return DimensionalData.basetypeof(timedim(x, query))
 end
 
 times(x) = SpaceDataModel.times(x)
@@ -47,7 +45,7 @@ function tstack(vectors::AbstractVector{<:AbstractVector}; kwargs...)
     return stack(vectors; kwargs...)
 end
 
-function tstack(vectors::AbstractDimVector{<:AbstractVector}; dims=1)
+function tstack(vectors::AbstractDimVector{<:AbstractVector}; dims = 1)
     n = length(first(vectors))
     data = stack(parent(vectors); dims)
     new_dims = (dims(vectors, 1), Y(1:n))
