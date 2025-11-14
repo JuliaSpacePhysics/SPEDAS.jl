@@ -2,9 +2,7 @@ using DimensionalData.Lookups
 using HybridArrays
 
 const timeDimType = (DimensionalData.TimeDim, Dim{:time})
-
-abstract type FrequencyDim{T} <: Dimension{T} end
-@dim 𝑓 FrequencyDim "Frequency"
+const 𝑓 = Y
 
 function hybridify(A, dims)
     sizes = ntuple(ndims(A)) do i

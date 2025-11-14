@@ -29,7 +29,6 @@ makedocs(
             "explanations/multispacecraft.md",
             "explanations/timeseries.md",
             "explanations/resampling.md",
-            "explanations/waves.md",
             "explanations/analysis.md"
         ],
         "Observatories" => list_pages("observatory"),
@@ -44,6 +43,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaSpacePhysics/SPEDAS.jl", 
+    repo = "github.com/JuliaSpacePhysics/SPEDAS.jl",
     push_preview = true
 )
