@@ -2,9 +2,7 @@
 
 This page contains a set of examples for you to start with.
 
-- [Basic interactive tplot](./interactive.md)
-- [Interactive tplot with Speasy](./interactive_speasy.md)
-- [Speasy example](./speasy.md)
+- [Speasy example: flexible layout and interactive tplot](https://juliaspacephysics.github.io/SpacePhysicsMakie.jl/dev/speasy/)
 
 ## Examples in the wild
 
