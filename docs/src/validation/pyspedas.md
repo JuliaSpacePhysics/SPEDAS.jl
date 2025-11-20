@@ -3,7 +3,7 @@
 !!! note "Performance Notes"
     - Calling Python from Julia (via [PythonCall.jl](https://github.com/JuliaPy/PythonCall.jl)) introduces only a negligible overhead, typically within nanoseconds.
     - Memory allocations shown in Julia benchmarks do not include allocations that occur within Python. To measure Python-side allocations, profiling should be done directly in Python.
-    - The documentation and benchmarks are generated using a single thread on GitHub Actions. Running the code locally with multiple threads (e.g., by setting `JULIA_NUM_THREADS`) can yield even greater performance improvements for Julia.
+    - The documentation and benchmarks are generated using GitHub Actions. Running the code locally with multiple threads (e.g., by setting `JULIA_NUM_THREADS`) can yield even greater performance improvements for Julia.
 
 ```@example pyspedas
 using PySPEDAS
@@ -12,8 +12,6 @@ using PythonCall
 using DimensionalData
 using PySPEDAS: get_data
 using CairoMakie, SpacePhysicsMakie
-using Chairmarks
-using Test
 ```
 
 ## Wave polarization
@@ -32,11 +30,14 @@ py_tvars = [
     "thc_scf_fac_elliptict",
     "thc_scf_fac_helict",
 ]
-py_result = DimStack(DimArray.(get_data.(py_tvars)))
+# PySPEDAS returns non valid values at the first and last frequency bin, the last time bin is also not valid
+_subset_py(x) = x[1:end-1,2:end-1]
+py_result = DimStack(_subset_py.(DimArray.(get_data.(py_tvars))))
+py_result.thc_scf_fac_powspec.metadata[:colorscale] = log10
+py_result.thc_scf_fac_helict.metadata[:colorscale] = identity
 res = twavpol(thc_scf_fac)
-res.power.metadata["scale"] = identity
 
-f = Figure(;size=(1200, 800))
+f = Figure(; size=(1200, 800))
 tplot(f[1,1], py_result)
 tplot(f[1,2], res)
 f
@@ -52,6 +53,8 @@ tplot(res)
 ### Benchmark
 
 ```@example pyspedas
+using Chairmarks
+
 @b twavpol(thc_scf_fac), twavpol_svd(thc_scf_fac), pyspedas.twavpol("thc_scf_fac")
 ```
 

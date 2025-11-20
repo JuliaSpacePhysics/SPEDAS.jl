@@ -1,3 +1,5 @@
 Manifest.toml
 .vscode
 .CondaPkg
+themis_data
+*.jld2
