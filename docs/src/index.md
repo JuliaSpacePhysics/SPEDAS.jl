@@ -16,6 +16,27 @@ using Pkg
 Pkg.add("SPEDAS")
 ```
 
+## Explanations
+
+!!! note "Notes" 
+    - This package began as a Julia port of [PySPEDAS](https://github.com/spedas/pyspedas) but has since expanded beyond a direct translation. While we aim to keep the API broadly consistent with the original, some intentional differences reflect design improvements in the Julia ecosystem. If you need a one-to-one wrapper of the Python library, see [PySPEDAS.jl](https://github.com/JuliaSpacePhysics/PySPEDAS.jl).
+    - The package now functions as a **meta-package**. Much of its functionality has been refactored into separate, modular components to improve maintainability and accelerate development. The broader [JuliaSpacePhysics Ecosystem](https://juliaspacephysics.github.io/ecosystem/) includes tools for coordinate transformations ([GeoCotrans.jl](https://github.com/JuliaSpacePhysics/GeoCotrans.jl)), data access ([CDAWeb.jl](https://github.com/JuliaSpacePhysics/CDAWeb.jl)), data analysis (e.g. [VelocityDistributionFunctions.jl](https://github.com/JuliaSpacePhysics/VelocityDistributionFunctions.jl), [PlasmaFormulary.jl](https://github.com/JuliaSpacePhysics/PlasmaFormulary.jl)), and more specialized applications (e.g. [GeoAACGM.jl](https://github.com/JuliaSpacePhysics/GeoAACGM.jl)).
+    - The primary goal of this package is to coordinate diverse data sources and analysis methods, providing a unified, high-level interface for scientific workflows. A secondary goal is to ensure consistent interfaces and to validate results against tools such as `PySPEDAS`.
+
+Plasma wave analysis is supported through the [PlasmaWaves.jl](https://juliaspacephysics.github.io/PlasmaWaves.jl/dev/) package. For an example using functions such as `twavpol` and `twavpol_svd`, see the [Wave polarization section in *Validation with PySPEDAS*](../validation/pyspedas.md#wave-polarization).
+
+Energetic particle analysis is provided by [SolarEnergeticParticle.jl](https://juliaspacephysics.github.io/SolarEnergeticParticle.jl). See, for example, the sections on [onset analysis](https://juliaspacephysics.github.io/SolarEnergeticParticle.jl/dev/onset/) and [velocity dispersion analysis (VDA)](https://juliaspacephysics.github.io/SolarEnergeticParticle.jl/dev/vda/).
+
+```@contents
+Pages = [
+    "explanations/coords.md",
+    "explanations/multispacecraft.md",
+    "explanations/tplot.md",
+    "explanations/resampling.md"
+]
+Depth = 1
+```
+
 ## Related packages
 
 - [SPEDAS (IDL)](https://spedas.org) / [PySPEDAS](https://github.com/SPEDAS/PySPEDAS) : Space Physics Environment Data Analysis Software framework to support loading, plotting, analysis, and integration of data from a number of space- and ground-based observatories
@@ -40,21 +61,6 @@ Pkg.add("SPEDAS")
 
 📫 **Contributing**: We welcome contributions! If you're interested in collaborating or need assistance, please open an issue or reach out through our [GitHub repository](https://github.com/JuliaSpacePhysics/SPEDAS.jl).
 
-!!! note "Notes" 
-    - This package originated as a port of [PySPEDAS](https://github.com/spedas/pyspedas) to Julia but has since evolved to extend its functionality. While we strive to maintain an API that is as consistent as possible with the original, certain design improvements have led to intentional deviations. For a direct one-to-one wrapper of the original Python library, see [PySPEDAS.jl](https://github.com/JuliaSpacePhysics/PySPEDAS.jl). 
-    - The package now serves as a **meta-package**, with much of its functionality refactored into separate, modular packages to improve maintainability and accelerate development. The broader [JuliaSpacePhysics Ecosystem](https://juliaspacephysics.github.io/ecosystem/) includes tools for coordinate transformations ([GeoCotrans.jl](https://github.com/JuliaSpacePhysics/GeoCotrans.jl)), data access ([CDAWeb.jl](https://github.com/JuliaSpacePhysics/CDAWeb.jl)), data analysis (e.g., [MinimumVarianceAnalysis.jl](https://github.com/JuliaSpacePhysics/MinimumVarianceAnalysis.jl), [VelocityDistributionFunctions.jl](https://github.com/JuliaSpacePhysics/VelocityDistributionFunctions.jl), [PlasmaFormulary.jl](https://github.com/JuliaSpacePhysics/PlasmaFormulary.jl)), and more domain-specific applications ([SolarEnergeticParticle.jl](https://github.com/JuliaSpacePhysics/SolarEnergeticParticle.jl), [GeoAACGM.jl](https://github.com/JuliaSpacePhysics/GeoAACGM.jl)).
-
-## Explanations
-
-```@contents
-Pages = [
-    "explanations/coords.md",
-    "explanations/multispacecraft.md",
-    "explanations/tplot.md",
-    "explanations/resampling.md"
-]
-Depth = 1
-```
 
 ## Reproducibility
 

@@ -42,10 +42,17 @@ tplot(f[1,2], res)
 f
 ```
 
+We can also use single value decomposition (SVD) technique to calculate the wave polarization.
+
+```@example pyspedas
+res = twavpol_svd(thc_scf_fac)
+tplot(res)
+```
+
 ### Benchmark
 
 ```@example pyspedas
-@b twavpol(thc_scf_fac), pyspedas.twavpol("thc_scf_fac")
+@b twavpol(thc_scf_fac), twavpol_svd(thc_scf_fac), pyspedas.twavpol("thc_scf_fac")
 ```
 
 Julia is about 100 times faster than Python.

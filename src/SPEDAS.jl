@@ -15,18 +15,16 @@ using LinearAlgebra
 using NaNStatistics
 using Intervals: Interval
 using StaticArrays
-using OhMyThreads
 using Statistics
 using Unitful, DimensionfulAngles
-using FFTW, DSP, SignalAnalysis
-using Tullio
-using Bumper
+using SignalAnalysis
 using NamedTupleTools
 using Reexport
 @reexport using SpaceDataModel
 using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData
 @reexport using TimeseriesUtilities
 @reexport using MinimumVarianceAnalysis
+@reexport using PlasmaWaves
 
 # export TimeRange
 export tstack, tinterp, tinterp_nans, tsync, resample, tresample
@@ -39,7 +37,6 @@ export volumetric_tensor, tetrahedron_quality
 export ConstantVelocityApproach, CVA, ConstantThicknessApproach, CTA
 export DiscontinuityAnalyzer, DA
 export Elsässer, σ_c
-export spectral_matrix, wavpol, twavpol, wpol_helicity, polarization
 
 const DD = DimensionalData
 const AbstractDimType = Union{AbstractDimStack, AbstractDimArray}
@@ -50,7 +47,6 @@ include("mhd.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/gap.jl")
 include("utils.jl")
-include("utils/timerange.jl")
 include("utils/dimensiondata.jl")
 include("resampling/resample.jl")
 include("resampling/interp.jl")
@@ -60,7 +56,4 @@ include("multispacecraft/tetrahedron.jl")
 include("multispacecraft/lingradest.jl")
 include("multispacecraft/timing.jl")
 include("analysis/analysis.jl")
-include("waves/polarization.jl")
-include("waves/helicty.jl")
-include("waves/spectral_matrix.jl")
 end

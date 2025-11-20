@@ -16,10 +16,7 @@ makedocs(
         "Tutorials" => list_pages("tutorials"),
         "Examples" => [
             "examples/index.md",
-            "examples/speasy.md",
             "examples/tplot.md",
-            "examples/interactive.md",
-            "examples/interactive_speasy.md"
         ],
         "Explanation" => [
             "explanations/data.md",
@@ -29,12 +26,11 @@ makedocs(
             "explanations/multispacecraft.md",
             "explanations/timeseries.md",
             "explanations/resampling.md",
-            "explanations/waves.md",
-            "explanations/analysis.md"
+            "explanations/analysis.md",
         ],
         "Observatories" => list_pages("observatory"),
         "Validation" => list_pages("validation"),
-        "API" => "api.md"
+        "API" => "api.md",
     ],
     format = Documenter.HTML(size_threshold = nothing),
     modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.MinimumVarianceAnalysis],
@@ -44,6 +40,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaSpacePhysics/SPEDAS.jl", 
+    repo = "github.com/JuliaSpacePhysics/SPEDAS.jl",
     push_preview = true
 )
