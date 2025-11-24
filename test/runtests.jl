@@ -12,6 +12,7 @@ end
 
 @testitem "cotrans" begin
     using CDAWeb
+    using DimensionalData
     t0 = "2010-02-25T00:00:00"
     t1 = "2010-02-25T23:59:59"
     pos = DimArray(CDAWeb.get_data("tha_l1_state", "tha_pos", t0, t1))
