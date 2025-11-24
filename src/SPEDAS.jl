@@ -19,7 +19,7 @@ using SignalAnalysis
 using NamedTupleTools
 using Reexport: @reexport
 @reexport using SpaceDataModel
-using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData
+using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim
 @reexport using TimeseriesUtilities
 @reexport using MinimumVarianceAnalysis
 @reexport using PlasmaWaves
@@ -29,7 +29,7 @@ export tstack, tinterp, tinterp_nans, tsync, resample, tresample
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
-export standardize, amap, ω2f
+export amap, ω2f
 export Elsässer, σ_c
 
 const DD = DimensionalData
