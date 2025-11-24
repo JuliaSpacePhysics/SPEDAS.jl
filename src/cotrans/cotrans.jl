@@ -24,7 +24,7 @@ References:
 function cotrans(A, in, out; backend = :auto)
     backend = Symbol(backend) # handle Module
     @assert backend ∈ (:auto, :GeoCotrans, :IRBEM) "backend must be :auto, :GeoCotrans, or :IRBEM"
-    key = (Symbol(lowercase(in)), Symbol(lowercase(out)))
+    key = _geocotrans_key(in, out)
     Ac = if backend == :auto
         haskey(coord_maps, key) ? coord_maps[key](A) : irbem_cotrans(A, in, out)
     elseif backend == :GeoCotrans
@@ -35,7 +35,9 @@ function cotrans(A, in, out; backend = :auto)
     return set_coord(Ac, out)
 end
 
-cotrans(A, out; in = get_coord(A)) = cotrans(A, in, out)
+_geocotrans_key(in, out) = (Symbol(lowercase(string(in))), Symbol(lowercase(string(out))))
+
+cotrans(A, out; in = get_coord(A), kw...) = cotrans(A, in, out; kw...)
 cotrans(A, f::Function; dims = 1) = map(f, eachslice(parent(A); dims), times(A))
 
 function irbem_cotrans(A, in, out)
@@ -43,7 +45,7 @@ function irbem_cotrans(A, in, out)
     time = times(A)
 
     data = dims == 1 ?
-           IRBEM.transform(time, A', in, out)' :
-           IRBEM.transform(time, A, in, out)
+        IRBEM.transform(time, A', in, out)' :
+        IRBEM.transform(time, A, in, out)
     return rebuild(A; data)
 end

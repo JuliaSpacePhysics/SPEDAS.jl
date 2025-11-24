@@ -17,8 +17,9 @@ Reference:
 
   - https://pyspedas.readthedocs.io/en/latest/_modules/pytplot/data_att_getters_setters.html#set_coords
 """
-function set_coord(da, coord; old_coords = get_coords(da))
+function set_coord(da, coord_out; old_coords = get_coords(da))
     # Update the coordinate system metadata
+    coord = string(coord_out)
     old_new_pairs = [old_coord => coord for old_coord in old_coords]
     push!(old_coords, lowercase.(old_coords)...)
     push!(old_new_pairs, _lowercase.(old_new_pairs)...)
