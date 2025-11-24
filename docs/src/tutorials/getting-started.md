@@ -54,15 +54,14 @@ using PySPEDAS.Projects
 using DimensionalData
 using CairoMakie
 
+# Same as more verbose `pyspedas.projects.themis.fgm(...)`
 da = themis.fgm(["2020-04-20/06:00", "2020-04-20/08:00"], time_clip=true, probe="d");
 keys(da)
-# Same as more verbose `pyspedas.projects.themis.fgm(...)`
+
 ```
 
 ### Plot the data
 
 ```@example pyspedas
-f = Figure()
 tplot((da.thd_fgs_gsm, da.thd_fgs_btotal))
-f
 ```
