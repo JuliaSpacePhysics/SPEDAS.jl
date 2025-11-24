@@ -12,6 +12,8 @@ There are multiple ways to retrieve data in the JuliaSpacePhysics Ecosystem:
 
 - [Speasy (preferred)](https://github.com/SciQLop/speasy): a Python library for accessing space physics data. Integration is provided using the wrapper library [Speasy.jl](https://sciqlop.github.io/Speasy.jl/dev/).
 
+- [Madrigal.jl](https://github.com/JuliaSpacePhysics/Madrigal.jl): a Julia API to access the Madrigal database.
+
 - [PySPEDAS](https://github.com/spedas/pyspedas): Python-based Space Physics Environment Data Analysis Software. Integration is provided using the wrapper library [PySPEDAS.jl](https://github.com/JuliaSpacePhysics/PySPEDAS.jl).
 
 - [HAPI](https://hapi-server.org): Heliophysics Application Programmer’s Interface (HAPI) specification. Integration is provided using the wrapper library [HAPIClient.jl](https://juliaspacephysics.github.io/HAPIClient.jl/dev/).

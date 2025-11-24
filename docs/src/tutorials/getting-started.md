@@ -1,6 +1,6 @@
 # Quickstart
 
-We provide a few ways to load data, please see [Data](../explanations/data.md) for a detailed explanation of the data formats and retrieval methods.
+Here, we show an example of loading data from CDAWeb using Speasy.jl and visualizing it with SpacePhysicsMakie.jl. For additional approaches to retrieving data, see the [Julia Space Physics Tutorials](https://juliaspacephysics.github.io/tutorials/data_loading/). You can also refer to the [Data](../explanations/data.md) page for a detailed explanation of supported data formats and retrieval methods.
 
 ## Get data with Speasy
 
@@ -13,55 +13,11 @@ using Speasy
 using CairoMakie, SpacePhysicsMakie
 
 # da = get_data("amda/imf", "2016-6-2", "2016-6-5")
-da = Speasy.get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-3"; sanitize=true)
+data = Speasy.get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-3"; sanitize=true)
 ```
 
 ### Plot the data
 
 ```@example share
-tplot(da)
-```
-
-## Get data using Heliophysics Application Programmer's Interface (HAPI)
-
-[HAPIClient.jl](https://github.com/JuliaSpacePhysics/HAPIClient.jl) provides functions to load data from HAPI-compliant servers.
-
-It could be installed using `using Pkg; Pkg.add("HAPIClient")`.
-
-```@example hapi
-using HAPIClient: get_data
-
-da = get_data("CDAWeb/AC_H0_MFI/Magnitude,BGSEc", "2001-1-2", "2001-1-2T6")
-```
-
-### Plot the data
-
-```@example hapi
-using CairoMakie, SpacePhysicsMakie
-
-tplot(da; add_title=true)
-```
-
-## Get data with PySPEDAS
-
-[PySPEDAS.jl](https://github.com/JuliaSpacePhysics/PySPEDAS.jl) provides a Julia interface to the [PySPEDAS](https://github.com/spedas/pyspedas) Python package, offering a similar API for Julia users to utilize the existing Python routines.
-
-It could be installed using `using Pkg; Pkg.add("PySPEDAS")`.
-
-```@example pyspedas
-using SpacePhysicsMakie: tplot
-using PySPEDAS.Projects
-using DimensionalData
-using CairoMakie
-
-# Same as more verbose `pyspedas.projects.themis.fgm(...)`
-da = themis.fgm(["2020-04-20/06:00", "2020-04-20/08:00"], time_clip=true, probe="d");
-keys(da)
-
-```
-
-### Plot the data
-
-```@example pyspedas
-tplot((da.thd_fgs_gsm, da.thd_fgs_btotal))
+tplot(data)
 ```
