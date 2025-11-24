@@ -31,6 +31,8 @@ Multi-spacecraft analysis methods are provided by [MultiSpacecraftAnalysis.jl](h
 
 [`SpacePhysicsMakie.jl`](https://juliaspacephysics.github.io/SpacePhysicsMakie.jl/dev/) provides utilities for visualizing and composing space physics time series data.
 
+## Contents
+
 ```@contents
 Pages = [
     "explanations/data.md",
