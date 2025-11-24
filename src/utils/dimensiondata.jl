@@ -18,15 +18,6 @@ end
 hybridify(A; query=nothing) = 
     hybridify(A, dimnum(A, something(query, TimeDim)))
 
-function standardize(x::AbstractDimArray; floatify=true)
-    # Convert integer values to floats
-    floatify && eltype(x) <: Integer && (x = modify(float, x))
-    # Check if any of the dimensions match our time dimension types
-    x = any(d -> d isa Dim{:time}, dims(x)) ? set(x, Dim{:time} => Ti) : x
-end
-tdim(t) = Ti(t)
-tdim(t::DD.Dimension) = t
-
 function tvec(A::AbstractDimArray; query=nothing)
     dim = timedim(A, query)
     DimArray(vec(parent(A)), dim; metadata=meta(A), name=name(A))
@@ -54,15 +45,6 @@ end
 
 function rename(da::AbstractDimArray, new_name)
     rebuild(da; name=new_name)
-end
-
-function _dimnum(x, query = nothing)
-    # If query is nothing, choose the time dimension or the first dimension
-    if isnothing(query)
-        hasdim(x, TimeDim) ? dimnum(x, TimeDim) : 1
-    else
-        dimnum(x, query)
-    end
 end
     
 """
