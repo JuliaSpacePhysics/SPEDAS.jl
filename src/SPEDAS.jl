@@ -9,14 +9,13 @@ using Dates
 using Dates: AbstractTime
 using DimensionalData
 using DimensionalData.Dimensions
-using DimensionalData: AbstractDimVector, AbstractDimMatrix, TimeDim
+using DimensionalData: AbstractDimVector, TimeDim
 using DimensionalData.Dimensions: Dimension
 using LinearAlgebra
 using StaticArrays
 using Statistics
 using Unitful, DimensionfulAngles
 using SignalAnalysis
-using NamedTupleTools
 using Reexport: @reexport
 @reexport using SpaceDataModel
 using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim
