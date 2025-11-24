@@ -18,7 +18,7 @@ using Unitful, DimensionfulAngles
 using SignalAnalysis
 using Reexport: @reexport
 @reexport using SpaceDataModel
-using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim
+using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim, times
 @reexport using TimeseriesUtilities
 @reexport using MinimumVarianceAnalysis
 @reexport using PlasmaWaves
