@@ -37,13 +37,22 @@ n = DataSet("Density",
 )
 ```
 
+The DataSets are callable: given a time range, it will return the actual data.
+
 ```@example PSP
-tplot(n, "2021-08-09T06", "2021-08-10T18")
+t0 = "2021-08-09T06"
+t1 = "2021-08-10T18"
+n(t0, t1)
+```
+
+```@example PSP
+# tplot(n(t0, t1)) # get the data first and plot it
+tplot(n, t0, t1) # or interactive mode
 ```
 
 ```@example PSP
 # Overlay multiple datasets in the same panel
-tplot([n], "2021-08-09T06", "2021-08-10T18")
+tplot([n], t0, t1)
 ```
 
 ## References

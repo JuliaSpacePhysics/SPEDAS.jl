@@ -1,39 +1,83 @@
 # Multi-spacecraft analysis methods
 
+This page demonstrates the use of multi-spacecraft analysis for MMS data. For more details about the package, see [MultiSpacecraftAnalysis.jl](https://juliaspacephysics.github.io/MultiSpacecraftAnalysis.jl/dev/).
 
-## Reciprocal vectors
+```@example mms
+using SPEDAS
+using Dates
+using CDAWeb
+using DimensionalData
+using CairoMakie, SpacePhysicsMakie
 
-[paschmannMultispacecraftAnalysisMethods2008; Chapter 4](@citet), [paschmannAnalysisMethodsMultispacecraft2000; Chapter 14](@citet), 
+t0 = DateTime("2016-12-09T09:02")
+t1 = DateTime("2016-12-09T09:04")
+fgm_datasets = ntuple(4) do probe
+    get_dataset("MMS$(probe)_FGM_BRST_L2", t0, t1)
+end
 
-```@docs
-SPEDAS.position_tensor
-reciprocal_vector
-reciprocal_vectors
+# Load data from CDF files into memory, MMS FGM data comes with magnitude
+fields = ntuple(4) do probe
+    DimArray(fgm_datasets[probe]["mms$(probe)_fgm_b_gse_brst_l2"])[X(1:3), Ti(t0..t1)]
+end
+
+tplot(fields)
 ```
 
-### Estimation of spatial gradients
+```@example mms
+mec_datasets = ntuple(4) do probe
+    get_dataset("MMS$(probe)_MEC_BRST_L2_EPHT89D", t0, t1)
+end
 
-```@docs
-lingradest
+positions = ntuple(4) do probe
+    DimArray(mec_datasets[probe]["mms$(probe)_mec_r_gse"])[Ti(t0..t1)]
+end
+
+out = tlingradest(fields, positions)
 ```
 
-> Since $\tilde{g}$ and $\tilde{\boldsymbol{V}}$ are linear functions, the calculation of spatial derivatives, such as the gradient of some scalar function or the divergence or curl of a vector function, can be done quite easily. The results are:
+```@example mms
+using SPEDAS: jparallel
 
-```math
-\begin{aligned}
-\nabla g \simeq \nabla \tilde{g} & =\sum_{\alpha=0}^3 \boldsymbol{k}_\alpha g_\alpha \\
-\hat{\boldsymbol{e}} \cdot \nabla g \simeq \hat{\boldsymbol{e}} \cdot \nabla \tilde{g} & =\sum_{\alpha=0}^3\left(\hat{\boldsymbol{e}} \cdot \boldsymbol{k}_\alpha\right) g_\alpha \\
-\nabla \cdot \boldsymbol{V} \simeq \nabla \cdot \tilde{\boldsymbol{V}} & =\sum_{\alpha=0}^3 \boldsymbol{k}_\alpha \cdot \boldsymbol{V}_\alpha \\
-\nabla \times \boldsymbol{V} \simeq \nabla \times \tilde{\boldsymbol{V}} & =\sum_{\alpha=0}^3 \boldsymbol{k}_\alpha \times \boldsymbol{V}_\alpha
-\end{aligned}
+jp = jparallel(out.Bbc, out.curl)
+jp = setmeta(jp, ylabel = "Jparallel\n(nA/m²)")
+tplot((out.Bbc, out.div, out.curl, out.curv, jp))
 ```
 
-## Multi-spacecraft timing
+## Validation with PySPEDAS
 
-```@docs
-ConstantVelocityApproach
+```@example mms
+using PySPEDAS
+using PythonCall
+using Unitful
+using Test
+@py import pyspedas.projects.mms: mec, fgm, curlometer
+trange = string.([t0, t1])
+fgm_vars = @py fgm(probe=[1, 2, 3, 4], trange=trange, data_rate="brst", time_clip=true, varformat="*_gse_*")
+mec_vars = @py mec(probe=[1, 2, 3, 4], trange=trange, data_rate="brst", time_clip=true, varformat="*_r_gse")
+posits_py = ["mms1_mec_r_gse", "mms2_mec_r_gse", "mms3_mec_r_gse", "mms4_mec_r_gse"]
+fields_py = ["mms1_fgm_b_gse_brst_l2", "mms2_fgm_b_gse_brst_l2", "mms3_fgm_b_gse_brst_l2", "mms4_fgm_b_gse_brst_l2"]
+curlometer_vars = curlometer(fields=fields_py, positions=posits_py)
+jp_py = PySPEDAS.get_data("jpar")
+
+# Due to interpolation, pyspedas first and last values are NaN
+@test (jp ./ u"A/m^2" .|> NoUnits) ≈ (jp_py[2:end-1]) atol=1e-5
 ```
 
+### Benchmark
 
-```@bibliography
+```@example mms
+using Chairmarks
+@b tlingradest(fields, positions), curlometer(fields=fields_py, positions=posits_py)
 ```
+
+Julia is about 100 times faster than Python for similar workflows.
+
+## Dataset info
+
+```@example mms
+fgm_datasets[1]
+```
+
+# References
+
+- https://github.com/spedas/mms-examples/blob/master/basic/Curlometer%20Technique.ipynb

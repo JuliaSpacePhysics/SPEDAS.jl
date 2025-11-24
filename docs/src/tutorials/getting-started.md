@@ -9,11 +9,11 @@ We provide a few ways to load data, please see [Data](../explanations/data.md) f
 It could be installed using `using Pkg; Pkg.add("Speasy")`.
 
 ```@example share
-using Speasy: get_data
+using Speasy
 using CairoMakie, SpacePhysicsMakie
 
 # da = get_data("amda/imf", "2016-6-2", "2016-6-5")
-da = get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-3"; sanitize=true)
+da = Speasy.get_data("cda/OMNI_HRO_1MIN/Pressure", "2016-6-2", "2016-6-3"; sanitize=true)
 ```
 
 ### Plot the data
@@ -39,7 +39,7 @@ da = get_data("CDAWeb/AC_H0_MFI/Magnitude,BGSEc", "2001-1-2", "2001-1-2T6")
 ```@example hapi
 using CairoMakie, SpacePhysicsMakie
 
-tplot(da)
+tplot(da; add_title=true)
 ```
 
 ## Get data with PySPEDAS
@@ -63,7 +63,6 @@ keys(da)
 
 ```@example pyspedas
 f = Figure()
-tplot(f[1,1], [da.thd_fgs_gsm, da.thd_fgs_btotal])
-tplot(f[2,1], [DimArray(da.thd_fgl_gsm), DimArray(da.thd_fgl_btotal)])
+tplot((da.thd_fgs_gsm, da.thd_fgs_btotal))
 f
 ```

@@ -6,7 +6,7 @@ See [Coordinate Systems](../explanations/coords.md) for more information.
 !!! note "Takeaway"
     Julia's implementation yields results very close to IRBEM's and PySPEDAS's one, and is an order of magnitude faster. (Julia's one uses finer interpolation than IRBEM's and PySPEDAS's one to determine IGRF coefficients and sun's direction, leading to more accurate transformations.)
 
-References: [`cotrans`](@ref), [test_cotrans.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/cotrans.py)
+References: [`cotrans`](@ref), [test_cotrans.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/test_cotrans.py)
 
 ## Setup
 
@@ -24,7 +24,7 @@ using Test
 Setup using PySPEDAS test cases.
 
 ```@example coords
-@py import pyspedas.cotrans_tools.tests.cotrans: CotransTestCases
+@py import pyspedas.cotrans_tools.tests.test_cotrans: CotransTestCases
 
 pytest = CotransTestCases()
 pytest.test_cotrans()
