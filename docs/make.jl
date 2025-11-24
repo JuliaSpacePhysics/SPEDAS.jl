@@ -14,9 +14,6 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Tutorials" => list_pages("tutorials"),
-        "Examples" => [
-            "examples/index.md",
-        ],
         "Explanation" => [
             "explanations/data.md",
             "explanations/data_model.md",
