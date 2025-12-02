@@ -6,7 +6,7 @@
 using DataInterpolations
 
 """
-    tinterp(A, t; interp=LinearInterpolation)
+    tinterp(A, t; interp=LinearInterpolation, dim)
 
 Interpolate time series `A` at time point(s) `t` using `interp` (default: `LinearInterpolation`) method.
 Returns interpolated value for single time point or DimArray for multiple time points.
@@ -24,10 +24,9 @@ new_times = DateTime("2023-01-01"):Hour(1):DateTime("2023-01-02")
 tinterp(time_series, new_times; interp = CubicSpline)
 ```
 """
-function tinterp(A, t; interp = nothing, query = nothing, kws...)
-    interp = something(interp, LinearInterpolation)
-    query = something(query, TimeDim)
-    dim = dimnum(A, query)
+function tinterp(A, t; interp = nothing, dim = nothing, kws...)
+    interp = @something interp LinearInterpolation
+    dim = @something dim tdimnum(A)
     out = _tinterp(parent(A), parent(lookup(dims(A, dim))), t, interp, dim; kws...)
     return if t isa AbstractTime
         out
