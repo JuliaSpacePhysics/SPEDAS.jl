@@ -12,7 +12,7 @@ using CairoMakie, SpacePhysicsMakie
 t0 = DateTime("2016-12-09T09:02")
 t1 = DateTime("2016-12-09T09:04")
 fgm_datasets = ntuple(4) do probe
-    get_dataset("MMS$(probe)_FGM_BRST_L2", t0, t1)
+    get_data("MMS$(probe)_FGM_BRST_L2", t0, t1)
 end
 
 # Load data from CDF files into memory, MMS FGM data comes with magnitude
@@ -25,7 +25,7 @@ tplot(fields)
 
 ```@example mms
 mec_datasets = ntuple(4) do probe
-    get_dataset("MMS$(probe)_MEC_BRST_L2_EPHT89D", t0, t1)
+    get_data("MMS$(probe)_MEC_BRST_L2_EPHT89D", t0, t1)
 end
 
 positions = ntuple(4) do probe

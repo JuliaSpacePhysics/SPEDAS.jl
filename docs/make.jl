@@ -26,7 +26,7 @@ makedocs(
         "API" => "api.md",
     ],
     format = Documenter.HTML(size_threshold = nothing),
-    modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.MinimumVarianceAnalysis],
+    modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.MinimumVarianceAnalysis, SPEDAS.TimeseriesUtilities],
     warnonly = Documenter.except(:doctest),
     plugins = [bib],
     doctest = true
