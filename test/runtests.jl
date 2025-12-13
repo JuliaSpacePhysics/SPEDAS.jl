@@ -15,7 +15,7 @@ end
     using DimensionalData
     t0 = "2010-02-25T00:00:00"
     t1 = "2010-02-25T23:59:59"
-    pos = DimArray(CDAWeb.get_data("tha_l1_state", "tha_pos", t0, t1))
+    pos = DimArray(CDAWeb.get_data("tha_l1_state", t0, t1)["tha_pos"])
     geo = gei2geo(pos)
     @test geo.data[:, [1, end]] ≈ [32500.703796760008 32964.60545865282; -5688.514017885206 -5723.818569392612; -4950.9140625 -5013.51220703125]
     @test SPEDAS.get_coord(pos) == "GEI"

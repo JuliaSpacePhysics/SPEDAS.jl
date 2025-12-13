@@ -1,22 +1,6 @@
 using DimensionalData.Lookups
-using HybridArrays
 
-const timeDimType = (DimensionalData.TimeDim, Dim{:time})
 const 𝑓 = Y
-
-function hybridify(A, dims)
-    sizes = ntuple(ndims(A)) do i
-        i in dims ? StaticArrays.Dynamic() : size(A, i)
-    end
-    HybridArray{Tuple{sizes...}}(A)
-end
-
-function hybridify(A::AbstractDimArray, dim)
-    rebuild(A, hybridify(parent(A), dim))
-end
-
-hybridify(A; query=nothing) = 
-    hybridify(A, dimnum(A, something(query, TimeDim)))
 
 function tvec(A::AbstractDimArray; query=nothing)
     dim = timedim(A, query)

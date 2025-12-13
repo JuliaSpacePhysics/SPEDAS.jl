@@ -25,7 +25,7 @@ import SpaceDataModel as SDM
 @reexport using PlasmaWaves
 @reexport using MultiSpacecraftAnalysis
 
-export tstack, tinterp, tinterp_nans, tsync, resample, tresample
+export tstack, resample, tresample
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
@@ -44,7 +44,6 @@ include("timeseries/gap.jl")
 include("utils.jl")
 include("utils/dimensiondata.jl")
 include("resampling/resample.jl")
-include("resampling/interp.jl")
 include("cotrans/cotrans.jl")
 include("analysis/analysis.jl")
 end
