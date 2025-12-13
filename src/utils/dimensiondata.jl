@@ -1,7 +1,5 @@
 using DimensionalData.Lookups
 
-const 𝑓 = Y
-
 function tvec(A::AbstractDimArray; query=nothing)
     dim = timedim(A, query)
     DimArray(vec(parent(A)), dim; metadata=meta(A), name=name(A))

@@ -5,12 +5,12 @@
 
 export pspectrum
 
-function pspectrum(x::AbstractVector, times, spec::Spectrogram; name=:power, metadata=Dict("DISPLAY_TYPE" => "spectrogram", "scale" => log10))
+function pspectrum(x::AbstractVector, times, spec::Spectrogram; name=:power, metadata=Dict("DISPLAY_TYPE" => "spectrogram", :scale => log10, :ylabel => "Frequency (Hz)"))
     fs = samplingrate(times) |> ustrip
     y = tfd(ustrip(x), spec; fs)
     t0 = DateTime(times[1])
     t_dim = Ti(y.time .* 1u"s" .+ t0)
-    f_dim = 𝑓(y.freq * 1u"Hz")
+    f_dim = Z(y.freq)
     DimArray(permutedims(y.power), (t_dim, f_dim); name, metadata)
 end
 
