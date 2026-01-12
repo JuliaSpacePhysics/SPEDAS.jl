@@ -49,7 +49,7 @@ function set_coord(da, coord_out; old_coords = get_coords(da))
     name = string(da.name)
     if any(occursin(name), old_coords)
         new_name = replace(name, old_new_pairs...)
-        new_da = rename(new_da, Symbol(new_name))
+        new_da = rebuild(new_da, name = Symbol(new_name))
     end
 
     # Update dimension names if they contain the coordinate system

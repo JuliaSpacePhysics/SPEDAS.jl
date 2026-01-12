@@ -1,6 +1,5 @@
 [deps]
 CDAWeb = "950ff2a9-823f-469c-91a7-754a5d85edca"
-CDFDatasets = "075ae62b-f872-4368-b383-31e3aa6c3154"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Chairmarks = "0ca39b1e-fe0b-4e98-acfc-b1656634c4de"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"

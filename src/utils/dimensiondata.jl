@@ -1,34 +1,3 @@
-using DimensionalData.Lookups
-
-function tvec(A::AbstractDimArray; query=nothing)
-    dim = timedim(A, query)
-    DimArray(vec(parent(A)), dim; metadata=meta(A), name=name(A))
-end
-
-"""
-    nt2ds(nt_arr, dim; fields=propertynames(first(nt_arr)))
-
-Convert a NamedTuple array to a DimStack of DimArrays.
-"""
-function nt2ds(nt_arr, dim; fields=propertynames(first(nt_arr)))
-    DimStack([
-        DimArray(getfield.(nt_arr, field), dim; name=field)
-        for field in fields
-    ])
-end
-
-function nt2ds(nt_arr; sym=:time)
-    dim = Dim{sym}(getfield.(nt_arr, sym))
-    # filter the time dimension
-    fields = propertynames(first(nt_arr))
-    fields = filter(field -> field != sym, fields)
-    nt2ds(nt_arr, dim; fields)
-end
-
-function rename(da::AbstractDimArray, new_name)
-    rebuild(da; name=new_name)
-end
-    
 """
     amap(f, a, b)
 
