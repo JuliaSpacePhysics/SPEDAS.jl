@@ -13,7 +13,6 @@ using DimensionalData: AbstractDimVector, TimeDim
 using DimensionalData.Dimensions: Dimension
 using LinearAlgebra
 using StaticArrays
-using Statistics
 using Unitful, DimensionfulAngles
 using SignalAnalysis
 using Reexport: @reexport
@@ -25,20 +24,15 @@ import SpaceDataModel as SDM
 @reexport using PlasmaWaves
 @reexport using MultiSpacecraftAnalysis
 
-export tstack, resample, tresample
+export resample, tresample
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
 export get_coord, get_coords, set_coord
 export amap, ω2f
-export Elsässer, σ_c
 
 const DD = DimensionalData
-const AbstractDimType = Union{AbstractDimStack, AbstractDimArray}
-const MatrixLike = Union{AbstractArray{<:AbstractVector}, AbstractMatrix}
-const SV3 = SVector{3}
 
 include("projects/project.jl")
-include("mhd.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/gap.jl")
 include("utils.jl")

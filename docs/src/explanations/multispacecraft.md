@@ -36,7 +36,22 @@ out = tlingradest(fields, positions)
 ```
 
 ```@example mms
-using SPEDAS: jparallel
+using LinearAlgebra
+using Unitful
+
+unitify(x, unit) = x isa Quantity ? x : x * unit
+
+"""
+Calculate the parallel component of current density with respect to magnetic field, given `𝐁` and Curl of magnetic field vector `curl𝐁`.
+"""
+function jparallel(𝐁, curl𝐁)
+    𝐁 = unitify.(𝐁, u"nT")
+    curl𝐁 = unitify.(curl𝐁, u"nT/km")
+    J_parallel = dot(curl𝐁, 𝐁) / norm(𝐁) / Unitful.μ0
+    return J_parallel |> u"nA/m^2"
+end
+
+jparallel(B::AbstractMatrix, curl𝐁::AbstractMatrix; dim = 2) = jparallel.(eachslice(B; dims = dim), eachslice(curl𝐁; dims = dim))
 
 jp = jparallel(out.Bbc, out.curl)
 jp = setmeta(jp, ylabel = "Jparallel\n(nA/m²)")
