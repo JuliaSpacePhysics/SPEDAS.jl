@@ -1,6 +1,6 @@
 name = "SPEDAS"
 uuid = "3930f61c-4d81-4846-ab8f-357babe068a6"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Zijin Zhang <zzj956959688@gmail.com> and contributors"]
 
 [workspace]
