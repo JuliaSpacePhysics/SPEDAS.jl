@@ -26,7 +26,7 @@ import SpaceDataModel as SDM
 
 export resample, tresample
 export fill_gaps
-export rotate, select_rotate, fac_mat, tfac_mat, mva, mva_eigen, check_mva_eigen
+export rotate, select_rotate, fac_mat, tfac_mat
 export get_coord, get_coords, set_coord
 export amap, ω2f
 
@@ -40,4 +40,5 @@ include("utils/dimensiondata.jl")
 include("resampling/resample.jl")
 include("cotrans/cotrans.jl")
 include("analysis/analysis.jl")
+include("deprecate.jl")
 end
