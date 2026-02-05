@@ -3,7 +3,7 @@
 This page demonstrates the use of multi-spacecraft analysis for MMS data. For more details about the package, see [MultiSpacecraftAnalysis.jl](https://juliaspacephysics.github.io/MultiSpacecraftAnalysis.jl/dev/).
 
 ```@example mms
-using SPEDAS
+using SPEDAS: tlingradest, setmeta
 using Dates
 using CDAWeb
 using DimensionalData
@@ -65,7 +65,7 @@ using PySPEDAS
 using PythonCall
 using Unitful
 using Test
-@py import pyspedas.projects.mms: mec, fgm, curlometer
+@py import pyspedas.projects.mms: mec, fgm, curlometer, lingradest
 trange = string.([t0, t1])
 fgm_vars = @py fgm(probe=[1, 2, 3, 4], trange=trange, data_rate="brst", time_clip=true, varformat="*_gse_*")
 mec_vars = @py mec(probe=[1, 2, 3, 4], trange=trange, data_rate="brst", time_clip=true, varformat="*_r_gse")
@@ -82,7 +82,7 @@ jp_py = PySPEDAS.get_data("jpar")
 
 ```@example mms
 using Chairmarks
-@b tlingradest(fields, positions), curlometer(fields=fields_py, positions=posits_py)
+@b tlingradest($fields, $positions), lingradest(fields=$fields_py, positions=$posits_py), curlometer(fields=$fields_py, positions=$posits_py)
 ```
 
 Julia is about 100 times faster than Python for similar workflows.
