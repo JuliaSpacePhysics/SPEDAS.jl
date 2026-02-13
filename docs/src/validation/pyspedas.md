@@ -14,6 +14,8 @@ using PySPEDAS: get_data
 using CairoMakie, SpacePhysicsMakie
 ```
 
+For minimum variance analysis, see [MinimumVarianceAnalysis.jl](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/#Validation-with-PySPEDAS).
+
 ## Wave polarization
 
 References: [`twavpol`](@ref), [test_twavpol.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/analysis/tests/test_twavpol.py), [Wave polarization using SCM data - PySPEDAS](https://github.com/spedas/mms-examples/blob/master/advanced/Wave_polarization_using_SCM_data.ipynb)
@@ -59,40 +61,3 @@ using Chairmarks
 ```
 
 Julia is about 100 times faster than Python.
-
-
-## Minimum variance analysis
-
-References: [`mva_eigen`](@ref), [test_minvar.py - PySPEDAS](https://github.com/spedas/pyspedas/blob/master/pyspedas/cotrans_tools/tests/test_minvar.py)
-
-```@example pyspedas
-@py import pyspedas.cotrans_tools.tests.test_minvar: TestMinvar
-@py import pyspedas.cotrans_tools.minvar_matrix_make: minvar_matrix_make
-
-isapprox_eigenvector(v1, v2) = isapprox(v1, v2) || isapprox(v1, -v2)
-
-pytest = TestMinvar()
-pytest.setUpClass()
-
-thb_fgs_gsm = get_data("idl_thb_fgs_gsm_mvaclipped1") |> DimArray
-jl_mva_eigen = mva_eigen(thb_fgs_gsm)
-jl_mva_mat = jl_mva_eigen.vectors
-jl_mva_vals = jl_mva_eigen.values
-
-py_mva_vals = PyArray(pytest.vals.y) |> vec
-py_mva_mat = PyArray(pytest.mat.y[0])'
-@assert isapprox(jl_mva_vals, py_mva_vals)
-@assert all(isapprox_eigenvector.(eachcol(jl_mva_mat), eachcol(py_mva_mat)))
-```
-
-Since eigenvectors are only unique up to sign; therefore, the test checks if each Julia eigenvector is approximately equal to the corresponding Python eigenvector or its negative.
-Test passed.
-
-### Benchmark
-
-```@example pyspedas
-@b mva_eigen(thb_fgs_gsm), minvar_matrix_make("idl_thb_fgs_gsm_mvaclipped1")
-```
-
-Julia demonstrates a performance advantage of approximately 1000 times over Python, with significantly reduced memory allocations. 
-Moreover, Julia's implementation is generalized for N-dimensional data.
