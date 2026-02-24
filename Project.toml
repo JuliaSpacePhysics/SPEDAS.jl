@@ -28,7 +28,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 DataInterpolations = "7, 8"
 Dates = "1"
-DimensionalData = "0.29"
+DimensionalData = "0.29, 0.30"
 DimensionfulAngles = "0.2.1"
 GeoCotrans = "0.0.1, 0.1, 0.2"
 IRBEM = "0.1.7"
