@@ -1,1 +1,3 @@
-@time using SPEDAS
+using BenchmarkTools
+
+const SUITE = BenchmarkGroup()

@@ -4,10 +4,9 @@ version = "0.2.5"
 authors = ["Zijin Zhang <zzj956959688@gmail.com> and contributors"]
 
 [workspace]
-projects = ["docs", "test"]
+projects = ["docs", "test", "benchmark"]
 
 [deps]
-DataInterpolations = "82cc6244-b520-54b8-b5a6-8a565e85f1d0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 DimensionfulAngles = "2d4b8d7a-02d9-40f9-9abe-9c695b77de0d"
@@ -26,7 +25,6 @@ TimeseriesUtilities = "31d49243-0742-49c1-b8d2-db113b74581e"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-DataInterpolations = "7, 8"
 Dates = "1"
 DimensionalData = "0.29, 0.30"
 DimensionfulAngles = "0.2.1"

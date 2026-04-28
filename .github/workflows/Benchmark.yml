@@ -1,0 +1,14 @@
+name: Benchmark
+
+on:
+  pull_request_target:
+    branches:
+      - main
+permissions:
+  pull-requests: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: MilesCranmer/AirspeedVelocity.jl@action-v1
