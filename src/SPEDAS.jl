@@ -11,10 +11,10 @@ using DimensionalData
 using DimensionalData.Dimensions
 using DimensionalData: AbstractDimVector, TimeDim
 using DimensionalData.Dimensions: Dimension
+using DSP: spectrogram, hamming
 using LinearAlgebra
 using StaticArrays
-using Unitful, DimensionfulAngles
-using SignalAnalysis
+using Unitful
 using Reexport: @reexport
 @reexport using SpaceDataModel
 using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim, tdimnum, times, unwrap
@@ -28,7 +28,7 @@ export resample, tresample
 export fill_gaps
 export rotate, select_rotate, fac_mat, tfac_mat
 export get_coord, get_coords, set_coord
-export amap, ω2f
+export amap
 
 const DD = DimensionalData
 

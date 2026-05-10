@@ -5,42 +5,45 @@
 
 export pspectrum
 
-function pspectrum(x::AbstractVector, times, spec::Spectrogram; name=:power, metadata=Dict("DISPLAY_TYPE" => "spectrogram", :scale => log10, :ylabel => "Frequency (Hz)"))
-    fs = samplingrate(times) |> ustrip
-    y = tfd(ustrip(x), spec; fs)
-    t0 = DateTime(times[1])
-    t_dim = Ti(y.time .* 1u"s" .+ t0)
+_seconds(dt::Dates.Period) = Dates.seconds(dt)
+_seconds(dt) = dt
+_timebins(t0::Dates.TimeType, seconds) = Nanosecond.(round.(Int, 1e9 .* seconds)) .+ t0
+_timebins(t0, seconds) = seconds .+ t0
+
+function pspectrum(x::AbstractVector, times; nfft = 256, noverlap = div(nfft, 2), window = hamming)
+    dt = resolution(times)
+    fs = inv(_seconds(dt))
+    y = spectrogram(x, nfft, noverlap; fs, window)
+    time = _timebins(times[1], y.time)
+    return (power = y.power, time, freq = y.freq)
+end
+
+function pspectrum(x::AbstractDimVector; name = :power, metadata = Dict("DISPLAY_TYPE" => "spectrogram", :scale => log10, :ylabel => "Frequency (Hz)"), kwargs...)
+    ts = times(x)
+    y = pspectrum(parent(x), ts; kwargs...)
+    t_dim = Ti(y.time)
     f_dim = Z(y.freq)
-    DimArray(permutedims(y.power), (t_dim, f_dim); name, metadata)
+    return DimArray(y.power, (f_dim, t_dim); name, metadata)
 end
 
 """
-    pspectrum(x::AbstractDimArray, spec::Spectrogram)
     pspectrum(x::AbstractDimArray; nfft=256, noverlap=128, window=hamming)
 
 Compute the power spectrum (time-frequency representation) of a time series using the short-time Fourier transform.
 
 Returns a `DimArray` with frequency and original time dimensions.
 
-See also: `DSP.Spectrogram`, `DSP.stft`
+Defaults to a Hamming window to preserve SPEDAS behavior.
+
+See also: `DSP.spectrogram`, `DSP.stft`
 
 # Reference
 - [Matlab](https://www.mathworks.com/help/signal/ref/pspectrum.html)
 """
-function pspectrum(x::AbstractDimVector, spec::Spectrogram; kwargs...)
-    return pspectrum(x, times(x), spec; kwargs...)
-end
-
-function pspectrum(x::AbstractDimArray, spec::Spectrogram; query=Ti, kwargs...)
-    ts = times(x)
+function pspectrum(x::AbstractDimArray; query = Ti, kwargs...)
     dims = otherdims(x, query)
     specs = map(eachslice(x; dims)) do slice
-        pspectrum(slice, ts, spec; kwargs...)
+        pspectrum(slice; kwargs...)
     end
-    cat(specs...; dims)
-end
-
-function pspectrum(x::AbstractDimArray; nfft=256, noverlap=div(nfft, 2), window=hamming)
-    spec = Spectrogram(nfft, noverlap, window)
-    pspectrum(x, spec)
+    return cat(specs...; dims)
 end
