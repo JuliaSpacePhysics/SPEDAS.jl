@@ -24,7 +24,6 @@ Filter = t -> t isa AbstractDataSet
 ```@example PSP
 using Speasy: SpeasyProduct
 using SPEDAS
-using CairoMakie, SpacePhysicsMakie
 using Unitful
 
 n = DataSet("Density",
@@ -42,10 +41,12 @@ The DataSets are callable: given a time range, it will return the actual data.
 ```@example PSP
 t0 = "2021-08-09T06"
 t1 = "2021-08-10T18"
-n(t0, t1)
+map(p -> p(t0, t1), n)
 ```
 
 ```@example PSP
+using CairoMakie, SpacePhysicsMakie
+
 # tplot(n(t0, t1)) # get the data first and plot it
 tplot(n, t0, t1) # or interactive mode
 ```
