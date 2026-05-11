@@ -7,7 +7,6 @@ authors = ["Zijin Zhang <zzj956959688@gmail.com> and contributors"]
 projects = ["docs", "test", "benchmark"]
 
 [deps]
-DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 GeoCotrans = "4624b3bc-fe35-44f8-bfa8-722ff9c0e307"
@@ -28,7 +27,6 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 SPEDASUnitfulExt = "Unitful"
 
 [compat]
-DSP = "0.8"
 Dates = "1"
 DimensionalData = "0.29, 0.30"
 GeoCotrans = "0.0.1, 0.1, 0.2"
