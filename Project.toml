@@ -8,7 +8,6 @@ projects = ["docs", "test", "benchmark"]
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 GeoCotrans = "4624b3bc-fe35-44f8-bfa8-722ff9c0e307"
 IRBEM = "d0b46c7b-8a8f-4d20-a1b4-6e9a4a1e4e5f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -21,9 +20,11 @@ TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 TimeseriesUtilities = "31d49243-0742-49c1-b8d2-db113b74581e"
 
 [weakdeps]
+DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [extensions]
+SPEDASDimensionalDataExt = "DimensionalData"
 SPEDASUnitfulExt = "Unitful"
 
 [compat]

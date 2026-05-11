@@ -13,22 +13,22 @@ end
 
 rotate(ts::AbstractMatrix, mat::Eigen) = rotate(ts, mat.vectors)
 
-function rotate(da::AbstractDimArray, mats::AbstractVector)
-    da = da[DimSelectors(mats)]
-    da_rot = @d mats .* eachslice(da, dims=Ti) # hcat on `OffsetArray` doesn't work
-    da_rot = mats .* eachrow(da.data)
-    data = hcat(da_rot...)'
-    DimArray(data, dims(da); name=da.name, metadata=da.metadata)
-end
+"""
+    rotate(da, mats)
 
-function select_rotate(da::AbstractDimArray, mats::AbstractVector; selectors=Near())
-    all_mats = mats[DimSelectors(da; selectors)]
-    da_rot = map(eachrow(parent(da)), all_mats) do row, mat
-        mat * row
-    end
-    data = stack(da_rot; dims=1)
-    DimArray(data, dims(da); name=da.name, metadata=da.metadata)
-end
+Rotate a dimensioned array using a vector of rotation matrices aligned to its time axis.
+Requires DimensionalData to be loaded.
+"""
+function rotate end
+
+"""
+    select_rotate(da, mats; selectors=Near())
+    select_rotate(da, mats, coord; kwargs...)
+
+Rotate a dimensioned array using nearest-neighbor matched rotation matrices.
+Requires DimensionalData to be loaded.
+"""
+function select_rotate end
 
 select_rotate(da, mats, coord; kwargs...) =
     select_rotate(da, mats; kwargs...) |> set_coord(coord)

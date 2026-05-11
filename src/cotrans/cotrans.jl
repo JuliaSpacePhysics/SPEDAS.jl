@@ -41,11 +41,10 @@ cotrans(A, out; in = get_coord(A), kw...) = cotrans(A, in, out; kw...)
 cotrans(A, f::Function; dims = 1) = map(f, eachslice(parent(A); dims), times(A))
 
 function irbem_cotrans(A, in, out)
-    dims = dimnum(A, TimeDim)
+    d = dimnum(A, nothing)
     time = times(A)
-
-    data = dims == 1 ?
-        IRBEM.transform(time, A', in, out)' :
-        IRBEM.transform(time, A, in, out)
-    return rebuild(A; data)
+    data = d == 1 ?
+        IRBEM.transform(time, parent(A)', in, out)' :
+        IRBEM.transform(time, parent(A), in, out)
+    return _rebuild_data(A, data)
 end
