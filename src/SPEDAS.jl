@@ -14,7 +14,6 @@ import TimeseriesUtilities: dimnum
 using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim, tdimnum, times, unwrap
 import SpaceDataModel as SDM
 @reexport using TimeseriesUtilities
-# Resolve ambiguity: both TimeseriesUtilities and SpaceDataModel export ContinuousTimeRanges
 using TimeseriesUtilities: ContinuousTimeRanges
 export ContinuousTimeRanges
 @reexport using MinimumVarianceAnalysis

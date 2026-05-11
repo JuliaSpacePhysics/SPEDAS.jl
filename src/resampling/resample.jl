@@ -17,11 +17,10 @@ function resample(arr, n; dim=1, verbose=false)
 end
 
 """
-    tresample(da, n; dim = nothing, query=nothing)
+    tresample(da, n; dim=nothing)
 
-Resample a dimensioned array along its time dimension (or `dim`/`query`) to `n` points.
+Resample a dimensioned array along its time dimension (or `dim`) to `n` points.
 """
-function tresample(da, n; dim = nothing, query=nothing)
-    dim = @something dim dimnum(da, query)
-    resample(da, n; dim)
+function tresample(da, n; dim=nothing)
+    resample(da, n; dim=dimnum(da, dim))
 end
