@@ -13,9 +13,8 @@ using DimensionalData: AbstractDimVector, TimeDim
 using DimensionalData.Dimensions: Dimension
 using DSP: spectrogram, hamming
 using LinearAlgebra
-using StaticArrays
-using Unitful
 using Reexport: @reexport
+import TimeseriesUtilities: ContinuousTimeRanges
 @reexport using SpaceDataModel
 using SpaceDataModel: meta, name, setmeta, NoMetadata, NoData, timedim, tdimnum, times, unwrap
 import SpaceDataModel as SDM
@@ -35,7 +34,6 @@ const DD = DimensionalData
 include("projects/project.jl")
 include("timeseries/spectrum.jl")
 include("timeseries/gap.jl")
-include("utils.jl")
 include("utils/dimensiondata.jl")
 include("resampling/resample.jl")
 include("cotrans/cotrans.jl")

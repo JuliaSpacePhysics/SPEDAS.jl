@@ -18,10 +18,14 @@ MultiSpacecraftAnalysis = "162efcab-a561-4df9-ac40-20243229ff2c"
 PlasmaWaves = "12efb907-3f94-4823-94fe-a707db5a5005"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SpaceDataModel = "0b37b92c-f0c5-4a52-bd5c-390dec20857c"
-StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 TimeseriesUtilities = "31d49243-0742-49c1-b8d2-db113b74581e"
+
+[weakdeps]
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
+[extensions]
+SPEDASUnitfulExt = "Unitful"
 
 [compat]
 DSP = "0.8"
@@ -35,8 +39,7 @@ MultiSpacecraftAnalysis = "0.1.1"
 PlasmaWaves = "0.1.1"
 Reexport = "1"
 SpaceDataModel = "0.2.3"
-StaticArrays = "1"
 TOML = "1"
-TimeseriesUtilities = "0.1.5"
+TimeseriesUtilities = "0.2"
 Unitful = "1"
 julia = "1.10"
