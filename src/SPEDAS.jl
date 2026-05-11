@@ -11,7 +11,6 @@ using DimensionalData
 using DimensionalData.Dimensions
 using DimensionalData: AbstractDimVector, TimeDim
 using DimensionalData.Dimensions: Dimension
-using DSP: spectrogram, hamming
 using LinearAlgebra
 using Reexport: @reexport
 import TimeseriesUtilities: ContinuousTimeRanges
@@ -32,7 +31,6 @@ export amap
 const DD = DimensionalData
 
 include("projects/project.jl")
-include("timeseries/spectrum.jl")
 include("timeseries/gap.jl")
 include("utils/dimensiondata.jl")
 include("resampling/resample.jl")

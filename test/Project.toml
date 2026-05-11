@@ -1,5 +1,6 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 CDAWeb = "950ff2a9-823f-469c-91a7-754a5d85edca"
 Chairmarks = "0ca39b1e-fe0b-4e98-acfc-b1656634c4de"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"

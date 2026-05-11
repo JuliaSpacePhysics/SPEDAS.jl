@@ -4,9 +4,7 @@
 
 ### Changed
 
-- **Breaking**: Replace `SignalAnalysis` spectrogram configuration with `DSP` keyword arguments in `pspectrum`; use `nfft`, `noverlap`, and `window` keywords instead of a positional config object.
-- **Breaking**: `pspectrum` now stores spectrogram `DimArray` output as `(frequency, time)` to match `DSP.spectrogram` layout.
-- `pspectrum` no longer uses `Unitful` internally for sampling rate and time-bin conversion.
+- **Breaking**: `pspectrum` is no longer available by default; it is now provided by the `TimeseriesUtilities` DSP extension and requires `import DSP` (or `using DSP`) to be enabled.
 - `Unitful` is now a weak dependency; `current_density` returns plain numeric output for numeric input and unitful output when Unitful quantities are loaded.
 
 ## [0.2.2] - 2025-11-23
