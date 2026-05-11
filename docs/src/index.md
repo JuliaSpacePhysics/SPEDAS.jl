@@ -58,11 +58,13 @@ Depth = 1
 - [QSAS (C/C++)](http://www.sp.ph.ic.ac.uk/csc-web/QSAS/) : Science Analysis Software for Space Plasmas
 - [pysat](https://github.com/pysat/pysat): Python Satellite Data Analysis Toolkit
 
-### Validation with PySPEDAS
+### Validation with other libraries
 
-For minimum variance analysis, see [MinimumVarianceAnalysis.jl](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/#Validation-with-PySPEDAS).
+For minimum variance analysis, see [MinimumVarianceAnalysis.jl versus PySPEDAS](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/#Validation-with-PySPEDAS).
 
-For wave polarization, see [PlasmaWaves.jl](https://juliaspacephysics.github.io/PlasmaWaves.jl/dev/pyspedas/).
+For wave polarization, see [PlasmaWaves.jl versus PySPEDAS](https://juliaspacephysics.github.io/PlasmaWaves.jl/dev/pyspedas/).
+
+For coordinate transformations (GeoCotrans.jl versus IRBEM and PySPEDAS), see [Coordinate Systems](https://juliaspacephysics.github.io/GeoCotrans.jl/stable/coords/).
 
 ## Status
 
