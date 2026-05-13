@@ -17,12 +17,10 @@ function resample(arr, n; dim=1, verbose=false)
 end
 
 """
-    tresample(da::DimArray, n; dim = nothing, query=nothing)
+    tresample(da, n; dim=nothing)
 
-Resample a DimArray specifically along its dimension `dim` or `query` to `n` points.
-Throws an error if no dimension of type `dimtype` is found in the array.
+Resample a dimensioned array along its time dimension (or `dim`) to `n` points.
 """
-function tresample(da::DimArray, n; dim = nothing, query=nothing)
-    dim = @something dim dimnum(da, something(query, TimeDim))
-    resample(da, n; dim)
+function tresample(da, n; dim=nothing)
+    resample(da, n; dim=dimnum(da, dim))
 end

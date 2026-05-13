@@ -22,12 +22,11 @@ makedocs(
             "explanations/timeseries.md",
         ],
         "Observatories" => "observatory/index.md",
-        "Validation" => list_pages("validation"),
         "API" => "api.md",
     ],
     format = Documenter.HTML(size_threshold = nothing),
     modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.MinimumVarianceAnalysis, SPEDAS.TimeseriesUtilities],
-    warnonly = Documenter.except(:doctest),
+    warnonly = Documenter.except(:doctest, :example_block),
     plugins = [bib],
     doctest = true
 )

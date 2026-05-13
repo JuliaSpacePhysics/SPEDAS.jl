@@ -57,4 +57,4 @@ function fill_gaps(times::AbstractVector{T}, values; resolution=resolution(times
 end
 
 
-fill_gaps(da::AbstractDimArray) = fill_gaps(times(da), da.data)
+fill_gaps(da) = fill_gaps(times(da), parent(da))

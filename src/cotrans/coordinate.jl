@@ -31,37 +31,20 @@ function set_coord(da, coord_out; old_coords = get_coords(da))
     # Update other potential metadata fields that might contain coordinate info
     for field in ("LABLAXIS", "UNITS", "FIELDNAM", "CATDESC", "DICT_KEY") ∩ keys(m)
         value = m[field]
-        if any(occursin(value), old_coords)
+        if any(old -> occursin(old, value), old_coords)
             new_value = replace(value, old_new_pairs...)
             push!(metadata_pairs, field => new_value)
         end
     end
     for field in ("LABL_PTR_1",) ∩ keys(m)
         values = m[field]
-        if any(occursin(first(values)), old_coords)
+        if any(old -> occursin(old, first(values)), old_coords)
             new_value = replace.(values, old_new_pairs...)
             push!(metadata_pairs, field => new_value)
         end
     end
     new_da = setmeta(da, metadata_pairs...)
-
-    # Update name
-    name = string(da.name)
-    if any(occursin(name), old_coords)
-        new_name = replace(name, old_new_pairs...)
-        new_da = rebuild(new_da, name = Symbol(new_name))
-    end
-
-    # Update dimension names if they contain the coordinate system
-    for dim in dims(new_da)
-        dim_name = string(DD.name(dim))
-        if any(occursin(dim_name), old_coords)
-            new_dim_name = replace(dim_name, old_new_pairs...)
-            new_da = DD.set(new_da, dim => Dim{Symbol(new_dim_name)})
-        end
-    end
-
-    return new_da
+    return _update_coord_dims(new_da, da, old_coords, old_new_pairs)
 end
 
 set_coord(coord; kwargs...) = da -> set_coord(da, coord; kwargs...)

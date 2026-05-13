@@ -20,6 +20,7 @@ function fac_mat(
     return vcat(x0', y0', z0')
 end
 
-function tfac_mat(da::AbstractDimArray; dims=Ti)
-    fac_mat.(eachslice(da; dims))
+function tfac_mat(da; dim=nothing)
+    d = dimnum(da, dim)
+    fac_mat.(eachslice(da; dims=d))
 end
