@@ -11,16 +11,28 @@ using TestItemRunner
 end
 
 @testitem "cotrans" begin
-    using CDAWeb
-    using DimensionalData
-    t0 = "2010-02-25T00:00:00"
-    t1 = "2010-02-25T23:59:59"
-    pos = DimArray(CDAWeb.get_data("tha_l1_state", t0, t1)["tha_pos"])
-    geo = gei2geo(pos)
-    @test geo.data[:, [1, end]] ≈ [32500.703796760008 32964.60545865282; -5688.514017885206 -5723.818569392612; -4950.9140625 -5013.51220703125]
+    using Dates, DimensionalData
+    times = [DateTime("2010-02-25T00:00:00"), DateTime("2010-02-25T23:59:00")]
+    gei_data = [
+        -26968.025  -27617.074
+        19010.012   18887.152
+        -4950.914   -5013.512
+    ]
+    pos = DimArray(
+        gei_data, (X(1:3), Ti(times));
+        metadata = Dict("COORDINATE_SYSTEM" => "GEI")
+    )
+    geo = cotrans(pos, :GEO)
+    expected = [
+        32500.703796760055  32964.60545865276
+        -5688.5140178849615 -5723.818569392979
+        -4950.9140625       -5013.51220703125
+    ]
+    @test geo.data ≈ expected
     @test SPEDAS.get_coord(pos) == "GEI"
-    @test cotrans(pos, :GEO) == geo
-    @test cotrans(pos, "GEO"; backend = :IRBEM) ≈ geo
+    @test SPEDAS.get_coord(geo) == "GEO"
+    @test cotrans(pos, :GEO).data ≈ expected
+    @test cotrans(pos, "GEO"; backend = :IRBEM).data ≈ expected
 end
 
 @testitem "dropna" begin
