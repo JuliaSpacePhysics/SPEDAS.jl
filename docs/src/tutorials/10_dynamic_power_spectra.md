@@ -4,9 +4,7 @@
 using CDAWeb
 using SPEDAS
 using DimensionalData
-using DSP
-using CairoMakie
-using SpacePhysicsMakie
+using CairoMakie, SpacePhysicsMakie
 
 t0 = "2015-10-16"
 t1 = "2015-10-16T03"
@@ -18,7 +16,9 @@ tplot(da)
 ```
 
 ```@example mms
-metadata = Dict("DISPLAY_TYPE" => "spectrogram", :scale => log10, :ylabel => "Frequency (Hz)")
+using DSP
+
+metadata = Dict("DISPLAY_TYPE" => "spectrogram", "SCALETYP" => log10, :ylabel => "Frequency (Hz)", :yscale => log10)
 pvar = setmeta(pspectrum(da; nfft = 512), metadata)
 f = tplot(pvar[:,:,1])
 ylims!(5e-2, 2e1)
