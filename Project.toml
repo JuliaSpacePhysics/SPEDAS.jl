@@ -9,7 +9,6 @@ projects = ["docs", "test", "benchmark"]
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 GeoCotrans = "4624b3bc-fe35-44f8-bfa8-722ff9c0e307"
-IRBEM = "d0b46c7b-8a8f-4d20-a1b4-6e9a4a1e4e5f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MinimumVarianceAnalysis = "5a74c7d3-1edb-47ee-a7ac-bdb4b3eeab9d"
 MultiSpacecraftAnalysis = "162efcab-a561-4df9-ac40-20243229ff2c"
@@ -21,10 +20,12 @@ TimeseriesUtilities = "31d49243-0742-49c1-b8d2-db113b74581e"
 
 [weakdeps]
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
+IRBEM = "d0b46c7b-8a8f-4d20-a1b4-6e9a4a1e4e5f"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [extensions]
 SPEDASDimensionalDataExt = "DimensionalData"
+SPEDASIRBEMExt = "IRBEM"
 SPEDASUnitfulExt = "Unitful"
 
 [compat]

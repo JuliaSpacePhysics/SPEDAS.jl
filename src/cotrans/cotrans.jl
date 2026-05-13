@@ -1,4 +1,3 @@
-import IRBEM
 export cotrans
 
 include("rotate.jl")
@@ -9,42 +8,39 @@ include("fac.jl")
 using GeoCotrans: coord_maps
 
 """
-    cotrans(A, in, out; backend=:auto)
-    cotrans(A, out; in=get_coord(A))
+    cotrans(out, A, [times]; in=get_coord(A), backend=GeoCotrans)
+    cotrans(in => out, A, [times]; backend=GeoCotrans)
 
-Transform the data to the `out` coordinate system from the `in` coordinate system.
+Transform data to the `out` coordinate system.
 
-If `backend` is set to `:auto` (default), this function automatically chooses between Julia's [`GeoCotrans`](https://juliaspacephysics.github.io/GeoCotrans.jl) (if available) and Fortran's [`IRBEM`](https://juliaspacephysics.github.io/IRBEM.jl) implementation. Otherwise, it uses the specified backend.
+By default, this uses Julia's [`GeoCotrans`](https://juliaspacephysics.github.io/GeoCotrans.jl).
+Use `backend = IRBEM` after loading IRBEM.jl to call Fortran's
+[`IRBEM`](https://juliaspacephysics.github.io/IRBEM.jl) implementation.
 
 References:
 
   - [IRBEM-LIB](https://prbem.github.io/IRBEM/): compute magnetic coordinates and perform coordinate conversions ([Documentation](https://prbem.github.io/IRBEM/api/coordinates_transformations.html), [IRBEM.jl](https://github.com/JuliaSpacePhysics/IRBEM.jl))
   - [SPEDAS Cotrans](https://spedas.org/wiki/index.php?title=Cotrans)
 """
-function cotrans(A, in, out; backend = :auto)
-    backend = Symbol(backend) # handle Module
-    @assert backend ∈ (:auto, :GeoCotrans, :IRBEM) "backend must be :auto, :GeoCotrans, or :IRBEM"
-    key = _geocotrans_key(in, out)
-    Ac = if backend == :auto
-        haskey(coord_maps, key) ? coord_maps[key](A) : irbem_cotrans(A, in, out)
-    elseif backend == :GeoCotrans
-        coord_maps[key](A)
-    else
-        irbem_cotrans(A, in, out)
-    end
+function cotrans(out, A, args...; in = get_coord(A), backend = GeoCotrans, kw...)
+    isnothing(in) && throw(ArgumentError("input coordinate system required; use `cotrans(in => out, A, times)` or pass `in = ...`"))
+    @assert nameof(backend) ∈ (:GeoCotrans, :IRBEM) "backend must be either GeoCotrans or IRBEM"
+    Ac = backend === GeoCotrans ?
+        _geocotrans_cotrans(A, in, out, args...; kw...) :
+        _irbem_cotrans(A, in, out, args...; kw...)
     return set_coord(Ac, out)
 end
 
-_geocotrans_key(in, out) = (Symbol(lowercase(string(in))), Symbol(lowercase(string(out))))
+cotrans(pair::Pair, A, args...; kw...) =
+    cotrans(last(pair), A, args...; in = first(pair), kw...)
 
-cotrans(A, out; in = get_coord(A), kw...) = cotrans(A, in, out; kw...)
-cotrans(A, f::Function; dims = 1) = map(f, eachslice(parent(A); dims), times(A))
+function _geocotrans_cotrans(A, in, out, args...; kw...)
+    _symbol(s) = Symbol(lowercase(string(s)))
 
-function irbem_cotrans(A, in, out)
-    d = dimnum(A, nothing)
-    time = times(A)
-    data = d == 1 ?
-        IRBEM.transform(time, parent(A)', in, out)' :
-        IRBEM.transform(time, parent(A), in, out)
-    return _rebuild_data(A, data)
+    transform = get(coord_maps, (_symbol(in), _symbol(out)), nothing)
+    isnothing(transform) && throw(ArgumentError("GeoCotrans has no $(in) => $(out) transform; load IRBEM.jl and use `backend = IRBEM` if IRBEM supports it"))
+    return transform(A, args...; kw...)
 end
+
+_irbem_cotrans(A, in, out, args...; kw...) =
+    throw(ArgumentError("IRBEM backend not available; load IRBEM.jl and pass `backend = IRBEM`"))
