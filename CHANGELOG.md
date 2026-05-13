@@ -4,6 +4,8 @@
 
 ### Changed
 
+- **Breaking**: `cotrans` argument order changed to `cotrans(out, A, [times])` and `cotrans(in => out, A, [times])`; `backend` now takes a module (`IRBEM`) instead of a symbol (`:IRBEM`).
+- **Breaking**: `IRBEM` is now a weak dependency; load `IRBEM.jl` and pass `backend = IRBEM` to use the Fortran implementation.
 - **Breaking**: `pspectrum` is no longer available by default; it is now provided by the `TimeseriesUtilities` DSP extension and requires `import DSP` (or `using DSP`) to be enabled.
 - `Unitful` is now a weak dependency; `current_density` returns plain numeric output for numeric input and unitful output when Unitful quantities are loaded.
 

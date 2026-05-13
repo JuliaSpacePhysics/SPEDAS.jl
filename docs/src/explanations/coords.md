@@ -57,9 +57,9 @@ using CairoMakie, SpacePhysicsMakie
 
 pos_gse = get_data("cda/THC_L1_STATE/thc_pos_gse", "2015-10-16", "2015-10-17") |> DimArray
 
-pos_gsm = cotrans(pos_gse, "GSM")
-pos_sm = cotrans(pos_gse, "SM")
-pos_geo = cotrans(pos_gse, "GEO")
+pos_gsm = cotrans(:GSM, pos_gse)
+pos_sm = cotrans(:SM, pos_gsm)
+pos_geo = cotrans(:GEO, pos_gsm)
 
 tplot((pos_gse, pos_gsm, pos_sm, pos_geo))
 ```
