@@ -38,10 +38,6 @@ More information can be found in the the following links
 
 ## Coordinate Transformations
 
-```@docs; canonical=false
-rotate
-```
-
 A comprehensive description of the transformations can be found in [hapgoodSpacePhysicsCoordinate1992](@citet)
 
 ### Coordinate transformations between geocentric systems
@@ -80,15 +76,7 @@ fac_mat
 
 A coordinate system derived from the eigenvalues and eigenvectors of the magnetic field variance matrix, commonly used in analyzing current sheets, discontinuities, and wave propagation.
 
-See [MinimumVarianceAnalysis.jl](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/) for more details.
-
-```@docs; canonical=false
-mva_eigen
-mva
-check_mva_eigen
-```
-
-See also: [Comparison with PySPEDAS](../validation/pyspedas.md#minimum-variance-analysis).
+`mva_eigen`, `mva` and related functions come from [MinimumVarianceAnalysis.jl](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/), re-exported by SPEDAS; see its documentation for the API and the [comparison with PySPEDAS](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/#Validation-with-PySPEDAS).
 
 ## Reference
 

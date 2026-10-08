@@ -16,16 +16,13 @@ makedocs(
         "Tutorials" => list_pages("tutorials"),
         "Explanation" => [
             "explanations/data.md",
-            "explanations/data_model.md",
             "explanations/coords.md",
-            "explanations/multispacecraft.md",
             "explanations/timeseries.md",
         ],
-        "Observatories" => "observatory/index.md",
         "API" => "api.md",
     ],
     format = Documenter.HTML(size_threshold = nothing),
-    modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.MinimumVarianceAnalysis, SPEDAS.TimeseriesUtilities],
+    modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.TimeseriesUtilities],
     warnonly = Documenter.except(:doctest, :example_block),
     plugins = [bib],
     doctest = true

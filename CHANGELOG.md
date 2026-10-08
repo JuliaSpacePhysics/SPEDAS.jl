@@ -7,6 +7,11 @@
 - **Breaking**: `cotrans` argument order changed to `cotrans(out, A, [times])` and `cotrans(in => out, A, [times])`; `backend` now takes a module (`IRBEM`) instead of a symbol (`:IRBEM`).
 - **Breaking**: `IRBEM` is now a weak dependency; load `IRBEM.jl` and pass `backend = IRBEM` to use the Fortran implementation.
 - **Breaking**: `pspectrum` is no longer available by default; it is now provided by the `TimeseriesUtilities` DSP extension and requires `import DSP` (or `using DSP`) to be enabled.
+- **Breaking**: `tlingradest` is MultiSpacecraftAnalysis's; its output fields are `rbar, vbar, vmag, grad, div, curl, curv, rc`.
+- **Breaking**: `resample` and `tresample(da, n)` removed; `tresample` is TimeseriesUtilities' `tresample(A, dt)`.
+- **Breaking**: `rotate` and `select_rotate` removed; use `mapsamples((x, R) -> R * x, A, Rs)` for per-sample matrices (align `Rs` with `tinterp`).
+- **Breaking**: `fill_gaps` removed; use `tfill_gaps(x, [dt])`.
+- **Breaking**: project modules `SPEDAS.MMS`, `THEMIS`, `PSP`, `Juno` (and `FPIDataSet`) removed: their types are gone from SpaceDataModel. Use CDAWeb ids (`cda"MMS2_FPI_BRST_L2_DES-MOMS"`).
 - `Unitful` is now a weak dependency; `current_density` returns plain numeric output for numeric input and unitful output when Unitful quantities are loaded.
 
 ## [0.2.2] - 2025-11-23

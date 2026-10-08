@@ -20,8 +20,6 @@ This function supports interpolation for both vector-like and matrix-like time s
 
 ```@docs
 tinterp
-tinterp_nans
+tinterp_na
 tsync
-resample
-tresample
 ```
