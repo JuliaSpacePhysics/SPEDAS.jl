@@ -1,6 +1,5 @@
 export cotrans
 
-include("rotate.jl")
 include("coordinate.jl")
 include("fac.jl")
 

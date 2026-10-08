@@ -3,7 +3,7 @@
 
 Calculate the current density time series from magnetic field (B) and plasma velocity (V) time series.
 
-Assume 1-D structure along the z-direction. Remember to transform the coordinates of B and V first (e.g. using [`mva`](@ref)
+Assume 1-D structure along the z-direction. Remember to transform the coordinates of B and V first (e.g. using [`mva`](https://juliaspacephysics.github.io/MinimumVarianceAnalysis.jl/dev/)
 """
 function current_density(B, V)
     μ0 = 4π * 1.0e-7
@@ -13,20 +13,16 @@ function current_density(B, V)
 end
 
 function _current_density(f, B, V)
-    _B_in, _V_in = tviews(B, V)
-    ts = times(_B_in)
+    B, V = tview.((B, V), Ref(trange(B, V)))
+    dBdt = parent(tderiv(B))
+    ts = times(B)[1:(end - 1)]
+    Vz = parent(tinterp(V, ts))[:, 3]
 
-    Bx = parent(_B_in)[:, 1]
-    By = parent(_B_in)[:, 2]
-    dBxdt = tderiv(Bx, ts)
-    dBydt = tderiv(By, ts)
-    Vz = tinterp(_V_in[:, 3], ts[1:(end - 1)])
-
-    Jx = f(dBydt, Vz)
-    Jy = f(-dBxdt, Vz)
+    Jx = f(dBdt[:, 2], Vz)
+    Jy = f(-dBdt[:, 1], Vz)
 
     @views begin
-        B_in = _B_in[1:(end - 1), :]
+        B_in = parent(B)[1:(end - 1), :]
         Bx = B_in[:, 1]
         By = B_in[:, 2]
         Bmag = norm.(eachrow(B_in))

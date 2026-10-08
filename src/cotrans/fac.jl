@@ -21,6 +21,6 @@ function fac_mat(
 end
 
 function tfac_mat(da; dim=nothing)
-    d = dimnum(da, dim)
+    d = resolve_dim(da, dim)
     fac_mat.(eachslice(da; dims=d))
 end

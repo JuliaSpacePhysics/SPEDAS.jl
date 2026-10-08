@@ -1,31 +1,13 @@
 module SPEDASDimensionalDataExt
 
 using DimensionalData
-using DimensionalData: AbstractDimArray, DimSelectors, Near, Dim, rebuild
+using DimensionalData: AbstractDimArray, DimSelectors, Dim, rebuild
 import SPEDAS
 
 # amap: apply f to the intersection of a and b
 function SPEDAS.amap(f, a::AbstractDimArray, b::AbstractDimArray)
     shared_selectors = DimSelectors(a)[DimSelectors(b)]
     return f(a[shared_selectors], b[shared_selectors])
-end
-
-# rotate: apply per-timestep rotation matrices to a DimArray
-function SPEDAS.rotate(da::AbstractDimArray, mats::AbstractVector)
-    da = da[DimSelectors(mats)]
-    da_rot = map(eachrow(parent(da)), mats) do row, mat
-        mat * row
-    end
-    return rebuild(da; data = stack(da_rot; dims = 1))
-end
-
-# select_rotate: match rotation matrices to nearest timesteps
-function SPEDAS.select_rotate(da::AbstractDimArray, mats::AbstractVector; selectors = Near())
-    all_mats = mats[DimSelectors(da; selectors)]
-    da_rot = map(eachrow(parent(da)), all_mats) do row, mat
-        mat * row
-    end
-    return rebuild(da; data = stack(da_rot; dims = 1))
 end
 
 # _rebuild_data: replace data in a DimArray while preserving all dimensions

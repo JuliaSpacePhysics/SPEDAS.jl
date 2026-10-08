@@ -23,7 +23,7 @@ Plasma wave analysis is supported through the [PlasmaWaves.jl](https://juliaspac
 
 Energetic particle analysis is provided by [SolarEnergeticParticle.jl](https://juliaspacephysics.github.io/SolarEnergeticParticle.jl). See, for example, the sections on [onset analysis](https://juliaspacephysics.github.io/SolarEnergeticParticle.jl/dev/onset/) and [velocity dispersion analysis (VDA)](https://juliaspacephysics.github.io/SolarEnergeticParticle.jl/dev/vda/).
 
-Multi-spacecraft analysis methods are provided by [MultiSpacecraftAnalysis.jl](https://juliaspacephysics.github.io/MultiSpacecraftAnalysis.jl), see the section on [using reciprocal vectors to estimate spatial gradients](./explanations/multispacecraft.md).
+Multi-spacecraft analysis methods are provided by [MultiSpacecraftAnalysis.jl](https://juliaspacephysics.github.io/MultiSpacecraftAnalysis.jl); see its [MMS example](https://juliaspacephysics.github.io/MultiSpacecraftAnalysis.jl/dev/mms/).
 
 [`SpacePhysicsMakie.jl`](https://juliaspacephysics.github.io/SpacePhysicsMakie.jl/dev/) provides utilities for visualizing and composing space physics time series data.
 
@@ -32,9 +32,7 @@ Multi-spacecraft analysis methods are provided by [MultiSpacecraftAnalysis.jl](h
 ```@contents
 Pages = [
     "explanations/data.md",
-    "explanations/data_model.md",
     "explanations/coords.md",
-    "explanations/multispacecraft.md",
     "explanations/timeseries.md"
 ]
 Depth = 1
