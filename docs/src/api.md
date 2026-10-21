@@ -1,31 +1,11 @@
 # API Reference
 
+Re-exported packages are documented upstream: [SpaceDataModel.jl](https://juliaspacephysics.github.io/SpaceDataModel.jl), [TimeseriesUtilities.jl](https://beforerr.github.io/TimeseriesUtilities.jl), [GeoCotrans.jl](https://juliaspacephysics.github.io/GeoCotrans.jl).
+
 ```@index
 Pages = ["api.md"]
 ```
 
-## Data Model
-
-```@autodocs
-Modules = [SPEDAS.SpaceDataModel]
-```
-
-## Coordinate Transformations
-
-See [GeoCotrans.jl](https://juliaspacephysics.github.io/GeoCotrans.jl) for more details. IRBEM.jl can be loaded separately and selected with `backend = IRBEM`.
-
-```@docs
-cotrans
-```
-
-## SPEDAS
-
 ```@autodocs
 Modules = [SPEDAS]
-```
-
-## Timeseries Utilities
-
-```@autodocs
-Modules = [SPEDAS.TimeseriesUtilities]
 ```

@@ -1,4 +1,4 @@
-get_coord(da) = get(meta(da), "COORDINATE_SYSTEM", nothing)
+get_coord(da) = getmeta(da, "COORDINATE_SYSTEM", nothing)
 function get_coords(da)
     coord = get_coord(da)
     return isnothing(coord) ? [] : split(coord, '>')
@@ -12,10 +12,6 @@ Set the coordinate system.
 
 Updates legend names and axis labels if they include the coordinate system.
 Also updates the dimension name if it contains the coordinate system.
-
-Reference:
-
-  - https://pyspedas.readthedocs.io/en/latest/_modules/pytplot/data_att_getters_setters.html#set_coords
 """
 function set_coord(da, coord_out; old_coords = get_coords(da))
     # Update the coordinate system metadata

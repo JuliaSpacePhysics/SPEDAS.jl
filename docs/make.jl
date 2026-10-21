@@ -1,5 +1,4 @@
 using SPEDAS
-using SPEDAS.SpaceDataModel
 using SpacePhysicsMakie
 using Documenter
 using DocumenterCitations
@@ -22,7 +21,7 @@ makedocs(
         "API" => "api.md",
     ],
     format = Documenter.HTML(size_threshold = nothing),
-    modules = [SPEDAS, SPEDAS.SpaceDataModel, SpacePhysicsMakie, SPEDAS.TimeseriesUtilities],
+    modules = [SPEDAS],
     warnonly = Documenter.except(:doctest, :example_block),
     plugins = [bib],
     doctest = true

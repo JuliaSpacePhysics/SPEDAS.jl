@@ -19,25 +19,22 @@ TimeseriesUtilities = "31d49243-0742-49c1-b8d2-db113b74581e"
 
 [weakdeps]
 DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
-IRBEM = "d0b46c7b-8a8f-4d20-a1b4-6e9a4a1e4e5f"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [extensions]
 SPEDASDimensionalDataExt = "DimensionalData"
-SPEDASIRBEMExt = "IRBEM"
 SPEDASUnitfulExt = "Unitful"
 
 [compat]
 Dates = "1"
 DimensionalData = "0.29, 0.30"
-GeoCotrans = "0.3"
-IRBEM = "0.2"
+GeoCotrans = "0.3.7"
 LinearAlgebra = "1"
 MinimumVarianceAnalysis = "0.2"
 MultiSpacecraftAnalysis = "0.2"
 PlasmaWaves = "0.2"
 Reexport = "1"
-SpaceDataModel = "0.6"
-TimeseriesUtilities = "0.3.4"
+SpaceDataModel = "0.7"
+TimeseriesUtilities = "0.4"
 Unitful = "1"
 julia = "1.10"

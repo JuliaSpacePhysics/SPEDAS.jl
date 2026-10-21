@@ -9,8 +9,7 @@ using CairoMakie, SpacePhysicsMakie
 t0 = "2015-10-16"
 t1 = "2015-10-16T03"
 
-ds = CDAWeb.get_dataset("MMS4_SCM_SRVY_L2_SCSRVY", t0, t1; clip=true)
-da = DimArray(ds["mms4_scm_acb_gse_scsrvy_srvy_l2"])
+da = getdata(cda"MMS4_SCM_SRVY_L2_SCSRVY/mms4_scm_acb_gse_scsrvy_srvy_l2", t0, t1) |> DimArray
 
 tplot(da)
 ```
