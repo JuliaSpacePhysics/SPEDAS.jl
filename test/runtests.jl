@@ -12,7 +12,6 @@ end
 
 @testitem "cotrans" begin
     using Dates, DimensionalData
-    using IRBEM
     times = [DateTime("2010-02-25T00:00:00"), DateTime("2010-02-25T23:59:00")]
     gei_data = [
         -26968.025  -27617.074
@@ -25,7 +24,7 @@ end
     )
     @test SPEDAS.get_coord(pos) == "GEI"
 
-    geo = cotrans(:GEO, pos)
+    geo = cotrans(GEO, pos)
     expected = [
         32500.703796760055  32964.60545865276
         -5688.5140178849615 -5723.818569392979
@@ -35,9 +34,8 @@ end
     @test geo isa DimArray
     @test SPEDAS.get_coord(geo) == "GEO"
 
-    @test cotrans(:GEI => :GEO, pos) ≈ expected
-    geo_irbem = cotrans(:GEO, pos; backend = IRBEM)
-    @test geo_irbem ≈ expected
-    @test geo_irbem isa DimArray
-    @test SPEDAS.get_coord(geo_irbem) == "GEO"
+    @test cotrans(GEI => GEO, pos) ≈ expected
+    gse = cotrans(GSE(), pos)
+    @test SPEDAS.get_coord(gse) == "GSE"
+    @test cotrans(GEI, gse) ≈ pos
 end

@@ -10,9 +10,6 @@ function SPEDAS.amap(f, a::AbstractDimArray, b::AbstractDimArray)
     return f(a[shared_selectors], b[shared_selectors])
 end
 
-# _rebuild_data: replace data in a DimArray while preserving all dimensions
-SPEDAS._rebuild_data(x::AbstractDimArray, data) = rebuild(x; data)
-
 # _update_coord_dims: update array name and dimension names after coordinate transform
 function SPEDAS._update_coord_dims(new_da::AbstractDimArray, da::AbstractDimArray, old_coords, old_new_pairs)
     name_str = string(da.name)
