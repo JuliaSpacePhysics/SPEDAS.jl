@@ -11,7 +11,7 @@
 - **Breaking**: `rotate` and `select_rotate` removed; use `mapsamples((x, R) -> R * x, A, Rs)` for per-sample matrices (align `Rs` with `tinterp`).
 - **Breaking**: `fill_gaps` removed; use `tfill_gaps(x, [dt])`.
 - **Breaking**: project modules `SPEDAS.MMS`, `THEMIS`, `PSP`, `Juno` (and `FPIDataSet`) removed: their types are gone from SpaceDataModel. Use CDAWeb ids (`cda"MMS2_FPI_BRST_L2_DES-MOMS"`).
-- `Unitful` is now a weak dependency; `current_density` returns plain numeric output for numeric input and unitful output when Unitful quantities are loaded.
+- **Breaking**: `amap`, `current_density`, `fac_mat` and `tfac_mat` removed; `get_coord` and `get_coords` no longer exported; `set_coord` renamed `setcoord` and no longer renames dimensions (it still renames the array).
 
 ## [0.2.2] - 2025-11-23
 

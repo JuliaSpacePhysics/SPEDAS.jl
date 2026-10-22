@@ -39,3 +39,16 @@ end
     @test SPEDAS.get_coord(gse) == "GSE"
     @test cotrans(GEI, gse) ≈ pos
 end
+
+@testitem "setcoord" begin
+    using DimensionalData
+
+    da = DimArray(ones(3, 3), (Ti(1:3), Dim{:comp}([:x, :y, :z]));
+                  name=:B_GEI, metadata=Dict("COORDINATE_SYSTEM" => "GEI", "LABLAXIS" => "B (gei)", "LABL_PTR_1" => "label_b_gei"))
+    result = setcoord(da, "GSE")
+    @test SPEDAS.get_coord(result) == "GSE"
+    @test result.name == :B_GSE
+    @test result.metadata["LABLAXIS"] == "B (gse)"
+    @test result.metadata["LABL_PTR_1"] == "label_b_gei"  # a CDF pointer to a label variable, not labels
+    @test SPEDAS.get_coord(setcoord(DimArray(ones(3), X(1:3); metadata=Dict("COORDINATE_SYSTEM" => "GEI")), "GSE")) == "GSE"
+end

@@ -7,9 +7,8 @@ authors = ["Zijin Zhang <zzj956959688@gmail.com> and contributors"]
 projects = ["docs", "test", "benchmark"]
 
 [deps]
-Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+ConstructionBase = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
 GeoCotrans = "4624b3bc-fe35-44f8-bfa8-722ff9c0e307"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MinimumVarianceAnalysis = "5a74c7d3-1edb-47ee-a7ac-bdb4b3eeab9d"
 MultiSpacecraftAnalysis = "162efcab-a561-4df9-ac40-20243229ff2c"
 PlasmaWaves = "12efb907-3f94-4823-94fe-a707db5a5005"
@@ -17,24 +16,13 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SpaceDataModel = "0b37b92c-f0c5-4a52-bd5c-390dec20857c"
 TimeseriesUtilities = "31d49243-0742-49c1-b8d2-db113b74581e"
 
-[weakdeps]
-DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
-Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
-
-[extensions]
-SPEDASDimensionalDataExt = "DimensionalData"
-SPEDASUnitfulExt = "Unitful"
-
 [compat]
-Dates = "1"
-DimensionalData = "0.29, 0.30"
+ConstructionBase = "1"
 GeoCotrans = "0.3.7"
-LinearAlgebra = "1"
 MinimumVarianceAnalysis = "0.2"
 MultiSpacecraftAnalysis = "0.2"
 PlasmaWaves = "0.2"
 Reexport = "1"
 SpaceDataModel = "0.7"
 TimeseriesUtilities = "0.4"
-Unitful = "1"
 julia = "1.10"

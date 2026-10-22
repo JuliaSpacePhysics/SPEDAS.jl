@@ -64,14 +64,6 @@ tplot((pos_gse, pos_gsm, pos_sm, pos_geo))
 
 The package also provides transformations for analysis-specific coordinate systems:
 
-### Field-Aligned Coordinates (FAC)
-
-A local coordinate system defined relative to the ambient magnetic field direction, useful for studying plasma waves and particle distributions.
-
-```@docs; canonical=false
-fac_mat
-```
-
 ### Minimum Variance Analysis (MVA) and Boundary Normal Coordinates (LMN)
 
 A coordinate system derived from the eigenvalues and eigenvectors of the magnetic field variance matrix, commonly used in analyzing current sheets, discontinuities, and wave propagation.
