@@ -64,16 +64,6 @@ For wave polarization, see [PlasmaWaves.jl versus PySPEDAS](https://juliaspaceph
 
 For coordinate transformations (GeoCotrans.jl versus IRBEM and PySPEDAS), see [Coordinate Systems](https://juliaspacephysics.github.io/GeoCotrans.jl/stable/coords/).
 
-## Status
-
-[![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
-[![Build Status](https://github.com/JuliaSpacePhysics/SPEDAS.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/JuliaSpacePhysics/SPEDAS.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/JuliaSpacePhysics/SPEDAS.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/JuliaSpacePhysics/SPEDAS.jl)
-
-⚠️ **Development Status**: This package is in active development. While functional, the API may undergo changes in future releases. Please review the documentation and test thoroughly before using in scientific work.
-
-📫 **Contributing**: We welcome contributions! If you're interested in collaborating or need assistance, please open an issue or reach out through our [GitHub repository](https://github.com/JuliaSpacePhysics/SPEDAS.jl).
-
 ## Reproducibility
 
 ```@raw html
