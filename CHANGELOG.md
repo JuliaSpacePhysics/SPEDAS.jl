@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-24
+
 ### Changed
 
 - **Breaking**: `cotrans` argument order changed to `cotrans(out, A, [times])` and `cotrans(in => out, A, [times])` with IRBEM backend removed
