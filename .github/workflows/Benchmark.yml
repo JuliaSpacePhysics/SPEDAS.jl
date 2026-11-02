@@ -4,11 +4,14 @@ on:
   pull_request_target:
     branches:
       - main
-permissions:
-  pull-requests: write
+  push:
+    branches:
+      - main
 
 jobs:
   benchmark:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: MilesCranmer/AirspeedVelocity.jl@action-v1
+    uses: JuliaSpacePhysics/actions/.github/workflows/benchmark.yml@main
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
